@@ -24,7 +24,7 @@ public class UserRole {
 
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column
     private RoleType roleType;
 
     private String roleName;
