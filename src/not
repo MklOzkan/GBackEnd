@@ -1,0 +1,6 @@
+public class User {
+
+    @NotBlank
+    @Email
+    @Pattern(regexp = ".+@(gmail|hotmail)\\.com$", message = "Email must be from gmail.com or hotmail.com")
+    private String email;
