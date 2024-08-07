@@ -1,4 +1,4 @@
-package com.project.domain.concretes.users;
+package com.project.domain.concretes.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -54,9 +54,6 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Set<LocalDateTime> updatedAt;
 
-
-    @Column(unique = true)
-    private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

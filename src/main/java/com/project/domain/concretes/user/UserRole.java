@@ -1,4 +1,4 @@
-package com.project.domain.concretes.users;
+package com.project.domain.concretes.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.domain.enums.RoleType;
