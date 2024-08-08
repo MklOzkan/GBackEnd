@@ -27,6 +27,7 @@ public class UserRole {
     @Column
     private RoleType roleType;
 
+    @Column
     private String roleName;
 
     @ManyToMany(mappedBy = "userRole")

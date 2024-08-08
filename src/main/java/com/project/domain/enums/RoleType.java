@@ -19,4 +19,13 @@ public enum RoleType {
         return name;
     }
 
+    public static RoleType fromString(String roleName) {
+        for (RoleType role : RoleType.values()) {
+            if (role.name.equalsIgnoreCase(roleName)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException(String.format("Role '%s' not found", roleName));
+    }
+
 }
