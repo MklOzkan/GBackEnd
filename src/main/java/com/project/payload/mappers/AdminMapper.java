@@ -19,7 +19,13 @@ public class AdminMapper {
                 .email(savedUser.getEmail())
                 .firstName(savedUser.getFirstName())
                 .lastName(savedUser.getLastName())
+                .builtIn(savedUser.getBuiltIn())
+                .createAt(savedUser.getCreatedAt())
+                //.updateAt(savedUser.getUpdatedAt())
+                //TODO Rolde gelecek buraya
                 .build();
     }
+
+
 
 }
