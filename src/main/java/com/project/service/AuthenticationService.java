@@ -2,7 +2,7 @@ package com.project.service;
 
 import com.project.domain.concretes.user.User;
 import com.project.payload.mappers.AuthenticationMapper;
-import com.project.payload.request.SignInRequest;
+import com.project.payload.request.SignUpRequest;
 import com.project.payload.response.SignInResponse;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
@@ -20,7 +20,7 @@ public class AuthenticationService {
     private final AuthenticationMapper authenticationMapper;
     //TODO PasswordEncoder
 
-    public ResponseEntity<SignInResponse> registerUser(SignInRequest signInRequest) {
+    public ResponseEntity<SignInResponse> registerUser(SignUpRequest signInRequest) {
 
         methodHelper.checkDuplicate(signInRequest.getEmail());
         User registeredUser = authenticationMapper.SignInRequestToUser(signInRequest);

@@ -6,14 +6,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class SignInRequest {
+public class SignUpRequest {
 
     @NotBlank
     @Size(min = 2, max = 30, message = "First name '${validatedValue}' must be between {min} and {max}")
@@ -41,6 +39,6 @@ public class SignInRequest {
             message = "Password must contain at least one digit, one lowercase character, one uppercase character, and one special character (@#$%^&+=)")
     private String password;
 
- //   private Set<RoleType> role;
+
 
 }

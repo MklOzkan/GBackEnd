@@ -1,7 +1,7 @@
 package com.project.payload.mappers;
 
 import com.project.domain.concretes.user.User;
-import com.project.payload.request.SignInRequest;
+import com.project.payload.request.SignUpRequest;
 import com.project.payload.response.SignInResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class AuthenticationMapper {
 
 
-    public User SignInRequestToUser(SignInRequest signInRequest) {
+    public User SignInRequestToUser(SignUpRequest signInRequest) {
       return   User.builder().firstName(signInRequest.getFirstName())
                 .lastName(signInRequest.getLastName())
                 .email(signInRequest.getEmail())

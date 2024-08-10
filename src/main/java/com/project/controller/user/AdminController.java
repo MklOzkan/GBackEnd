@@ -1,5 +1,6 @@
 package com.project.controller.user;
 
+import com.project.payload.request.UserUpdateByAdminRequest;
 import com.project.payload.response.UserResponse;
 import com.project.service.user.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 
 @RestController
@@ -35,8 +37,19 @@ public class AdminController {
     }
 
     @PatchMapping
-    public ResponseEntity<String> setUserRole(HttpServletRequest request, @RequestParam String role, @RequestParam String email) {
+    public ResponseEntity<String> setUserRole(HttpServletRequest request, @RequestParam Set<String> role, @RequestParam String email) {
         return adminService.setUserRole(request, role, email);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse>updateUserByAdmin(@PathVariable Long id, @Valid @RequestBody UserUpdateByAdminRequest adminRequest,HttpServletRequest request){
+
+        return adminService.updateUserByAdmin(id,adminRequest,request);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String>deleteUserByAdmin(@PathVariable Long id,HttpServletRequest request){
+        return ResponseEntity.ok(adminService.deleteUserByAdmin(id,request));
     }
 
 }
