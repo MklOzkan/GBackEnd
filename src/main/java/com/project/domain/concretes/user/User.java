@@ -52,7 +52,7 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH-mm", timezone = "Turkey")
     @Column(name = "update_at")
     @Setter(AccessLevel.NONE)
-    private Set<LocalDateTime> updatedAt;
+    private LocalDateTime updatedAt;
 
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -71,6 +71,8 @@ public class User {
 
     @PreUpdate
     private void onUpdate() {
-        updatedAt.add(LocalDateTime.now());
+        updatedAt=(LocalDateTime.now());
     }
+
+    //Todo Son 1 haftalik giris listesi eklenecek
 }

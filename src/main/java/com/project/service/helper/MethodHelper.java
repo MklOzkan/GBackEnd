@@ -7,7 +7,9 @@ import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.request.abstracts.AbstractUserRequest;
 import com.project.repository.user.UserRepository;
+import com.project.service.user.UserRoleService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,7 @@ import java.util.Set;
 public class MethodHelper {
 
     private final UserRepository userRepository;
+    private final UserRoleService userRoleService;
 
     public void checkDuplicate(String email) {
 
@@ -67,5 +70,37 @@ public class MethodHelper {
         }
         throw new ResourceNotFoundException(ErrorMessages.USER_ROLE_IS_NOT_FOUND);
     }
+
+
+    public void checkUniqueProperties(User user, AbstractUserRequest request) {
+
+        boolean changed = false;
+        String changedEmail = "";
+
+
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
+            changed = true;
+            changedEmail = request.getEmail();
+        }
+        if (changed) {
+            checkDuplicate(changedEmail);
+        }
+    }
+
+    public Set<UserRole>stringRoleToUserRole(Set<String>role){
+        Set<UserRole> userRoleSet = new HashSet<>();
+        try {
+        for (String rl:role) {
+            RoleType roleType = RoleType.fromString(rl);
+            UserRole userRole = userRoleService.getUserRoleByRoleType(roleType);
+            userRoleSet.add(userRole);
+        }
+
+        }catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(ErrorMessages.USER_ROLE_IS_NOT_FOUND);
+        }
+     return userRoleSet;
+    }
+
 
 }

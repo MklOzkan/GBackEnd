@@ -1,5 +1,7 @@
 package com.project.payload.response;
 
+
+
 import lombok.*;
 
 @Getter
@@ -7,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
+
 public class SignInResponse {
 
     private Long id;
