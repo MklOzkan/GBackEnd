@@ -1,4 +1,4 @@
-package com.project.payload.request;
+package com.project.payload.request.user;
 
 import com.project.payload.request.abstracts.BaseUserRequest;
 import jakarta.validation.constraints.Email;

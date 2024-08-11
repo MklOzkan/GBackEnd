@@ -7,3 +7,9 @@ public class User {
     @Email
     @Pattern(regexp = ".+@(gmail|hotmail)\\.com$", message = "Email must be from gmail.com or hotmail.com")
     private String email;
+
+
+    1- getAll pageable yap.
+    2-Son bir hafta girislerini kaydet
+    3-Forgot password yaz
+    4-Securityi yaz
