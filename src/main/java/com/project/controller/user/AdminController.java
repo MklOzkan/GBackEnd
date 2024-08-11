@@ -1,12 +1,11 @@
 package com.project.controller.user;
 
-import com.project.payload.request.UserUpdateByAdminRequest;
-import com.project.payload.response.UserResponse;
+import com.project.payload.request.user.UserUpdateByAdminRequest;
+import com.project.payload.response.user.UserResponse;
 import com.project.service.user.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

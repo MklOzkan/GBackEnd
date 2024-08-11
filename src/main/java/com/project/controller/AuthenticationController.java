@@ -1,6 +1,7 @@
 package com.project.controller;
 
 import com.project.payload.request.SignUpRequest;
+import com.project.payload.request.user.CodeRequest;
 import com.project.payload.response.SignInResponse;
 import com.project.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -23,6 +24,10 @@ public class AuthenticationController {
     }
 
 
+    @PostMapping("/reset-password") //http://localhost:8080/auth/reset-password
+    ResponseEntity<String>resetPassword(@Valid @RequestBody CodeRequest request){
+        return authenticationService.resetPassword(request);
+    }
 
 
 }

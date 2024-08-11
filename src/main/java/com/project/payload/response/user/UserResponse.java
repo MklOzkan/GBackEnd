@@ -1,4 +1,4 @@
-package com.project.payload.response;
+package com.project.payload.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.payload.response.abstracts.BaseUserResponse;

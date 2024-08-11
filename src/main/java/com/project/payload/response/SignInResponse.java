@@ -2,19 +2,19 @@ package com.project.payload.response;
 
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.project.payload.response.abstracts.BaseUserResponse;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SignInResponse extends BaseUserResponse {
 
-public class SignInResponse {
-
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private String token;
 
 }

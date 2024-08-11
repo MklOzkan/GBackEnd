@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
 
     Long countAllAdmins(RoleType roleType);
+
+    Optional<User> findByResetPasswordCode(String code);
 }

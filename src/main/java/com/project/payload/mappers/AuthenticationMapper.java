@@ -12,15 +12,17 @@ public class AuthenticationMapper {
 
 
     public User SignInRequestToUser(SignUpRequest signInRequest) {
-      return   User.builder().firstName(signInRequest.getFirstName())
+        return User.builder().firstName(signInRequest.getFirstName())
                 .lastName(signInRequest.getLastName())
                 .email(signInRequest.getEmail())
                 .build();
     }
 
     public SignInResponse UserToSignInResponse(User savedUser) {
+
+
         return SignInResponse.builder()
-                .id(savedUser.getId())
+                .id((savedUser.getId()))
                 .email(savedUser.getEmail())
                 .firstName(savedUser.getFirstName())
                 .lastName(savedUser.getLastName())
