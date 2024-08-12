@@ -10,6 +10,7 @@ public class ErrorMessages {
     public static final String BUILT_IN_USER_CAN_NOT_BE_UPDATED = "BuiltIn user can not be updated";
     public static final String THE_PASSWORDS_ARE_NOT_MATCHED = "The passwords are not matched";
     public static final String RESET_CODE_IS_NOT_FOUND ="Reset code is not found %s" ;
+    public static final String THERE_IS_NO_USER_REGISTERED_WITH_THIS_EMAIL_ADRESS ="There is no user registered with this email adress" ;
 
     private ErrorMessages(){}
 

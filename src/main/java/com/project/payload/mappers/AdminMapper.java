@@ -5,6 +5,7 @@ import com.project.domain.concretes.user.UserRole;
 import com.project.payload.request.abstracts.AbstractUserRequest;
 import com.project.payload.response.user.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -26,6 +27,8 @@ public class AdminMapper {
                 .userRole(savedUser.getUserRole().stream().map(UserRole::getRoleName).collect(Collectors.toSet()))
                 .build();
     }
+
+
 
     public User userToUser(AbstractUserRequest request,User user) {
         return user.toBuilder()

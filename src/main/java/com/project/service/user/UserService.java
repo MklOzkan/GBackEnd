@@ -11,7 +11,6 @@ import com.project.payload.request.user.UpdateUsersRequest;
 import com.project.payload.request.user.UserPasswordRequest;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.user.UserResponse;
-import com.project.payload.response.user.UserUpdateResponse;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
 import jakarta.servlet.http.HttpServletRequest;
