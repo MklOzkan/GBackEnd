@@ -6,6 +6,7 @@ import com.project.service.user.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,17 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @GetMapping("/getAll")
-        //TODO pageable cevir
-        //http://localhost:8080/admin/getAll
-    ResponseEntity<List<UserResponse>> getAllUsers(HttpServletRequest request) {
+    @GetMapping("/getAll")  //http://localhost:8080/admin/getAll
+    ResponseEntity<Page<UserResponse>> getAllUsers(HttpServletRequest request,
+                                                   @RequestParam(value = "firstName", required = false) String firstName,
+                                                   @RequestParam(value = "lastName", required = false) String lastName,
+                                                   @RequestParam(value = "email", required = false) String email,
+                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                   @RequestParam(value = "size", defaultValue = "10") int size,
+                                                   @RequestParam(value = "sort", defaultValue = "firstName") String sort,
+                                                   @RequestParam(value = "type", defaultValue = "desc") String type) {
 
-        return ResponseEntity.ok(adminService.getAllUsers(request));
+        return ResponseEntity.ok(adminService.getAllUsers(request,firstName,lastName,email,page,size,sort,type));
 
     }
 

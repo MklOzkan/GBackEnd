@@ -11,8 +11,11 @@ import com.project.payload.request.user.UserUpdateByAdminRequest;
 import com.project.payload.response.user.UserResponse;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
+import com.project.service.helper.PageableHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,18 +32,13 @@ public class AdminService {
     private final AdminMapper adminMapper;
     private final MethodHelper methodHelper;
     private final UserRoleService userRoleService;
+    private final PageableHelper pageableHelper;
 
 
-    public List<UserResponse> getAllUsers(HttpServletRequest request) {
 
-        User user = methodHelper.getUserByHttpRequest(request);
-        methodHelper.checkRoles(user, RoleType.ADMIN);
 
-        List<User> users = userRepository.findAll();
 
-        return users.stream().map(adminMapper::userToUserResponse).collect(Collectors.toList());
 
-    }
 
     public ResponseEntity<UserResponse> getUserByEmail(HttpServletRequest request, String email) {
 
@@ -98,4 +96,16 @@ public class AdminService {
         }
         return SuccessMessages.THE_USER_HAS_BEEN_DELETED;
     }
+
+        public  Page<UserResponse> getAllUsers(HttpServletRequest request, String firstName, String lastName, String email, int page, int size, String sort, String type) {
+                User user = methodHelper.getUserByHttpRequest(request);
+                methodHelper.checkRoles(user, RoleType.ADMIN);
+
+            Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+            Page<User> users = userRepository.findAll(firstName, lastName, email, pageable);
+
+
+                return users.map(adminMapper::userToUserResponse);
+
+        }
 }

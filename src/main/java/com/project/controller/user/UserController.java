@@ -4,7 +4,6 @@ import com.project.payload.request.user.UpdateUsersRequest;
 import com.project.payload.request.user.UserPasswordRequest;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.user.UserResponse;
-import com.project.payload.response.user.UserUpdateResponse;
 import com.project.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
