@@ -47,7 +47,7 @@ public class AuthenticationService {
 
     public ResponseEntity<String> resetPassword(CodeRequest request) {
 
-        User user = userRepository.findByResetPasswordCode(request.getCode()).orElseThrow(() ->
+        User user = userRepository.findByResetCode(request.getCode()).orElseThrow(() ->
                 new IllegalArgumentException(String.format(ErrorMessages.RESET_CODE_IS_NOT_FOUND, request.getCode())));
 
 
@@ -66,7 +66,7 @@ public class AuthenticationService {
         try {
             User user = methodHelper.findByUserByEmail(request.getEmail());
             resetCode = UUID.randomUUID().toString();
-            if(userRepository.existsByResetPasswordCode(resetCode)) throw new ConflictException("The code has already taken");
+            if(userRepository.existsByResetCode(resetCode)) throw new ConflictException("The code has already taken");
             user.setResetCode(resetCode);
             userRepository.save(user);
             MimeMessagePreparator resetPasswordEmail = MailUtil.buildResetPasswordEmail(user.getEmail(),resetCode , user.getFirstName() );

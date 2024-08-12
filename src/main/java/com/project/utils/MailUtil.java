@@ -35,7 +35,7 @@ public class MailUtil {
         return mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
             messageHelper.setTo(recipientEmail);
-            messageHelper.setSubject("Cossinest Homes - Reset your password");
+            messageHelper.setSubject("Staj - Reset your password");
 
             String message = "<html><body style='background-color: lightgray; padding: 5px; border: 2px solid darkgray; border-radius: 5px;'>" +
                     "<img src='cid:logo' alt='Logo' style='width: 135px; height: auto;'><br>" +

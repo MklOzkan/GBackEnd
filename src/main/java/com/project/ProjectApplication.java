@@ -3,6 +3,7 @@ package com.project;
 import com.project.domain.concretes.user.User;
 import com.project.domain.concretes.user.UserRole;
 import com.project.domain.enums.RoleType;
+import com.project.repository.user.UserRepository;
 import com.project.repository.user.UserRoleRepository;
 import com.project.service.user.AdminService;
 import com.project.service.user.UserRoleService;
@@ -19,12 +20,14 @@ public class ProjectApplication implements CommandLineRunner {
     private final UserRoleService userRoleService;
     private final AdminService adminService;
     private final UserRoleRepository userRoleRepository;
+    private final UserRepository userRepository;
 
 
-    public ProjectApplication(UserRoleService userRoleService, AdminService adminService, UserRoleRepository userRoleRepository) {
+    public ProjectApplication(UserRepository userRepository,UserRoleService userRoleService, AdminService adminService, UserRoleRepository userRoleRepository) {
         this.userRoleRepository = userRoleRepository;
         this.userRoleService = userRoleService;
         this.adminService = adminService;
+        this.userRepository=userRepository;
 
     }
 
@@ -76,13 +79,15 @@ public class ProjectApplication implements CommandLineRunner {
             roles.add(userRole);
 
             User admin = new User();
-            //	adminRequest.setUsername("SuperAdmin"); // builtIN degeri TRUE olarak setlenmis olacak
+
             admin.setEmail("admin@admin.com");
             //admin.setPassword(passwordEncoder.encode("A1a@secure"));
+            admin.setPassword("asd");
             admin.setFirstName("admin");
             admin.setLastName("admin");
             admin.setBuiltIn(true);
             admin.setUserRole(roles);
+            userRepository.save(admin);
 
 
         }
