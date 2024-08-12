@@ -10,8 +10,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-@SuperBuilder(toBuilder = true)
+//@NoArgsConstructor
+@SuperBuilder
 public class UpdateUsersRequest extends AbstractUserRequest {
 
 
