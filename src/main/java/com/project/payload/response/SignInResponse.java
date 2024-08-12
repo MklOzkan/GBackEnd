@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SignInResponse extends BaseUserResponse {
 

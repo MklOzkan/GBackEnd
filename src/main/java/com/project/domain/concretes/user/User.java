@@ -49,7 +49,7 @@ public class User {
     private LocalDateTime createdAt;
 
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH-mm", timezone = "Turkey")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Turkey")
     @Column(name = "update_at")
     @Setter(AccessLevel.NONE)
     private LocalDateTime updatedAt;
