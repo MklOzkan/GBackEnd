@@ -16,8 +16,14 @@ public interface UserRepository extends JpaRepository<User,Long> {
     boolean existsByEmail(String email);
 
     Optional<User> findByEmail(String email);
-    @Query("SELECT COUNT(u) FROM User u WHERE :roleType IN (SELECT r.roleType FROM u.userRole r)")
-    Long countAllAdmins(@Param("roleType") RoleType roleType);
+//    @Query("SELECT COUNT(u) FROM User u WHERE :roleType IN (SELECT r.roleType FROM u.userRole r)")
+//    Long countAllAdmins(@Param("roleType") RoleType roleType);
+//
+//    @Query("SELECT COUNT(u) FROM User u WHERE :roleType IN (SELECT r.roleType FROM u.userRole r)")
+//    Long countAllAdmins(@Param("roleType") RoleType roleType);
+
+
+
 
 
     @Query("SELECT u FROM User u WHERE " +
@@ -34,5 +40,14 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByResetCode(String code);
 
     boolean existsByResetCode(String resetCode);
+
+
+
+  Optional<User>   findByUserByUserRoleByRoleName(String roleByRequest);
+
+    Optional<User> findByPassword(String password);
+
+
+    Optional<User> findByUserRoleRoleType(RoleType roleType);
 }
 

@@ -1,25 +1,30 @@
 package com.project.service;
 
 import com.project.domain.concretes.user.User;
+import com.project.domain.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
+import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AuthenticationMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.SignUpRequest;
 import com.project.payload.request.user.CodeRequest;
+import com.project.payload.request.user.CreatePasswordRequest;
 import com.project.payload.request.user.ForgetPasswordRequest;
 import com.project.payload.response.SignInResponse;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
 import com.project.service.user.EmailService;
 import com.project.utils.MailUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,54 +35,62 @@ public class AuthenticationService {
     private final MethodHelper methodHelper;
     private final AuthenticationMapper authenticationMapper;
     private final EmailService emailService;
-    //TODO PasswordEncoder
 
-    public ResponseEntity<SignInResponse> registerUser(SignUpRequest signInRequest) {
+    public ResponseEntity<String> createPassword(CreatePasswordRequest createPasswordRequest, HttpServletRequest request) {
+        methodHelper.getUserByHttpRequest(request);
 
-        methodHelper.checkDuplicate(signInRequest.getEmail());
-        User registeredUser = authenticationMapper.SignInRequestToUser(signInRequest);
-        //TODO PasswordEncoder
-        //TODO Rol bilgisi
-
-        User savedUser = userRepository.save(registeredUser);
-
-        return new ResponseEntity<>(authenticationMapper.UserToSignInResponse(savedUser), HttpStatus.CREATED);
-
-    }
-
-    public ResponseEntity<String> resetPassword(CodeRequest request) {
-
-        User user = userRepository.findByResetCode(request.getCode()).orElseThrow(() ->
-                new IllegalArgumentException(String.format(ErrorMessages.RESET_CODE_IS_NOT_FOUND, request.getCode())));
-
-
-     //   String requestPassword = passwordEncoder.encode(request.getPassword());
-     //   user.setPassword(requestPassword);
-        user.setResetCode(null);
-        userRepository.save(user);
-
-        return new ResponseEntity<>(SuccessMessages.PASSWORD_RESET_SUCCESSFULLY, HttpStatus.OK);
-
-    }
-
-    public String forgotPassword(ForgetPasswordRequest request) {
-
-        String resetCode;
-        try {
-            User user = methodHelper.findByUserByEmail(request.getEmail());
-            resetCode = UUID.randomUUID().toString();
-            if(userRepository.existsByResetCode(resetCode)) throw new ConflictException("The code has already taken");
-            user.setResetCode(resetCode);
-            userRepository.save(user);
-            MimeMessagePreparator resetPasswordEmail = MailUtil.buildResetPasswordEmail(user.getEmail(),resetCode , user.getFirstName() );
-            emailService.sendEmail(resetPasswordEmail);
-
-
-        } catch (BadRequestException e) {
-            return ErrorMessages.THERE_IS_NO_USER_REGISTERED_WITH_THIS_EMAIL_ADRESS;
+        if (isPasswordExists(createPasswordRequest.getPassword())) {
+            throw new BadRequestException(ErrorMessages.PASSWORD_HAS_ALREADY_TAKEN);
         }
 
-        return "Code has been sent";
+        RoleType roleType = RoleType.valueOf(createPasswordRequest.getRoleName().toUpperCase());
+
+        switch (roleType) {
+
+            case TALASLI_IMALAT_AMIRI:
+                assignPasswordToUsersByRole(roleType, createPasswordRequest.getPassword());
+                break;
+            case POLISAJ_AMIRI:
+                assignPasswordToUsersByRole(roleType, createPasswordRequest.getPassword());
+                break;
+            case LIFT_MONTAJ_AMIRI:
+                assignPasswordToUsersByRole(roleType, createPasswordRequest.getPassword());
+                break;
+            case KALITE_KONTROL:
+                assignPasswordToUsersByRole(roleType, createPasswordRequest.getPassword());
+                break;
+            case BL_MONTAJ_AMIRI:
+                assignPasswordToUsersByRole(roleType, createPasswordRequest.getPassword());
+                break;
+            case URETIM_PLANLAMA_AMIRI:
+                assignPasswordToUsersByRole(roleType, createPasswordRequest.getPassword());
+                break;
+            case BOYAMA_VE_PAKETLEME_AMIRI:
+                assignPasswordToUsersByRole(roleType, createPasswordRequest.getPassword());
+                break;
+            default:
+                throw new IllegalArgumentException("Geçersiz rol adı: " + createPasswordRequest.getRoleName());
+        }
+
+        return ResponseEntity.ok("Şifre güncellendi.");
 
     }
+
+    private void assignPasswordToUsersByRole(RoleType roleType, String password) {
+
+            User fetchUser = userRepository.findByUserRoleRoleType(roleType).orElseThrow(()->new BadRequestException(ErrorMessages.USER_NOT_FOUND));
+            fetchUser.setPassword(password);
+            userRepository.save(fetchUser);
+
+    }
+
+    public boolean isPasswordExists(String password) {
+        return userRepository.findByPassword(password).isPresent();//password kullaniliksa isPresent true doner kullanmayiksak false doner.
+    }
+
+
+
+
+
+
 }
