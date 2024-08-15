@@ -51,20 +51,20 @@ public class MethodHelper {
     }
 
 
-    public void checkUniqueProperties(User user, String password) {
-
-        boolean changed = false;
-        String changedPassword = "";
-
-
-        if (!user.getPassword().equalsIgnoreCase(password)) {
-            changed = true;
-            changedPassword = request.getEmail();
-        }
-        if (changed) {
-            checkDuplicate(changedPassword);
-        }
-    }
+//    public void checkUniqueProperties(User user, String password) {
+//
+//        boolean changed = false;
+//        String changedPassword = "";
+//
+//
+//        if (!user.getPassword().equalsIgnoreCase(password)) {
+//            changed = true;
+//            changedPassword = request.getEmail();
+//        }
+//        if (changed) {
+//            checkDuplicate(changedPassword);
+//        }
+//    }
 
 
 }

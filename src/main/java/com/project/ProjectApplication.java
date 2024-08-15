@@ -18,12 +18,21 @@ public class ProjectApplication implements CommandLineRunner {
     private final UserRoleRepository userRoleRepository;
     private final UserRepository userRepository;
 
+    private final UserRepository userRepository;
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 50174be714ed51db5916f178bbef3613194e1741
     public ProjectApplication(UserRepository userRepository,UserRoleService userRoleService, AdminService adminService, UserRoleRepository userRoleRepository) {
         this.userRoleRepository = userRoleRepository;
         this.userRoleService = userRoleService;
         this.adminService = adminService;
+<<<<<<< HEAD
+        this.userRepository= userRepository;
+=======
         this.userRepository=userRepository;
+>>>>>>> 50174be714ed51db5916f178bbef3613194e1741
 
     }
 
@@ -65,6 +74,20 @@ public class ProjectApplication implements CommandLineRunner {
             admin5.setRoleName(RoleType.TALASLI_IMALAT_AMIRI.getName());
             userRoleRepository.save(admin5);
 
+<<<<<<< HEAD
+
+            UserRole admin6 = new UserRole();
+            admin5.setRoleType(RoleType.KALITE_KONTROL);
+            admin5.setRoleName(RoleType.KALITE_KONTROL.getName());
+            userRoleRepository.save(admin6);
+
+            UserRole admin7 = new UserRole();
+            admin5.setRoleType(RoleType.URETIM_PLANLAMA_AMIRI);
+            admin5.setRoleName(RoleType.URETIM_PLANLAMA_AMIRI.getName());
+            userRoleRepository.save(admin7);
+
+
+=======
             UserRole admin6 = new UserRole();
             admin6.setRoleType(RoleType.KALITE_KONTROL);
             admin6.setRoleName(RoleType.KALITE_KONTROL.getName());
@@ -75,11 +98,22 @@ public class ProjectApplication implements CommandLineRunner {
             admin7.setRoleName(RoleType.URUETIM_PLANLAMA.getName());
             userRoleRepository.save(admin7);
 
+>>>>>>> 50174be714ed51db5916f178bbef3613194e1741
         }
 
         if (adminService.countAllAdmins() == 0) {
 
             UserRole userRole=userRoleService.getUserRoleByRoleType(RoleType.ADMIN);
+<<<<<<< HEAD
+
+
+
+            User admin = new User();
+            //	adminRequest.setUsername("SuperAdmin"); // builtIN degeri TRUE olarak setlenmis olacak
+
+            //admin.setPassword(passwordEncoder.encode("A1a@secure"));
+
+=======
             UserRole userRole1=userRoleService.getUserRoleByRoleType(RoleType.BOYAMA_VE_PAKETLEME_AMIRI);
             UserRole userRole2=userRoleService.getUserRoleByRoleType(RoleType.URUETIM_PLANLAMA);
             UserRole userRole3=userRoleService.getUserRoleByRoleType(RoleType.KALITE_KONTROL);
@@ -90,10 +124,16 @@ public class ProjectApplication implements CommandLineRunner {
 
             User admin = new User();
             //admin.setPassword(passwordEncoder.encode("dfgh"));
+>>>>>>> 50174be714ed51db5916f178bbef3613194e1741
             admin.setPassword("Admin123!");
             admin.setBuiltIn(true);
             admin.setUserRole(userRole);
             userRepository.save(admin);
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 50174be714ed51db5916f178bbef3613194e1741
 
             User talasliImalatAmiri = new User();
             talasliImalatAmiri.setBuiltIn(true);

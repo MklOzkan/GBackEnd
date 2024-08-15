@@ -11,7 +11,12 @@ public class ErrorMessages {
     public static final String THE_PASSWORDS_ARE_NOT_MATCHED = "The passwords are not matched";
     public static final String RESET_CODE_IS_NOT_FOUND ="Reset code is not found %s" ;
     public static final String THERE_IS_NO_USER_REGISTERED_WITH_THIS_EMAIL_ADRESS ="There is no user registered with this email adress" ;
+
+    public static final String PASSWORD_HAS_ALREADY_TAKEN = "Password has already taken";
+    public static final String USER_NOT_FOUND = "User not found";
+
     public static final String USER_IS_NOT_FOUND_BY_USERNAME ="Username is npt found" ;
+
 
     private ErrorMessages(){}
 

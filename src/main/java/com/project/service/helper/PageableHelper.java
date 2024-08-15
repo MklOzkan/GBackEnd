@@ -10,15 +10,15 @@ import java.util.Objects;
 @Component
 public class PageableHelper {
 
+    public Pageable getPageableWithProperties(int page, int size, String sort, String type) {
 
-    public Pageable getPageableWithProperties( int page, int size, String sort, String type) {
+        Pageable pageable= PageRequest.of(page,size, Sort.by(sort).ascending());
+        if(Objects.equals(type,"desc")){
+            pageable=PageRequest.of(page,size,Sort.by(sort).descending());
+        }
 
-    Pageable pageable=PageRequest.of(page,size, Sort.by(sort).ascending());
-    if(Objects.equals(type,"desc")){
-        pageable=PageRequest.of(page,size,Sort.by(sort).descending());
-    }
-
-    return pageable;
+        return pageable;
 
     }
 }
+

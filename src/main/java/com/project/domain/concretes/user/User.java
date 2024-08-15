@@ -17,17 +17,22 @@ public class User {
     @Setter(AccessLevel.MODULE)
     private Long id;
 
+
+    @OneToOne(fetch = FetchType.EAGER)
+    private UserRole userRole = new UserRole();
+
+
     @Column(unique = true)
     String userName;
+
 
     @Column(unique = true)
     private String password;
 
-
     private Boolean builtIn=true;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    private UserRole userRole=new UserRole() ;
+
+
 
 
 

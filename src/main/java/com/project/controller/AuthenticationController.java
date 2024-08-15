@@ -21,24 +21,36 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
 
+
+
+
     @PostMapping("/createPassword")
     public ResponseEntity<String>createPassword(@Valid @RequestBody CreatePasswordRequest createPasswordRequest, HttpServletRequest request){
         return authenticationService.createPassword(createPasswordRequest,request);
     }
 
 
-    @PostMapping("/forgot-password") //http://localhost:8080/auth/forgot-password
-    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgetPasswordRequest request){
-
-        return ResponseEntity.ok(authenticationService.forgotPassword(request));
-    }
 
 
 
-    @PostMapping("/reset-password") //http://localhost:8080/auth/reset-password
-    ResponseEntity<String>resetPassword(@Valid @RequestBody CodeRequest request){
-        return authenticationService.resetPassword(request);
-    }
+//    @PostMapping("/forgot-password") //http://localhost:8080/auth/forgot-password
+//    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgetPasswordRequest request){
+//
+//        return ResponseEntity.ok(authenticationService.forgotPassword(request));
+//    }
+
+
+
+//    @PostMapping("/reset-password") //http://localhost:8080/auth/reset-password
+//    ResponseEntity<String>resetPassword(@Valid @RequestBody CodeRequest request){
+//        return authenticationService.resetPassword(request);
+//    }
+
+    //    @PostMapping("/register") //http://localhost:8080/auth/register
+//    public ResponseEntity<SignInResponse> registerUser(@RequestBody @Valid SignUpRequest signInRequest) {
+//        return authenticationService.registerUser(signInRequest);
+//
+//    }
 
 
 }
