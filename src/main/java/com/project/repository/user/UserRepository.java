@@ -13,9 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
-    boolean existsByEmail(String email);
 
-    Optional<User> findByEmail(String email);
+
 
     @Query("SELECT COUNT(u) FROM User u WHERE :roleType IN (SELECT r.roleType FROM u.userRole r)")
     Long countAllAdmins(@Param("roleType") RoleType roleType);
@@ -39,5 +38,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     boolean existsByResetCode(String resetCode);
 
 
-  Optional<User>   findByUserByUserRoleByRoleName(String roleByRequest);
+  Optional<User> findByUserRoleRoleName(String roleByRequest);
+
+    Optional<User> findByUserName(String userName);
 }

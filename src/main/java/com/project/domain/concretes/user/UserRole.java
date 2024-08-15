@@ -30,6 +30,8 @@ public class UserRole {
     @Column
     private String roleName;
 
-
+    @OneToOne(mappedBy = "userRole")
+    @JsonIgnore
+    private Set<User> user=new HashSet<>();
 
 }
