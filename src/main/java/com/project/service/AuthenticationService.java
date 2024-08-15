@@ -39,6 +39,7 @@ public class AuthenticationService {
     public ResponseEntity<String> createPassword(CreatePasswordRequest createPasswordRequest, HttpServletRequest request) {
         methodHelper.getUserByHttpRequest(request);
 
+
         if (isPasswordExists(createPasswordRequest.getPassword())) {
             throw new BadRequestException(ErrorMessages.PASSWORD_HAS_ALREADY_TAKEN);
         }
@@ -79,7 +80,7 @@ public class AuthenticationService {
     private void assignPasswordToUsersByRole(RoleType roleType, String password) {
 
             User fetchUser = userRepository.findByUserRoleRoleType(roleType).orElseThrow(()->new BadRequestException(ErrorMessages.USER_NOT_FOUND));
-            fetchUser.setPassword(passwordEncoder.encode(fetchUser.getPassword()));
+            fetchUser.setPassword(passwordEncoder.encode(password));
             userRepository.save(fetchUser);
 
     }

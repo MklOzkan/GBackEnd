@@ -117,8 +117,6 @@ public class WebSecurityConfig {
             "/js/**",
 
             "/auth/login",
-            "/adverts/cities",
-            "/adverts/categories",
             "/auth/loginUser",
             "/users/*",
             "/auth/forgot-password"
