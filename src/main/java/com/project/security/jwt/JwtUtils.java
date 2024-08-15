@@ -26,12 +26,12 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication){
         UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal();
 
-        return generateJwtTokenFromEmail(userDetails.getUsername());
+        return generateJwtTokenFromUserName(userDetails.getUsername());
     }
 
 
 
-    public String generateJwtTokenFromEmail(String userName){
+    public String generateJwtTokenFromUserName(String userName){
         return Jwts.builder()
                 .setSubject(userName)
                 .setIssuedAt(new Date()).setExpiration(new Date(new Date().getTime() + jwtExpirationTime))
