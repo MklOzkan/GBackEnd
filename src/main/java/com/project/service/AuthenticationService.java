@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,8 +34,7 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final MethodHelper methodHelper;
-    private final AuthenticationMapper authenticationMapper;
-    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<String> createPassword(CreatePasswordRequest createPasswordRequest, HttpServletRequest request) {
         methodHelper.getUserByHttpRequest(request);
@@ -79,7 +79,7 @@ public class AuthenticationService {
     private void assignPasswordToUsersByRole(RoleType roleType, String password) {
 
             User fetchUser = userRepository.findByUserRoleRoleType(roleType).orElseThrow(()->new BadRequestException(ErrorMessages.USER_NOT_FOUND));
-            fetchUser.setPassword(password);
+            fetchUser.setPassword(passwordEncoder.encode(fetchUser.getPassword()));
             userRepository.save(fetchUser);
 
     }
