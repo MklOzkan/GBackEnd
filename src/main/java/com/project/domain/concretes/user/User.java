@@ -17,6 +17,8 @@ public class User {
     @Setter(AccessLevel.MODULE)
     private Long id;
 
+    @Column(unique = true)
+    String userName;
 
     @Column(unique = true)
     private String password;

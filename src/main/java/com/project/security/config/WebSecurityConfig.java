@@ -1,9 +1,10 @@
 package com.project.security.config;
 
-import com.cossinest.homes.security.jwt.AuthEntryPointJwt;
-import com.cossinest.homes.security.jwt.AuthTokenFilter;
-import com.cossinest.homes.security.jwt.JwtUtils;
-import com.cossinest.homes.security.service.UserDetailsServiceImpl;
+
+import com.project.security.jwt.AuthEntryPointJwt;
+import com.project.security.jwt.AuthTokenFilter;
+import com.project.security.jwt.JwtUtils;
+import com.project.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +29,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    /* uygulamanızın nasıl korunacağını, hangi endpointlerin erişime açık olacağını,
-    hangi güvenlik kurallarının geçerli olacağını ve nasıl kimlik doğrulama işlemlerinin yapılacağını belirler */
 
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt authEntryPointJwt;
@@ -37,7 +36,6 @@ public class WebSecurityConfig {
     private final AuthTokenFilter authTokenFilter;
 
 
-    // kimlik bilgilerini doğrulamak ve oturum açma işlemlerini gerçekleştirmek için kullanılan merkezi bir bileşendir.
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -50,8 +48,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authEntryPointJwt))
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                /*Belirli URL desenlerine izin verir (AUTH_WHITE_LIST) ve bu desenlere uygun isteklerin kimlik doğrulaması gerektirmediğini belirtir.
-anyRequest().authenticated() ifadesi, diğer tüm isteklerin kimlik doğrulaması gerektirdiğini belirtir.*/
+
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITE_LIST).permitAll()
                         .anyRequest().authenticated()
@@ -62,14 +59,10 @@ anyRequest().authenticated() ifadesi, diğer tüm isteklerin kimlik doğrulamas�
                         .deleteCookies("JSESSIONID")
                 );
 
-                /*Frame Options başlığını "same origin" olarak ayarlar. Bu, yalnızca aynı kaynaktan gelen içeriklerin aynı iframe'de görüntülenmesine izin verir.*/
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
-        /*authenticationProvider() tarafından tanımlanan kimlik doğrulama sağlayıcısını ekler. Bu sağlayıcı, kullanıcı kimlik doğrulama işlemlerini gerçekleştirir.*/
         http.authenticationProvider(authenticationProvider());
 
-        /*authenticationJwtTokenFilter() tarafından tanımlanan JWT kimlik doğrulama filtresini,
-        UsernamePasswordAuthenticationFilter filtresinden önce ekler. Bu filtre, gelen isteklerdeki JWT tokenlarını doğrular.*/
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -88,13 +81,10 @@ anyRequest().authenticated() ifadesi, diğer tüm isteklerin kimlik doğrulamas�
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
 
-        /*DaoAuthenticationProvider, kullanıcı kimlik doğrulama işlemlerini yönetir.*/
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 
-        /*UserDetailsService, kullanıcı bilgilerini veritabanından yüklemek için kullanılır.*/
         authenticationProvider.setUserDetailsService(userDetailsService);
 
-        /*PasswordEncoder, kullanıcı şifrelerini güvenli bir şekilde hashlemek ve doğrulamak için kullanılır.*/
         authenticationProvider.setPasswordEncoder(passwordEncoder());
 
 
@@ -126,19 +116,10 @@ anyRequest().authenticated() ifadesi, diğer tüm isteklerin kimlik doğrulamas�
             "/css/**",
             "/js/**",
 
-            "/contactMessages/save",
             "/auth/login",
             "/adverts/cities",
             "/adverts/categories",
-
-            "/contact-messages/contact-messages",
             "/auth/loginUser",
-            "/adverts",
-            "/cities",
-            "/categories",
-            "/popular/*",
-            "/trySave",
-            "/users/register",
             "/users/*",
             "/auth/forgot-password"
 
