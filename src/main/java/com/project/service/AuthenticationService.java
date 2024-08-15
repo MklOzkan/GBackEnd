@@ -1,6 +1,7 @@
 package com.project.service;
 
 import com.project.domain.concretes.user.User;
+import com.project.domain.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
 import com.project.payload.mappers.AuthenticationMapper;
@@ -8,12 +9,14 @@ import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.SignUpRequest;
 import com.project.payload.request.user.CodeRequest;
+import com.project.payload.request.user.CreatePasswordRequest;
 import com.project.payload.request.user.ForgetPasswordRequest;
 import com.project.payload.response.SignInResponse;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
 import com.project.service.user.EmailService;
 import com.project.utils.MailUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,54 +33,48 @@ public class AuthenticationService {
     private final MethodHelper methodHelper;
     private final AuthenticationMapper authenticationMapper;
     private final EmailService emailService;
-    //TODO PasswordEncoder
 
-    public ResponseEntity<SignInResponse> registerUser(SignUpRequest signInRequest) {
+    public ResponseEntity<String> createPassword(CreatePasswordRequest createPasswordRequest, HttpServletRequest request) {
+        methodHelper.getUserByHttpRequest(request);
 
-        methodHelper.checkDuplicate(signInRequest.getEmail());
-        User registeredUser = authenticationMapper.SignInRequestToUser(signInRequest);
-        //TODO PasswordEncoder
-        //TODO Rol bilgisi
+        switch (RoleType.valueOf(createPasswordRequest.getRoleName().toUpperCase())) {
 
-        User savedUser = userRepository.save(registeredUser);
+            case TALASLI_IMALAT_AMIRI:
+                methodHelper.getUserByHttpRequest(request);
+                break;
 
-        return new ResponseEntity<>(authenticationMapper.UserToSignInResponse(savedUser), HttpStatus.CREATED);
+            case POLISAJ_AMIRI:
 
-    }
+                break;
 
-    public ResponseEntity<String> resetPassword(CodeRequest request) {
+            case LIFT_MONTAJ_AMIRI:
 
-        User user = userRepository.findByResetCode(request.getCode()).orElseThrow(() ->
-                new IllegalArgumentException(String.format(ErrorMessages.RESET_CODE_IS_NOT_FOUND, request.getCode())));
+                break;
 
+            case KALITE_KONTROL:
 
-     //   String requestPassword = passwordEncoder.encode(request.getPassword());
-     //   user.setPassword(requestPassword);
-        user.setResetCode(null);
-        userRepository.save(user);
+                break;
 
-        return new ResponseEntity<>(SuccessMessages.PASSWORD_RESET_SUCCESSFULLY, HttpStatus.OK);
+            case BL_MONTAJ_AMIRI:
 
-    }
+                break;
 
-    public String forgotPassword(ForgetPasswordRequest request) {
+            case URUETIM_PLANLAMA:
 
-        String resetCode;
-        try {
-            User user = methodHelper.findByUserByEmail(request.getEmail());
-            resetCode = UUID.randomUUID().toString();
-            if(userRepository.existsByResetCode(resetCode)) throw new ConflictException("The code has already taken");
-            user.setResetCode(resetCode);
-            userRepository.save(user);
-            MimeMessagePreparator resetPasswordEmail = MailUtil.buildResetPasswordEmail(user.getEmail(),resetCode , user.getFirstName() );
-            emailService.sendEmail(resetPasswordEmail);
+                break;
 
+            case BOYAMA_VE_PAKETLEME_AMIRI:
 
-        } catch (BadRequestException e) {
-            return ErrorMessages.THERE_IS_NO_USER_REGISTERED_WITH_THIS_EMAIL_ADRESS;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Geçersiz rol adı: " + createPasswordRequest.getRoleName());
         }
 
-        return "Code has been sent";
-
     }
+
+
+
+
+
 }
