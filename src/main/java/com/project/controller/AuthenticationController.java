@@ -19,11 +19,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
 
-    @PostMapping("/register") //http://localhost:8080/auth/register
-    public ResponseEntity<SignInResponse> registerUser(@RequestBody @Valid SignUpRequest signInRequest) {
-        return authenticationService.registerUser(signInRequest);
 
-    }
 
 
     @PostMapping("/forgot-password") //http://localhost:8080/auth/forgot-password
@@ -38,6 +34,12 @@ public class AuthenticationController {
     ResponseEntity<String>resetPassword(@Valid @RequestBody CodeRequest request){
         return authenticationService.resetPassword(request);
     }
+
+    //    @PostMapping("/register") //http://localhost:8080/auth/register
+//    public ResponseEntity<SignInResponse> registerUser(@RequestBody @Valid SignUpRequest signInRequest) {
+//        return authenticationService.registerUser(signInRequest);
+//
+//    }
 
 
 }

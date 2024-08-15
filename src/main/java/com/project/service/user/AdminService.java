@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,7 @@ public class AdminService {
 
         return new ResponseEntity<>(SuccessMessages.THE_ROLES_HAS_ADDED, HttpStatus.CREATED);
     }
+
 
     public Long countAllAdmins() {
 

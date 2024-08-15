@@ -6,6 +6,10 @@ public enum RoleType {
     POLISAJ_AMIRI("Polisaj amiri"),
     LIFT_MONTAJ_AMIRI("Lift montaj amiri"),
     BL_MONTAJ_AMIRI("BL montaj amiri"),
+
+    KALITE_KONTROL("Kalite kontrol"),
+
+    URETIM_PLANLAMA_AMIRI("Uretim planlama amiri"),
     BOYAMA_VE_PAKETLEME_AMIRI("Boyama ve paketleme amiri");
 
 
@@ -19,13 +23,13 @@ public enum RoleType {
         return name;
     }
 
-    public static RoleType fromString(String roleName) {
-        for (RoleType role : RoleType.values()) {
-            if (role.name.equalsIgnoreCase(roleName)) {
-                return role;
-            }
-        }
-        throw new IllegalArgumentException(String.format("Role '%s' not found", roleName));
-    }
+//    public static RoleType fromString(String roleName) {
+//        for (RoleType role : RoleType.values()) {
+//            if (role.name.equalsIgnoreCase(roleName)) {
+//                return role;
+//            }
+//        }
+//        throw new IllegalArgumentException(String.format("Role '%s' not found", roleName));
+//    }
 
 }

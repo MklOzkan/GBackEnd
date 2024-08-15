@@ -30,8 +30,6 @@ public class UserRole {
     @Column
     private String roleName;
 
-    @ManyToMany(mappedBy = "userRole")
-    @JsonIgnore
-    private Set<User> user = new HashSet<>();
+
 
 }

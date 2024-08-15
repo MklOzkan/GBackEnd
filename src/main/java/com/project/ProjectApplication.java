@@ -3,6 +3,7 @@ package com.project;
 import com.project.domain.concretes.user.User;
 import com.project.domain.concretes.user.UserRole;
 import com.project.domain.enums.RoleType;
+import com.project.repository.user.UserRepository;
 import com.project.repository.user.UserRoleRepository;
 import com.project.service.user.AdminService;
 import com.project.service.user.UserRoleService;
@@ -20,11 +21,14 @@ public class ProjectApplication implements CommandLineRunner {
     private final AdminService adminService;
     private final UserRoleRepository userRoleRepository;
 
+    private final UserRepository userRepository;
 
-    public ProjectApplication(UserRoleService userRoleService, AdminService adminService, UserRoleRepository userRoleRepository) {
+
+    public ProjectApplication(UserRepository userRepository,UserRoleService userRoleService, AdminService adminService, UserRoleRepository userRoleRepository) {
         this.userRoleRepository = userRoleRepository;
         this.userRoleService = userRoleService;
         this.adminService = adminService;
+        this.userRepository= userRepository;
 
     }
 
@@ -66,23 +70,37 @@ public class ProjectApplication implements CommandLineRunner {
             admin5.setRoleName(RoleType.TALASLI_IMALAT_AMIRI.getName());
             userRoleRepository.save(admin5);
 
+
+            UserRole admin6 = new UserRole();
+            admin5.setRoleType(RoleType.KALITE_KONTROL);
+            admin5.setRoleName(RoleType.KALITE_KONTROL.getName());
+            userRoleRepository.save(admin6);
+
+            UserRole admin7 = new UserRole();
+            admin5.setRoleType(RoleType.URETIM_PLANLAMA_AMIRI);
+            admin5.setRoleName(RoleType.URETIM_PLANLAMA_AMIRI.getName());
+            userRoleRepository.save(admin7);
+
+
         }
 
         if (adminService.countAllAdmins() == 0) {
 
             UserRole userRole=userRoleService.getUserRoleByRoleType(RoleType.ADMIN);
 
-            Set<UserRole> roles=new HashSet<>();
-            roles.add(userRole);
+
 
             User admin = new User();
             //	adminRequest.setUsername("SuperAdmin"); // builtIN degeri TRUE olarak setlenmis olacak
-            admin.setEmail("admin@admin.com");
+
             //admin.setPassword(passwordEncoder.encode("A1a@secure"));
-            admin.setFirstName("admin");
-            admin.setLastName("admin");
+
+            admin.setPassword("Admin123!");
             admin.setBuiltIn(true);
-            admin.setUserRole(roles);
+            admin.setUserRole(userRole);
+            userRepository.save(admin);
+
+
 
 
         }

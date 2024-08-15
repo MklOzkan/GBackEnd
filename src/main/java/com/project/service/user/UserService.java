@@ -62,16 +62,16 @@ public class UserService {
         return ResponseEntity.ok(userResponse);
     }
 
-    public ResponseEntity<BaseUserResponse> updateAuthenticatedUser(UpdateUsersRequest request, HttpServletRequest auth) {
-       User user =methodHelper.getUserByHttpRequest(auth);
-       user.setFirstName(request.getFirstName());
-       user.setLastName(request.getLastName());
-       methodHelper.checkUniqueProperties(user,request);
-       user.setEmail(request.getEmail());
-     //TODO CheckRolese gerek var mi
-
-       userRepository.save(user);
-       return ResponseEntity.ok(authenticationMapper.UserToSignInResponse(user));
-
-    }
+//    public ResponseEntity<BaseUserResponse> updateAuthenticatedUser(UpdateUsersRequest request, HttpServletRequest auth) {
+//       User user =methodHelper.getUserByHttpRequest(auth);
+//       user.setFirstName(request.getFirstName());
+//       user.setLastName(request.getLastName());
+//       methodHelper.checkUniqueProperties(user,request);
+//       user.setEmail(request.getEmail());
+//     //TODO CheckRolese gerek var mi
+//
+//       userRepository.save(user);
+//       return ResponseEntity.ok(authenticationMapper.UserToSignInResponse(user));
+//
+//    }
 }
