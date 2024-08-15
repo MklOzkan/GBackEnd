@@ -37,4 +37,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByResetCode(String code);
 
     boolean existsByResetCode(String resetCode);
+
+
+  Optional<User>   findByUserByUserRoleByRoleName(String roleByRequest);
 }

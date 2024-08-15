@@ -5,14 +5,10 @@ import com.project.domain.concretes.user.UserRole;
 import com.project.domain.enums.RoleType;
 import com.project.repository.user.UserRepository;
 import com.project.repository.user.UserRoleRepository;
-import com.project.service.user.AdminService;
 import com.project.service.user.UserRoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @SpringBootApplication
 public class ProjectApplication implements CommandLineRunner {
@@ -69,26 +65,70 @@ public class ProjectApplication implements CommandLineRunner {
             admin5.setRoleName(RoleType.TALASLI_IMALAT_AMIRI.getName());
             userRoleRepository.save(admin5);
 
+            UserRole admin6 = new UserRole();
+            admin6.setRoleType(RoleType.KALITE_KONTROL);
+            admin6.setRoleName(RoleType.KALITE_KONTROL.getName());
+            userRoleRepository.save(admin6);
+
+            UserRole admin7 = new UserRole();
+            admin7.setRoleType(RoleType.URUETIM_PLANLAMA);
+            admin7.setRoleName(RoleType.URUETIM_PLANLAMA.getName());
+            userRoleRepository.save(admin7);
+
         }
 
         if (adminService.countAllAdmins() == 0) {
 
             UserRole userRole=userRoleService.getUserRoleByRoleType(RoleType.ADMIN);
-
-            Set<UserRole> roles=new HashSet<>();
-            roles.add(userRole);
+            UserRole userRole1=userRoleService.getUserRoleByRoleType(RoleType.BOYAMA_VE_PAKETLEME_AMIRI);
+            UserRole userRole2=userRoleService.getUserRoleByRoleType(RoleType.URUETIM_PLANLAMA);
+            UserRole userRole3=userRoleService.getUserRoleByRoleType(RoleType.KALITE_KONTROL);
+            UserRole userRole4=userRoleService.getUserRoleByRoleType(RoleType.POLISAJ_AMIRI);
+            UserRole userRole5=userRoleService.getUserRoleByRoleType(RoleType.TALASLI_IMALAT_AMIRI);
+            UserRole userRole6=userRoleService.getUserRoleByRoleType(RoleType.LIFT_MONTAJ_AMIRI);
+            UserRole userRole7=userRoleService.getUserRoleByRoleType(RoleType.BL_MONTAJ_AMIRI);
 
             User admin = new User();
-
-            admin.setEmail("admin@admin.com");
-            //admin.setPassword(passwordEncoder.encode("A1a@secure"));
-            admin.setPassword("asd");
-            admin.setFirstName("admin");
-            admin.setLastName("admin");
+            //admin.setPassword(passwordEncoder.encode("dfgh"));
+            admin.setPassword("Admin123!");
             admin.setBuiltIn(true);
-            admin.setUserRole(roles);
+            admin.setUserRole(userRole);
             userRepository.save(admin);
 
+            User talasliImalatAmiri = new User();
+            talasliImalatAmiri.setBuiltIn(true);
+            talasliImalatAmiri.setUserRole(userRole5);
+            userRepository.save(talasliImalatAmiri);
+
+            User boyamaPaketlemeAmiri = new User();
+            boyamaPaketlemeAmiri.setBuiltIn(true);
+            boyamaPaketlemeAmiri.setUserRole(userRole1);
+            userRepository.save(boyamaPaketlemeAmiri);
+
+            User uretimPlanlama = new User();
+            uretimPlanlama.setBuiltIn(true);
+            uretimPlanlama.setUserRole(userRole2);
+            userRepository.save(uretimPlanlama);
+
+            User kaliteKontrol = new User();
+            kaliteKontrol.setBuiltIn(true);
+            kaliteKontrol.setUserRole(userRole3);
+            userRepository.save(kaliteKontrol);
+
+            User polisajAmiri = new User();
+            polisajAmiri.setBuiltIn(true);
+            polisajAmiri.setUserRole(userRole4);
+            userRepository.save(polisajAmiri);
+
+            User liftMonatajAmiri = new User();
+            liftMonatajAmiri.setBuiltIn(true);
+            liftMonatajAmiri.setUserRole(userRole6);
+            userRepository.save(liftMonatajAmiri);
+
+            User blMontajAmiri = new User();
+            blMontajAmiri.setBuiltIn(true);
+            blMontajAmiri.setUserRole(userRole7);
+            userRepository.save(blMontajAmiri);
 
         }
 
