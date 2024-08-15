@@ -1,8 +1,6 @@
 package com.project.security.service;
 
-import com.cossinest.homes.domain.concretes.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.domain.concretes.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,41 +16,27 @@ import java.util.*;
 public class UserDetailsImpl implements UserDetails {
 
     private Long id;
-    private Boolean built_in;
-    @JsonIgnore // password JSONla beraber gönderilmesin, hassas bilgi.
-    private String passwordHash;
+    private Boolean builtIn;
+    @JsonIgnore
+    private String password;
     private Collection<? extends GrantedAuthority> authorities;
+    private String userName;
 
 
-
-    private UserRole roles; // Kullanıcı rolleri
-
-
-    public UserDetailsImpl(Long id, String firstName, String lastName, String email, Set<UserRole> role, String passwordHash, Boolean built_in,String phone) {
+    public UserDetailsImpl(Long id,String userName, String role, String password, Boolean builtIn) {
 
         this.id=id;
-        this.firstName=firstName;
-        this.lastName=lastName;
-        this.email=email;
-        this.passwordHash=passwordHash;
-        this.built_in=built_in;
-        this.authorities = buildGrantedAuthorities(role);
-        this.builtIn = built_in;
-        this.phone=phone;
+        this.userName=userName;
+        this.password=password;
+        this.builtIn=builtIn;
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(role));
+        this.authorities=grantedAuthorities;
+
 
     }
 
-    private static List<SimpleGrantedAuthority> buildGrantedAuthorities(final Set<UserRole> roles) {
 
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        for (UserRole role : roles) {
-            authorities.add(
-                    new SimpleGrantedAuthority(role.getRoleType().name())
-            );
-        }
-        return authorities;
-
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -61,12 +45,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return passwordHash;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return userName;
     }
 
     @Override

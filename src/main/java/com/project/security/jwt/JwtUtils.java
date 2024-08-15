@@ -1,6 +1,6 @@
 package com.project.security.jwt;
 
-import com.cossinest.homes.security.service.UserDetailsImpl;
+import com.project.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,22 +24,21 @@ public class JwtUtils {
     private Long jwtExpirationTime;
 
     public String generateJwtToken(Authentication authentication){
-        UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal(); //kullanıcı adı veya kullanıcı nesnesi gibi kimliği temsil eden bilgiyi döner.Anlık login olan userı aldık.
+        UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal();
 
-        return generateJwtTokenFromEmail(userDetails.getEmail());
+        return generateJwtTokenFromEmail(userDetails.getUsername());
     }
 
-    //yardımcı metod: generateJwtTokenFromEmail()
 
-    public String generateJwtTokenFromEmail(String email){
+
+    public String generateJwtTokenFromEmail(String userName){
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userName)
                 .setIssuedAt(new Date()).setExpiration(new Date(new Date().getTime() + jwtExpirationTime))
                 .signWith(SignatureAlgorithm.HS512 , jwtSecretKey)
                 .compact();
     }
 
-    //validate Jwt Token
 
     public boolean validateJwtToken(String jwtToken){
         try {
@@ -59,9 +58,9 @@ public class JwtUtils {
         return false;
     }
 
-    // tokendan email i almak:
 
-    public String getEmailFromJwtToken(String token){
+
+    public String getUserNameFromJwtToken(String token){
         return Jwts.parser()
                 .setSigningKey(jwtSecretKey)
                 .parseClaimsJws(token)

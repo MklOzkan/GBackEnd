@@ -17,8 +17,13 @@ public class User {
     @Setter(AccessLevel.MODULE)
     private Long id;
 
+
     @OneToOne(fetch = FetchType.EAGER)
     private UserRole userRole = new UserRole();
+
+
+    @Column(unique = true)
+    String userName;
 
 
     @Column(unique = true)

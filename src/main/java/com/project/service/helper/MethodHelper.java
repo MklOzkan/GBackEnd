@@ -5,7 +5,6 @@ import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
-import com.project.payload.request.abstracts.AbstractUserRequest;
 import com.project.repository.user.UserRepository;
 import com.project.service.user.UserRoleService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,13 +31,13 @@ public class MethodHelper {
             throw new ResourceNotFoundException("Role can not be null or empty");
         }
 
-        return userRepository.findByUserByUserRoleByRoleName(role).orElseThrow(()-> new BadRequestException(String.format(ErrorMessages.THERE_IS_NO_USER_WITH_THIS_Role,role)));
+        return userRepository.findByUserRoleRoleName(role).orElseThrow(()-> new BadRequestException(String.format(ErrorMessages.THERE_IS_NO_USER_WITH_THIS_Role,role)));
     }
 
 
 
     public User getUserByHttpRequest(HttpServletRequest request) {
-        return userRepository.findByUserByUserRoleByRoleName(getRoleByRequest(request)).orElseThrow(()-> new ResourceNotFoundException("UserRole not found"));
+        return userRepository.findByUserRoleRoleName(getRoleByRequest(request)).orElseThrow(()-> new ResourceNotFoundException("UserRole not found"));
     }
 
 
