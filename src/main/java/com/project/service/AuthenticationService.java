@@ -3,30 +3,16 @@ package com.project.service;
 import com.project.domain.concretes.user.User;
 import com.project.domain.enums.RoleType;
 import com.project.exception.BadRequestException;
-import com.project.exception.ConflictException;
-import com.project.exception.ResourceNotFoundException;
-import com.project.payload.mappers.AuthenticationMapper;
 import com.project.payload.messages.ErrorMessages;
-import com.project.payload.messages.SuccessMessages;
-import com.project.payload.request.SignUpRequest;
-import com.project.payload.request.user.CodeRequest;
 import com.project.payload.request.user.CreatePasswordRequest;
-import com.project.payload.request.user.ForgetPasswordRequest;
-import com.project.payload.response.SignInResponse;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
-import com.project.service.user.EmailService;
-import com.project.utils.MailUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

@@ -30,9 +30,6 @@ public class AuthenticationController {
     }
 
 
-
-
-
 //    @PostMapping("/forgot-password") //http://localhost:8080/auth/forgot-password
 //    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgetPasswordRequest request){
 //
@@ -41,16 +38,7 @@ public class AuthenticationController {
 
 
 
-//    @PostMapping("/reset-password") //http://localhost:8080/auth/reset-password
-//    ResponseEntity<String>resetPassword(@Valid @RequestBody CodeRequest request){
-//        return authenticationService.resetPassword(request);
-//    }
 
-    //    @PostMapping("/register") //http://localhost:8080/auth/register
-//    public ResponseEntity<SignInResponse> registerUser(@RequestBody @Valid SignUpRequest signInRequest) {
-//        return authenticationService.registerUser(signInRequest);
-//
-//    }
 
 
 }

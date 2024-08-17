@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,19 +28,17 @@ private final UserService userService;
     }
 
     @GetMapping("/{id}") //http://localhost:8080/users/1/admin ++
-    //@PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id, HttpServletRequest request) {
-
         return userService.getUserById(id, request);
-
     }
 
-    @PatchMapping //http://localhost:8080/users
+/*    @PatchMapping //http://localhost:8080/users
  //   @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<BaseUserResponse> updateAuthenticatedUser(@Valid @RequestBody UpdateUsersRequest request, HttpServletRequest auth) {
 
         return userService.updateAuthenticatedUser(request, auth);
 
-    }
+    }*/
 
 }

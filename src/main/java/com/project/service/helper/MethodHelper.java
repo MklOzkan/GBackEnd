@@ -1,8 +1,8 @@
 package com.project.service.helper;
 
 import com.project.domain.concretes.user.User;
+import com.project.domain.enums.RoleType;
 import com.project.exception.BadRequestException;
-import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.repository.user.UserRepository;
@@ -32,17 +32,25 @@ public class MethodHelper {
 
 
     public User getUserByHttpRequest(HttpServletRequest request) {
-        return userRepository.findByUserRoleRoleName(getRoleByRequest(request)).orElseThrow(()-> new ResourceNotFoundException("UserRole not found"));
+        return userRepository.findByUserRoleRoleName(getUserNameByRequest(request)).orElseThrow(()-> new ResourceNotFoundException("Username not found"));
     }
 
 
-    public String getRoleByRequest(HttpServletRequest request) {
+    public String getUserNameByRequest(HttpServletRequest request) {
         return (String) request.getAttribute("userName");
     }
 
     public boolean isBuiltIn(User user) {
 
         return user.getBuiltIn();
+    }
+
+    public void checkRole(User user, RoleType roleType) {
+     if(!user.getUserRole().getRoleType().equals(roleType)) throw new BadRequestException(ErrorMessages.USER_ROLE_IS_NOT_FOUND);
+    }
+
+    public User findUserWithId(Long id) {
+      return   userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException(ErrorMessages.USER_ID_IS_NOT_FOUND));
     }
 
 
