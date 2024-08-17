@@ -16,6 +16,7 @@ public class ErrorMessages {
     public static final String USER_NOT_FOUND = "User not found";
 
     public static final String USER_IS_NOT_FOUND_BY_USERNAME ="Username is npt found" ;
+    public static final String PASSWORD_IS_INCORRECT = "Password is incorrect";
 
 
     private ErrorMessages(){}

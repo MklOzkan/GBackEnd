@@ -22,25 +22,19 @@ public class AdminController {
 
     @GetMapping("/getAll")  //http://localhost:8080/admin/getAll
     ResponseEntity<Page<UserResponse>> getAllUsers(HttpServletRequest request,
-                                                   @RequestParam(value = "firstName", required = false) String firstName,
-                                                   @RequestParam(value = "lastName", required = false) String lastName,
-                                                   @RequestParam(value = "email", required = false) String email,
                                                    @RequestParam(value = "page", defaultValue = "0") int page,
                                                    @RequestParam(value = "size", defaultValue = "10") int size,
                                                    @RequestParam(value = "sort", defaultValue = "firstName") String sort,
                                                    @RequestParam(value = "type", defaultValue = "desc") String type) {
 
-        return ResponseEntity.ok(adminService.getAllUsers(request,firstName,lastName,email,page,size,sort,type));
+        return ResponseEntity.ok(adminService.getAllUsers(request,page,size,sort,type));
 
     }
 
 
-    @GetMapping //http://localhost:8080/admin?email=asd@gmail.com
-    public ResponseEntity<UserResponse> getUserByEmail(HttpServletRequest request, @RequestParam String email) {
-        return adminService.getUserByEmail(request, email);
-    }
 
-    @PatchMapping
+
+    /*@PatchMapping
     public ResponseEntity<String> setUserRole(HttpServletRequest request, @RequestParam Set<String> role, @RequestParam String email) {
         return adminService.setUserRole(request, role, email);
     }
@@ -54,6 +48,6 @@ public class AdminController {
     @DeleteMapping("{id}")
     public ResponseEntity<String>deleteUserByAdmin(@PathVariable Long id,HttpServletRequest request){
         return ResponseEntity.ok(adminService.deleteUserByAdmin(id,request));
-    }
+    }*/
 
 }

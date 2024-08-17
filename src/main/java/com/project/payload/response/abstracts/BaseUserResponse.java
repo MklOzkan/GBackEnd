@@ -31,7 +31,7 @@ public abstract class BaseUserResponse {
 
     private LocalDateTime updateAt;
 
-    private Set<String> userRole;
+    private String userRole;
 
 
 
