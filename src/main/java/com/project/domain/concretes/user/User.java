@@ -14,7 +14,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.MODULE)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
 

@@ -19,7 +19,7 @@ public class UserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.MODULE)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
 
@@ -32,6 +32,6 @@ public class UserRole {
 
     @OneToOne(mappedBy = "userRole")
     @JsonIgnore
-    private Set<User> user=new HashSet<>();
+    private User user;
 
 }

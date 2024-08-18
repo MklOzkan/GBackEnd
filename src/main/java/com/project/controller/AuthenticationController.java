@@ -1,9 +1,11 @@
 package com.project.controller;
 
+import com.project.payload.request.LoginRequest;
 import com.project.payload.request.SignUpRequest;
 import com.project.payload.request.user.CodeRequest;
 import com.project.payload.request.user.CreatePasswordRequest;
 import com.project.payload.request.user.ForgetPasswordRequest;
+import com.project.payload.response.AuthenticatedUsersResponse;
 import com.project.payload.response.SignInResponse;
 import com.project.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +30,12 @@ public class AuthenticationController {
     public ResponseEntity<String>createPassword(@Valid @RequestBody CreatePasswordRequest createPasswordRequest, HttpServletRequest request){
         return authenticationService.createPassword(createPasswordRequest,request);
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<AuthenticatedUsersResponse>authenticateUser(
+//            @RequestBody @Valid LoginRequest request) {
+//        return ResponseEntity.ok(authenticationService.authenticateUser(request));
+//    }
 
 
 //    @PostMapping("/forgot-password") //http://localhost:8080/auth/forgot-password
