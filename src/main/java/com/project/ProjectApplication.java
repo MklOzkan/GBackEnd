@@ -7,6 +7,7 @@ import com.project.repository.user.UserRepository;
 import com.project.repository.user.UserRoleRepository;
 import com.project.service.user.AdminService;
 import com.project.service.user.UserRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -74,13 +75,13 @@ public class ProjectApplication implements CommandLineRunner {
 
 
             UserRole admin6 = new UserRole();
-            admin5.setRoleType(RoleType.KALITE_KONTROL);
-            admin5.setRoleName(RoleType.KALITE_KONTROL.getName());
+            admin6.setRoleType(RoleType.KALITE_KONTROL);
+            admin6.setRoleName(RoleType.KALITE_KONTROL.getName());
             userRoleRepository.save(admin6);
 
             UserRole admin7 = new UserRole();
-            admin5.setRoleType(RoleType.URETIM_PLANLAMA_AMIRI);
-            admin5.setRoleName(RoleType.URETIM_PLANLAMA_AMIRI.getName());
+            admin7.setRoleType(RoleType.URETIM_PLANLAMA_AMIRI);
+            admin7.setRoleName(RoleType.URETIM_PLANLAMA_AMIRI.getName());
             userRoleRepository.save(admin7);
 
         }

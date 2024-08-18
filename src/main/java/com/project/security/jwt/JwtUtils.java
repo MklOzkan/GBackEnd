@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-//JWT token generate edip, JWT token valide etmek için bu classı oluşturduk
+
 
 @Component
 public class JwtUtils {
