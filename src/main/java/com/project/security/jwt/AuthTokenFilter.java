@@ -61,10 +61,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
 
     private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");  // Authorization başlığını al
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {  // Başlık mevcut mu ve "Bearer " ile mi başlıyor?
-            return headerAuth.substring(7);  // "Bearer " kısmını çıkararak JWT token'ını döndür
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
         }
-        return null;  // Başlık yoksa veya doğru formatta değilse null döndür
+        return null;
     }
 }
