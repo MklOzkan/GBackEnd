@@ -2,7 +2,9 @@ package com.project.service.business;
 
 import com.project.domain.concretes.business.OrderConfirm;
 import com.project.domain.concretes.user.UserRole;
+import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.OrderConfirmMapper;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.business.OrderConfirmRequest;
 import com.project.payload.response.business.OrderConfirmResponse;
 import com.project.repository.repository.OrderConfirmRepository;
@@ -37,4 +39,21 @@ public class OrderConfirmService {
 
         return ResponseEntity.ok("Order created successfully");
     }
+
+
+    public ResponseEntity<OrderConfirmResponse> updateOrder(OrderConfirmRequest orderConfirmRequest, Long orderId, HttpServletRequest request) {
+        String userRole = request.getAttribute("userName").toString();
+        methodHelper.isUserExist(userRole);
+
+        OrderConfirm order = orderConfirmRepository.findById(orderId).orElseThrow(()-> new ResourceNotFoundException(ErrorMessages.NOT_FOUND_ORDER));
+        timeValidator.checkTimeWithException(LocalDate.now(), orderConfirmRequest.getDeliveryDate());
+        OrderConfirm updatedOrder = orderConfirmMapper.mapOrderConfirmRequestToOrderConfirm(orderConfirmRequest,order);
+
+        OrderConfirm savedOrder = orderConfirmRepository.save(updatedOrder);
+
+        return ResponseEntity.ok(orderConfirmMapper.mapOrderConfirmToOrderConfirmResponse(savedOrder));
+    }
+
+
+
 }

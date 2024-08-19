@@ -19,6 +19,7 @@ public class ErrorMessages {
     public static final String PASSWORD_IS_INCORRECT = "Password is incorrect";
     public static final String THERE_IS_NO_USER_WITH_THIS_ROLE = "There is no user with this role: %s";
     public static final String TIME_NOT_VALID_MESSAGE = "Time is not valid";
+    public static final String NOT_FOUND_ORDER = "Not found Order";
 
 
     private ErrorMessages(){}
