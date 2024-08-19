@@ -15,7 +15,7 @@ import java.util.Random;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class OrderConfirm {
 
     @Id

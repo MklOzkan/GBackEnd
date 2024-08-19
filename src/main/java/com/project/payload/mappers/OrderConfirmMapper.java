@@ -22,6 +22,20 @@ public class OrderConfirmMapper {
                 .build();
     }
 
+    public OrderConfirm mapOrderConfirmRequestToOrderConfirm(OrderConfirmRequest orderConfirmRequest,OrderConfirm order){
+        return order.toBuilder()
+                .customerName(orderConfirmRequest.getCustomerName())
+                .gasanNo(orderConfirmRequest.getGasanNo())
+                .orderNumber(orderConfirmRequest.getOrderNumber())
+                .deliveryDate(orderConfirmRequest.getDeliveryDate())
+                .orderType(orderConfirmRequest.getOrderType())
+                .orderQuantity(orderConfirmRequest.getOrderQuantity())
+                .readyMilCount(orderConfirmRequest.getReadyMilCount())
+                .build();
+    }
+
+
+
     public OrderConfirmResponse mapOrderConfirmToOrderConfirmResponse(OrderConfirm orderConfirm){
         return OrderConfirmResponse.builder().
                 customerName(orderConfirm.getCustomerName())
@@ -34,4 +48,6 @@ public class OrderConfirmMapper {
                 .readyMilCount(orderConfirm.getReadyMilCount())
                 .build();
     }
+
+
 }
