@@ -26,6 +26,7 @@ public class UserMapper {
         User user = User.builder()
                 .username(userRequest.getUsername())
                 .password(passwordEncoder.encode(userRequest.getPassword()))
+                .builtIn(userRequest.getBuildIn())
                 .build();
         if (userRole.equalsIgnoreCase(RoleType.ADMIN.getName())) {
             if (Objects.equals(userRequest.getUsername(), "Admin")) {
