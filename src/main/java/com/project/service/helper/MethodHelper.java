@@ -53,6 +53,14 @@ public class MethodHelper {
       return   userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException(ErrorMessages.USER_ID_IS_NOT_FOUND));
     }
 
+    public boolean isUserExist(String role) {
+        boolean isExist = userRepository.existsByUserRoleRoleName(role);
+        if (!isExist) {
+            throw new ResourceNotFoundException(String.format(ErrorMessages.THERE_IS_NO_USER_WITH_THIS_ROLE, role));
+        }
+        return true;
+    }
+
 
 //    public void checkUniqueProperties(User user, String password) {
 //
