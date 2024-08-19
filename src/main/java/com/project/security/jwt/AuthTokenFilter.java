@@ -40,11 +40,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             String jwt= parseJwt(request);
 
             if (jwt!=null && jwtUtils.validateJwtToken(jwt)){
-              String userName=  jwtUtils.getUserNameFromJwtToken(jwt);
+              String username=  jwtUtils.getUserNameFromJwtToken(jwt);
 
-              UserDetails userDetails= userDetailsService.loadUserByUsername(userName);
+              UserDetails userDetails= userDetailsService.loadUserByUsername(username);
 
-              request.setAttribute("userName" , userName);
+              request.setAttribute("userName" , username);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails , null , userDetails.getAuthorities() );
 
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

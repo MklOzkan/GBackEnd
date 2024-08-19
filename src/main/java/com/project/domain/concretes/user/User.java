@@ -1,4 +1,5 @@
 package com.project.domain.concretes.user;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,19 +18,19 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-
-    @OneToOne(fetch = FetchType.EAGER)
-    private UserRole userRole = new UserRole();
-
-
     @Column(unique = true)
-    String userName;
+    private String username;
 
 
-    @Column(unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private UserRole userRole;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private Boolean builtIn=true;
+    private Boolean builtIn;
 
 
 

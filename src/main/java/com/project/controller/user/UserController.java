@@ -2,6 +2,7 @@ package com.project.controller.user;
 
 import com.project.payload.request.user.UpdateUsersRequest;
 import com.project.payload.request.user.UserPasswordRequest;
+import com.project.payload.request.user.UserRequest;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.user.UserResponse;
 import com.project.service.user.UserService;
@@ -19,26 +20,12 @@ public class UserController {
 
 private final UserService userService;
 
-    @PatchMapping("/auth") //http://localhost:8080/users/auth ++
- //   @PreAuthorize("hasAnyAuthority('ADMIN','TALAS')")
-    public ResponseEntity<String> updateUserPassword(@Valid @RequestBody UserPasswordRequest request, HttpServletRequest auth) {
-
-        return userService.updateUserPassword(request, auth);
-
+    @PreAuthorize("hasAnyAuthority('Admin')")
+    @PostMapping("/save/{userRole}")
+    public ResponseEntity<String>saveUser(
+            @RequestBody @Valid UserRequest userRequest,
+            @PathVariable String userRole) {
+        return userService.saveUser(userRequest,userRole);
     }
-
-    @GetMapping("/{id}") //http://localhost:8080/users/1/admin ++
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id, HttpServletRequest request) {
-        return userService.getUserById(id, request);
-    }
-
-/*    @PatchMapping //http://localhost:8080/users
- //   @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<BaseUserResponse> updateAuthenticatedUser(@Valid @RequestBody UpdateUsersRequest request, HttpServletRequest auth) {
-
-        return userService.updateAuthenticatedUser(request, auth);
-
-    }*/
 
 }
