@@ -9,29 +9,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Table(name = "t_userRole")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
-@Table(name = "t_userRole")
+@Builder
 public class UserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
     private Long id;
 
-
     @Enumerated(EnumType.STRING)
-    @Column
     private RoleType roleType;
 
-    @Column
     private String roleName;
-
-    @OneToOne(mappedBy = "userRole")
-    @JsonIgnore
-    private User user;
 
 }

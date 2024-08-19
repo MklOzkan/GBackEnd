@@ -21,15 +21,7 @@ public abstract class BaseUserResponse {
 
     private Long id;
 
-    private String firstName;
-
-    private String lastName;
-
-    private String email;
-
-    private LocalDateTime createAt;
-
-    private LocalDateTime updateAt;
+    private String username;
 
     private String userRole;
 

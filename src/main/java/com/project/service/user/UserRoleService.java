@@ -16,7 +16,7 @@ public class UserRoleService {
 
     private final UserRoleRepository userRoleRepository;
 
-    public UserRole getUserRoleByRoleType(RoleType roleType)  {
+    public UserRole getUserRole(RoleType roleType)  {
         return  userRoleRepository.findByRoleType(roleType).orElseThrow(
                 ()-> new ResourceNotFoundException(ErrorMessages.USER_ROLE_IS_NOT_FOUND)
         );

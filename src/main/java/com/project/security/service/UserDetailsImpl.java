@@ -20,13 +20,13 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-    private String userName;
+    private String username;
 
 
-    public UserDetailsImpl(Long id,String userName, String role, String password, Boolean builtIn) {
+    public UserDetailsImpl(Long id,String username, String role, String password, Boolean builtIn) {
 
         this.id=id;
-        this.userName=userName;
+        this.username=username;
         this.password=password;
         this.builtIn=builtIn;
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -50,7 +50,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return username;
     }
 
     @Override
@@ -73,16 +73,16 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    public boolean equals(Object o){
-        if(this== o){
-            return true;
-        }
-        if(o == null || getClass() != o.getClass()){
-            return false;
-        }
-
-        UserDetailsImpl user= (UserDetailsImpl) o;
-        return Objects.equals(id,user.getId());
-
-    }
+//    public boolean equals(Object o){
+//        if(this== o){
+//            return true;
+//        }
+//        if(o == null || getClass() != o.getClass()){
+//            return false;
+//        }
+//
+//        UserDetailsImpl user= (UserDetailsImpl) o;
+//        return Objects.equals(id,user.getId());
+//
+//    }
 }

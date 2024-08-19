@@ -1,4 +1,4 @@
-package com.project.payload.request;
+package com.project.payload.request.authentication;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginRequest {
+  
+  @NotNull(message = "Username must not be empty")
+  public String username;
+  
+  @NotNull(message = "Password must not be empty")
+  public String password;
 
-    @NotNull(message = "Please enter your email")
-    private String email;
-
-    @NotNull(message = "Please enter your password")
-    private String password;
 }
