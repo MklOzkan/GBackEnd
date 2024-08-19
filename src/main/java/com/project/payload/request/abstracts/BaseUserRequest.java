@@ -26,7 +26,7 @@ public abstract class BaseUserRequest extends AbstractUserRequest{
             message = "Password must contain at least one digit, one lowercase character, one uppercase character, and one special character (@#$%^&+=)")
     private String password;
 
-    private Boolean buildIn = false;
+    private Boolean buildIn;
 
 
 }
