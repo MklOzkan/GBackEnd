@@ -1,26 +1,21 @@
 package com.project.service.user;
 
 import com.project.domain.concretes.user.User;
-import com.project.exception.BadRequestException;
 import com.project.payload.mappers.AdminMapper;
 import com.project.payload.mappers.AuthenticationMapper;
 import com.project.payload.mappers.UserMapper;
-import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
-import com.project.payload.request.user.UserPasswordRequest;
+import com.project.payload.request.user.UpdatePasswordRequest;
 import com.project.payload.request.user.UserRequest;
-import com.project.payload.response.user.UserResponse;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +28,7 @@ public class UserService {
     private final AuthenticationMapper authenticationMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<String> saveUser(@Valid UserRequest userRequest, String userRole) {
+    public ResponseEntity<String> saveUser(UserRequest userRequest, String userRole) {
         User user = userMapper.mapUserRequestToUser(userRequest, userRole);
         userRepository.save(user);
         return ResponseEntity.ok("User created successfully");
@@ -43,15 +38,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public ResponseEntity<String> updatePassword(@Valid UserPasswordRequest userPasswordRequest, HttpServletRequest request) {
+    public void updatePassword(String employeeName, UpdatePasswordRequest updatePasswordRequest, HttpServletRequest request) {
 
         String admin =  (String) request.getAttribute("username");
         User user = methodHelper.findUserByUsername(admin);
         methodHelper.isAdmin(user);
-        User userToUpdate = methodHelper.findUserByUsername(userPasswordRequest.getUsername());
-        userToUpdate.setPassword(passwordEncoder.encode(userPasswordRequest.getPassword()));
+        User userToUpdate = methodHelper.findUserByUsername(employeeName);
+        userToUpdate.setPassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
         userRepository.save(userToUpdate);
-        return ResponseEntity.ok(SuccessMessages.PASSWORD_UPDATED_SUCCESSFULLY);
-
     }
 }
