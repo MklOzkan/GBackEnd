@@ -1,10 +1,12 @@
 package com.project.service.helper;
 
+import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.user.User;
 import com.project.domain.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.repository.business.OrderRepository;
 import com.project.repository.user.UserRepository;
 import com.project.service.user.UserRoleService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ public class MethodHelper {
 
     private final UserRepository userRepository;
     private final UserRoleService userRoleService;
+    private final OrderRepository orderRepository;
 
     public User loadUserByUsername(String username){
         User user = userRepository.findByUsername(username);
@@ -64,6 +67,15 @@ public class MethodHelper {
         if (!user.getUserRole().getRoleType().equals(RoleType.EMPLOYEE)) {
             throw new BadRequestException(ErrorMessages.USER_IS_NOT_EMPLOYEE);
         }
+    }
+
+    //Order Helpers
+    public Order findOrderByOrderNumber(String orderNumber) {
+        Order order = orderRepository.findByOrderNumber(orderNumber);
+        if (order == null) {
+            throw new ResourceNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderNumber));
+        }
+        return order;
     }
 
 
