@@ -28,4 +28,12 @@ private final UserService userService;
         return userService.saveUser(userRequest,userRole);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin')")
+    @PutMapping("/updatePassword")
+    public ResponseEntity<String> updatePassword(
+            @Valid @RequestBody UserPasswordRequest userPasswordRequest,
+            HttpServletRequest request) {
+        return userService.updatePassword(userPasswordRequest,request);
+    }
+
 }

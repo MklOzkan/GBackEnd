@@ -43,4 +43,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public ResponseEntity<String> updatePassword(@Valid UserPasswordRequest userPasswordRequest, HttpServletRequest request) {
+
+        String admin =  (String) request.getAttribute("username");
+        User user = methodHelper.findUserByUsername(admin);
+        methodHelper.isAdmin(user);
+        User userToUpdate = methodHelper.findUserByUsername(userPasswordRequest.getUsername());
+        userToUpdate.setPassword(passwordEncoder.encode(userPasswordRequest.getPassword()));
+        userRepository.save(userToUpdate);
+        return ResponseEntity.ok(SuccessMessages.PASSWORD_UPDATED_SUCCESSFULLY);
+
+    }
 }
