@@ -18,10 +18,11 @@ public class ProductionController {
 
     private final OrderConfirmService orderConfirmService;
 
-
+    @PreAuthorize("hasAnyAuthority('Employee')")
     @PostMapping("/createOrder")
     public ResponseEntity<String> createOrder(@RequestBody @Valid OrderConfirmRequest orderConfirmRequest, HttpServletRequest request){
-        return orderConfirmService.createOrder(orderConfirmRequest, request);
+        orderConfirmService.createOrder(orderConfirmRequest, request);
+        return ResponseEntity.ok("Order created successfully");
     }
 
 

@@ -22,6 +22,7 @@ public class ErrorMessages {
     public static final String NOT_FOUND_ORDER = "Sipariş bulunamadı";
     public static final String USER_IS_NOT_ADMIN = "Kullanıcı yönetici değil";
     public static final String USER_IS_NOT_EMPLOYEE = "Kullanıcı çalışan değil";
+    public static final String UNAUTHORIZED_USER = "Yetkisiz kullanıcı";
 
 
     private ErrorMessages(){}

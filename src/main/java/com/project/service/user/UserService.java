@@ -1,9 +1,13 @@
 package com.project.service.user;
 
 import com.project.domain.concretes.user.User;
+import com.project.domain.concretes.user.UserRole;
+import com.project.domain.enums.RoleType;
+import com.project.exception.BadRequestException;
 import com.project.payload.mappers.AdminMapper;
 import com.project.payload.mappers.AuthenticationMapper;
 import com.project.payload.mappers.UserMapper;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.user.UpdatePasswordRequest;
 import com.project.payload.request.user.UserRequest;
@@ -40,10 +44,20 @@ public class UserService {
 
     public void updatePassword(String employeeName, UpdatePasswordRequest updatePasswordRequest, HttpServletRequest request) {
 
-        String admin =  (String) request.getAttribute("username");
-        User user = methodHelper.findUserByUsername(admin);
-        methodHelper.isAdmin(user);
+        String username = (String) request.getAttribute("username");
+        User currentUser = methodHelper.findUserByUsername(username);
+        System.out.println(currentUser.getUsername());
+        if (!currentUser.getBuiltIn()){
+            throw new BadRequestException(ErrorMessages.USER_IS_NOT_ADMIN);
+        }
+
         User userToUpdate = methodHelper.findUserByUsername(employeeName);
+        List<User> userList = getAllUsers();
+        for(User userCheck : userList){
+            if(passwordEncoder.matches(updatePasswordRequest.getNewPassword(),userCheck.getPassword())){
+                throw new BadRequestException(SuccessMessages.PASSWORD_SHOULD_NOT_MATCHED);
+            }
+        }
         userToUpdate.setPassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
         userRepository.save(userToUpdate);
     }

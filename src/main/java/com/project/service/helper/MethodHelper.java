@@ -55,7 +55,7 @@ public class MethodHelper {
     }
 
     public void isAdmin(User user) {
-        if (!user.getUserRole().getRoleType().equals(RoleType.ADMIN)) {
+        if (!user.getUserRole().getRoleType().getName().equals(RoleType.ADMIN.getName())) {
             throw new BadRequestException(ErrorMessages.USER_IS_NOT_ADMIN);
         }
     }
