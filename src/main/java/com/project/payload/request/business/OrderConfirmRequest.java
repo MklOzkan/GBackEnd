@@ -1,9 +1,11 @@
 package com.project.payload.request.business;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,8 @@ public class OrderConfirmRequest {
     @NotNull(message = "Sipariş numarası boş olamaz")
     private String orderNumber;
     @NotNull(message = "Teslimat tarihi boş olamaz")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @Future(message = "Teslimat tarihi bugünden önce olamaz")
     private LocalDate deliveryDate;
     @NotNull(message = "Sipariş tipi boş olamaz")
     private String orderType;

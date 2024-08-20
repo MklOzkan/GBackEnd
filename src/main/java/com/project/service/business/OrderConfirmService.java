@@ -1,7 +1,9 @@
 package com.project.service.business;
 
 import com.project.domain.concretes.business.OrderConfirm;
+import com.project.domain.concretes.user.User;
 import com.project.domain.concretes.user.UserRole;
+import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.OrderConfirmMapper;
 import com.project.payload.messages.ErrorMessages;
@@ -22,22 +24,21 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class OrderConfirmService {
 
-    private OrderConfirmRepository orderConfirmRepository;
-    private OrderConfirmMapper orderConfirmMapper;
-    private TimeValidator timeValidator;
-    private MethodHelper methodHelper;
+    private final OrderConfirmRepository orderConfirmRepository;
+    private final OrderConfirmMapper orderConfirmMapper;
+    private final TimeValidator timeValidator;
+    private final MethodHelper methodHelper;
 
 
-    public ResponseEntity<String> createOrder(OrderConfirmRequest orderConfirmRequest, HttpServletRequest request) {
-        String userRole = request.getAttribute("userName").toString();
-
+    public void createOrder(OrderConfirmRequest orderConfirmRequest, HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        User user = methodHelper.loadUserByUsername(username);
+        checkUserName(user);//kullanıcı adı kontrolü yapıyoruz
         timeValidator.checkTimeWithException(LocalDate.now(), orderConfirmRequest.getDeliveryDate());//teslim tarihi bugünden küçük olamaz
-        methodHelper.isUserExist(userRole);//kullanıcı var mı kontrol ediyoruz
+
 
         OrderConfirm orderConfirmToSave = orderConfirmMapper.mapOrderConfirmRequestToOrderConfirm(orderConfirmRequest);
         OrderConfirm savedOrder = orderConfirmRepository.save(orderConfirmToSave);
-
-        return ResponseEntity.ok("Order created successfully");
     }
 
 
@@ -52,6 +53,12 @@ public class OrderConfirmService {
         OrderConfirm savedOrder = orderConfirmRepository.save(updatedOrder);
 
         return ResponseEntity.ok(orderConfirmMapper.mapOrderConfirmToOrderConfirmResponse(savedOrder));
+    }
+
+    private void checkUserName(User user) {
+        if (!user.getUsername().equals("UretimPlanlama")) {
+            throw new BadRequestException(ErrorMessages.UNAUTHORIZED_USER);
+        }
     }
 
 
