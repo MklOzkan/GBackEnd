@@ -2,6 +2,7 @@ package com.project.security.jwt;
 
 import com.project.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,12 @@ public class JwtUtils {
 
     @Value("${backendapi.app.jwtExpirationMs}")
     private Long jwtExpirationTime;
+
+    @PostConstruct
+    public void init() {
+        LOGGER.debug("JWT Secret Key: {}", jwtSecretKey);
+        LOGGER.debug("JWT Expiration Time (ms): {}", jwtExpirationTime);
+    }
 
     public String generateJwtToken(Authentication authentication){
         UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal();
