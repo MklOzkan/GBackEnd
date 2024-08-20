@@ -43,7 +43,7 @@ public class AuthenticationService {
         String password= loginRequest.getPassword();
         // authenticationManager user ı valide ediyor
         Authentication authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
-        // valide edilen user Security Contexte atılıyor. Bu, uygulamanın geri kalanında kimlik doğrulamanın geçerli olmasını sağlar.
+        // authentication nesnesi SecurityContextHolder içine yükleniyor
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // JWT token oluşturuluyor
         String token= jwtUtils.generateJwtToken(authentication);

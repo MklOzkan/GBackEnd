@@ -5,6 +5,7 @@ import com.project.domain.concretes.user.User;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.repository.user.UserRepository;
+import com.project.service.helper.MethodHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,15 +16,13 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final MethodHelper methodHelper;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(userName).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessages.USER_IS_NOT_FOUND_BY_USERNAME, userName)));
+        User user = methodHelper.loadUserByUsername(userName);
 
-        if(user != null){
             return new UserDetailsImpl(
                     user.getId(),
                     user.getUsername(),
@@ -31,9 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     user.getPassword(),
                     user.getBuiltIn()
                     );
-        }
-
-        throw new UsernameNotFoundException("User not found with userName: " + userName);
     }
 
 
