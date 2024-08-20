@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class OrderConfirm {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

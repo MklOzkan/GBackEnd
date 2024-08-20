@@ -25,6 +25,10 @@ public class ErrorMessages {
     public static final String UNAUTHORIZED_USER = "Yetkisiz kullanıcı";
 
 
+    //Order Error Messages
+    public static final String ORDER_NOT_FOUND = "%s No'lu Sipariş bulunamadı";
+
+
     private ErrorMessages(){}
 
 }
