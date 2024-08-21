@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,13 +75,11 @@ public class OrderService {
         return orders.map(orderMapper::mapOrderConfirmToOrderConfirmResponse);
     }
 
-
-    public OrderResponse deleteOrderByOrderNumber(String orderNumber) {
-        Order order = methodHelper.findOrderByOrderNumber(orderNumber);
-        orderRepository.delete(order);
-        return  orderMapper.mapOrderConfirmToOrderConfirmResponse(order);
+    public List<OrderResponse> getOrders() {
+        return orderRepository
+                .findAll()
+                .stream()
+                .map(orderMapper::mapOrderConfirmToOrderConfirmResponse)
+                .collect(Collectors.toList());
     }
-
-
-
 }
