@@ -27,9 +27,9 @@ public class ProductionController {
         return ResponseEntity.ok("Order created successfully");
     }
 
-    @PutMapping("/updateOrder")
-    public ResponseEntity<OrderResponse> updateOrder(@RequestBody @Valid OrderRequest orderRequest, Long orderId, HttpServletRequest request){
-       return orderService.updateOrder(orderRequest,orderId,request);
+    @PutMapping("/updateOrder{orderNumber}")
+    public ResponseEntity<OrderResponse> updateOrder(@PathVariable String orderNumber, @RequestBody @Valid OrderRequest orderRequest, HttpServletRequest request){
+       return orderService.updateOrder(orderRequest,orderNumber,request);
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")

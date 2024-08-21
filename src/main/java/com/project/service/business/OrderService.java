@@ -44,11 +44,11 @@ public class OrderService {
     }
 
 
-    public ResponseEntity<OrderResponse> updateOrder(OrderRequest orderRequest, Long orderId, HttpServletRequest request) {
+    public ResponseEntity<OrderResponse> updateOrder(OrderRequest orderRequest, String orderNumber, HttpServletRequest request) {
         String userRole = request.getAttribute("userName").toString();
         methodHelper.isUserExist(userRole);
 
-        Order order = orderRepository.findById(orderId).orElseThrow(()-> new ResourceNotFoundException(ErrorMessages.NOT_FOUND_ORDER));
+        Order order = methodHelper.findOrderByOrderNumber(orderNumber);
         timeValidator.checkTimeWithException(LocalDate.now(), orderRequest.getDeliveryDate());
         Order updatedOrder = orderMapper.mapOrderConfirmRequestToOrderConfirm(orderRequest,order);
 
