@@ -48,6 +48,12 @@ public class ProductionController {
         return ResponseEntity.ok(orderResponses);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @DeleteMapping("/deleteOrderByOrderNumber/{orderNumber}")
+    ResponseEntity<OrderResponse> delete(@PathVariable String orderNumber){
+        return ResponseEntity.ok(orderService.deleteOrderByOrderNumber(orderNumber));
+    }
+
 
 
 
