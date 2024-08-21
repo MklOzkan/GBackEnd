@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,5 +73,13 @@ public class OrderService {
     public Page<OrderResponse> getAllOrders(int page, int size, String sort, String type) {
         Page<Order> orders = orderRepository.findAll(pageableHelper.getPageableWithProperties(page, size, sort, type));
         return orders.map(orderMapper::mapOrderConfirmToOrderConfirmResponse);
+    }
+
+    public List<OrderResponse> getOrders() {
+        return orderRepository
+                .findAll()
+                .stream()
+                .map(orderMapper::mapOrderConfirmToOrderConfirmResponse)
+                .collect(Collectors.toList());
     }
 }
