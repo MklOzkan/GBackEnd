@@ -1,10 +1,12 @@
 package com.project.service.helper;
 
+import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.user.User;
 import com.project.domain.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.repository.business.OrderRepository;
 import com.project.repository.user.UserRepository;
 import com.project.service.user.UserRoleService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,33 +19,18 @@ public class MethodHelper {
 
     private final UserRepository userRepository;
     private final UserRoleService userRoleService;
+    private final OrderRepository orderRepository;
 
-
-
-    public User findByUserByRole(String role){
-
-        if (role == null || role.isEmpty()) {
-            throw new ResourceNotFoundException("Role can not be null or empty");
+    public User loadUserByUsername(String username){
+        User user = userRepository.findByUsername(username);
+        if(user == null){
+            throw new ResourceNotFoundException(String.format(ErrorMessages.USER_NOT_FOUND,username));
         }
-
-        return userRepository.findByUserRoleRoleName(role).orElseThrow(()-> new BadRequestException(String.format(ErrorMessages.THERE_IS_NO_USER_WITH_THIS_Role,role)));
+        return user;
     }
 
 
 
-    public User getUserByHttpRequest(HttpServletRequest request) {
-        return userRepository.findByUserRoleRoleName(getUserNameByRequest(request)).orElseThrow(()-> new ResourceNotFoundException("Username not found"));
-    }
-
-
-    public String getUserNameByRequest(HttpServletRequest request) {
-        return (String) request.getAttribute("userName");
-    }
-
-    public boolean isBuiltIn(User user) {
-
-        return user.getBuiltIn();
-    }
 
     public void checkRole(User user, RoleType roleType) {
      if(!user.getUserRole().getRoleType().equals(roleType)) throw new BadRequestException(ErrorMessages.USER_ROLE_IS_NOT_FOUND);
@@ -53,12 +40,42 @@ public class MethodHelper {
       return   userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException(ErrorMessages.USER_ID_IS_NOT_FOUND));
     }
 
-    public boolean isUserExist(String role) {
+    public void isUserExist(String role) {
         boolean isExist = userRepository.existsByUserRoleRoleName(role);
         if (!isExist) {
             throw new ResourceNotFoundException(String.format(ErrorMessages.THERE_IS_NO_USER_WITH_THIS_ROLE, role));
         }
-        return true;
+    }
+
+    public User findUserByUsername(String username) {
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new ResourceNotFoundException(String.format(ErrorMessages.USER_NOT_FOUND, username));
+        }
+
+        return user;
+    }
+
+    public void isAdmin(User user) {
+        if (!user.getUserRole().getRoleType().getName().equals(RoleType.ADMIN.getName())) {
+            throw new BadRequestException(ErrorMessages.USER_IS_NOT_ADMIN);
+        }
+    }
+
+    public void isEmployee(User user) {
+        if (!user.getUserRole().getRoleType().equals(RoleType.EMPLOYEE)) {
+            throw new BadRequestException(ErrorMessages.USER_IS_NOT_EMPLOYEE);
+        }
+    }
+
+    //Order Helpers
+    public Order findOrderByOrderNumber(String orderNumber) {
+        Order order = orderRepository.findByOrderNumber(orderNumber);
+        if (order == null) {
+            throw new ResourceNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderNumber));
+        }
+        return order;
     }
 
 

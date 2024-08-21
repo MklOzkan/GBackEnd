@@ -24,22 +24,5 @@ public class AdminService {
     private final PageableHelper pageableHelper;
 
 
-    public Page<UserResponse> getAllUsers(HttpServletRequest request, int page, int size, String sort, String type) {
-        User user = methodHelper.getUserByHttpRequest(request);
-        methodHelper.checkRole(user, RoleType.ADMIN);
-
-        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
-        Page<User> users = userRepository.findAll(pageable);
-
-        return users.map(adminMapper::userToUserResponse);
-
-    }
-
-
-    public Long countAllAdmins() {
-
-        return userRepository.countAllAdmins(RoleType.ADMIN);
-
-    }
 
 }

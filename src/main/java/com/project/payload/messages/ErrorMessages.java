@@ -16,14 +16,19 @@ public class ErrorMessages {
     public static final String USER_NOT_FOUND = "User not found";
 
     public static final String USER_IS_NOT_FOUND_BY_USERNAME ="Username is npt found" ;
-    public static final String PASSWORD_IS_INCORRECT = "Password is incorrect";
-    public static final String THERE_IS_NO_USER_WITH_THIS_ROLE = "There is no user with this role: %s";
-    public static final String TIME_NOT_VALID_MESSAGE = "Time is not valid";
-    public static final String NOT_FOUND_ORDER = "Not found Order";
+    public static final String PASSWORD_IS_INCORRECT = "Sifre yanlis";
+    public static final String THERE_IS_NO_USER_WITH_THIS_ROLE = "Bu role ile kayıtlı kullanıcı bulunamadı: %s";
+    public static final String TIME_NOT_VALID_MESSAGE = "Zaman uygun değil";
+    public static final String NOT_FOUND_ORDER = "Sipariş bulunamadı";
+    public static final String USER_IS_NOT_ADMIN = "Kullanıcı yönetici değil";
+    public static final String USER_IS_NOT_EMPLOYEE = "Kullanıcı çalışan değil";
+    public static final String UNAUTHORIZED_USER = "Yetkisiz kullanıcı";
+
+
+    //Order Error Messages
+    public static final String ORDER_NOT_FOUND = "%s No'lu Sipariş bulunamadı";
 
 
     private ErrorMessages(){}
-
-    public static final String THIS_PHONE_NUMBER_IS_ALREADY_TAKEN = "This phone %s number is already taken";
 
 }

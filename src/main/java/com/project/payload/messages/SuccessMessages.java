@@ -9,6 +9,7 @@ public class SuccessMessages {
     public static final String THE_USER_HAS_BEEN_DELETED ="The user has been deleted" ;
     public static final String PASSWORD_UPDATED_SUCCESSFULLY ="Password updated successfully" ;
     public static final String PASSWORD_RESET_SUCCESSFULLY ="Password reset successfully" ;
+    public static final String PASSWORD_SHOULD_NOT_MATCHED = "Kaydetmeye çalıstığınız şifre kayıtlı olan şifrelerden biriyle aynı olamaz";
 
     private SuccessMessages(){}
 }

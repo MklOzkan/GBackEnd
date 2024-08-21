@@ -2,6 +2,7 @@ package com.project.security.jwt;
 
 import com.project.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,9 +24,14 @@ public class JwtUtils {
     @Value("${backendapi.app.jwtExpirationMs}")
     private Long jwtExpirationTime;
 
+    @PostConstruct
+    public void init() {
+        LOGGER.debug("JWT Secret Key: {}", jwtSecretKey);
+        LOGGER.debug("JWT Expiration Time (ms): {}", jwtExpirationTime);
+    }
+
     public String generateJwtToken(Authentication authentication){
         UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal();
-
         return generateJwtTokenFromUserName(userDetails.getUsername());
     }
 
@@ -34,7 +40,8 @@ public class JwtUtils {
     public String generateJwtTokenFromUserName(String username){
         return Jwts.builder()
                 .setSubject(username)
-                .setIssuedAt(new Date()).setExpiration(new Date(new Date().getTime() + jwtExpirationTime))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationTime))
                 .signWith(SignatureAlgorithm.HS512 , jwtSecretKey)
                 .compact();
     }
@@ -60,7 +67,7 @@ public class JwtUtils {
 
 
 
-    public String getUserNameFromJwtToken(String token){
+    public String getUsernameFromJwtToken(String token){
         return Jwts.parser()
                 .setSigningKey(jwtSecretKey)
                 .parseClaimsJws(token)

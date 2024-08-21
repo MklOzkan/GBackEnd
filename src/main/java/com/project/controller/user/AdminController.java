@@ -20,34 +20,5 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @GetMapping("/getAll")  //http://localhost:8080/admin/getAll
-    ResponseEntity<Page<UserResponse>> getAllUsers(HttpServletRequest request,
-                                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                                   @RequestParam(value = "size", defaultValue = "10") int size,
-                                                   @RequestParam(value = "sort", defaultValue = "firstName") String sort,
-                                                   @RequestParam(value = "type", defaultValue = "desc") String type) {
-
-        return ResponseEntity.ok(adminService.getAllUsers(request,page,size,sort,type));
-
-    }
-
-
-
-
-    /*@PatchMapping
-    public ResponseEntity<String> setUserRole(HttpServletRequest request, @RequestParam Set<String> role, @RequestParam String email) {
-        return adminService.setUserRole(request, role, email);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponse>updateUserByAdmin(@PathVariable Long id, @Valid @RequestBody UserUpdateByAdminRequest adminRequest,HttpServletRequest request){
-
-        return adminService.updateUserByAdmin(id,adminRequest,request);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String>deleteUserByAdmin(@PathVariable Long id,HttpServletRequest request){
-        return ResponseEntity.ok(adminService.deleteUserByAdmin(id,request));
-    }*/
 
 }
