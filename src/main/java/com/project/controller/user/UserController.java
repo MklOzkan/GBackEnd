@@ -2,6 +2,7 @@ package com.project.controller.user;
 
 import com.project.payload.request.user.UpdatePasswordRequest;
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -27,12 +28,12 @@ private final UserService userService;
 
     @PreAuthorize("hasAnyAuthority('Admin')")
     @PutMapping("/updatePassword/{username}")
-    public ResponseEntity<String> updatePassword(
+    public ResponseMessage<String> updatePassword(
             @PathVariable String username,
             @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest,
             HttpServletRequest request) {
-        userService.updatePassword(username, updatePasswordRequest,request);
-        return ResponseEntity.ok("Password updated successfully");
+        return userService.updatePassword(username, updatePasswordRequest,request);
+
     }
 
 }
