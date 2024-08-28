@@ -6,8 +6,10 @@ import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.OrderMapper;
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.response.business.OrderResponse;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.OrderRepository;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
@@ -15,6 +17,7 @@ import com.project.service.validator.TimeValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -81,5 +84,17 @@ public class OrderService {
                 .stream()
                 .map(orderMapper::mapOrderConfirmToOrderConfirmResponse)
                 .collect(Collectors.toList());
+    }
+
+    public ResponseMessage<String> deleteOrder(String orderNumber, HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        methodHelper.isUserExist(username);
+
+        Order order = methodHelper.findOrderByOrderNumber(orderNumber);
+        orderRepository.delete(order);
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.ORDER_DELETED)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 }

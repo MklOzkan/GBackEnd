@@ -2,6 +2,7 @@ package com.project.controller.business;
 
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.response.business.OrderResponse;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.service.business.ExcelService;
 import com.project.service.business.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,9 +84,10 @@ public class OrderController {
         }
     }
 
-
-
-
-
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @DeleteMapping("/deleteOrder/{orderNumber}")
+    public ResponseMessage<String> deleteOrder(@PathVariable String orderNumber, HttpServletRequest request){
+        return orderService.deleteOrder(orderNumber, request);
+    }
 
 }
