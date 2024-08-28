@@ -37,7 +37,7 @@ public class UserService {
     public ResponseEntity<String> saveUser(UserRequest userRequest, String userRole) {
         User user = userMapper.mapUserRequestToUser(userRequest, userRole);
         userRepository.save(user);
-        return ResponseEntity.ok("User created successfully");
+        return ResponseEntity.ok(SuccessMessages.USER_SAVED);
     }
 
     public List<User> getAllUsers(){
@@ -55,15 +55,15 @@ public class UserService {
 
         User userToUpdate = methodHelper.findUserByUsername(employeeName);
         List<User> userList = getAllUsers();
-        for(User userCheck : userList){
-            if(passwordEncoder.matches(updatePasswordRequest.getNewPassword(),userCheck.getPassword())){
-                throw new BadRequestException(SuccessMessages.PASSWORD_SHOULD_NOT_MATCHED);
-            }
-        }
+//        for(User userCheck : userList){
+//            if(passwordEncoder.matches(updatePasswordRequest.getNewPassword(),userCheck.getPassword())){
+//                throw new BadRequestException(SuccessMessages.PASSWORD_SHOULD_NOT_MATCHED);
+//            }
+//        }
         userToUpdate.setPassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
         userRepository.save(userToUpdate);
         return ResponseMessage.<String>builder()
-                .message("Password updated successfully")
+                .message(SuccessMessages.PASSWORD_UPDATED_SUCCESSFULLY)
                 .httpStatus(HttpStatus.OK)
                 .build();
     }

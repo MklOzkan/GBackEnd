@@ -21,5 +21,6 @@ public class OrderResponse {
     private LocalDate deliveryDate;
     private String orderType;
     private Integer orderTotal;
+    private String orderStatus;
     private Integer readyMilCount;
 }

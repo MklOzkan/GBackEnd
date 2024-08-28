@@ -25,7 +25,7 @@ public class ExcelService {
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            String[] columns = {"Müşteri Adı","Sipariş No", "Gasan No", "Sipariş Tarihi", "Teslim Tarihi", "Sipariş Türü", "Sipariş Adedi", "Hazır Mil Adedi"};
+            String[] columns = {"Sipariş Durumu","Müşteri Adı","Sipariş No", "Gasan No", "Sipariş Tarihi", "Teslim Tarihi", "Sipariş Türü", "Sipariş Adedi", "Hazır Mil Adedi"};
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(columns[i]);
