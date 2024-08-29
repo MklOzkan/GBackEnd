@@ -1,11 +1,15 @@
 package com.project;
 
+import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.concretes.user.User;
 import com.project.domain.concretes.user.UserRole;
 import com.project.domain.enums.RoleType;
+import com.project.domain.enums.StatusType;
 import com.project.payload.request.user.UserRequest;
+import com.project.repository.business.OrderStatusRepository;
 import com.project.repository.user.UserRepository;
 import com.project.repository.user.UserRoleRepository;
+import com.project.service.business.OrderStatusService;
 import com.project.service.user.AdminService;
 import com.project.service.user.UserRoleService;
 import com.project.service.user.UserService;
@@ -23,14 +27,18 @@ public class ProjectApplication implements CommandLineRunner {
     private final UserRoleRepository userRoleRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final OrderStatusService orderStatusService;
+    private final OrderStatusRepository orderStatusRepository;
 
 
-    public ProjectApplication(PasswordEncoder passwordEncoder, UserRepository userRepository, UserRoleService userRoleService, AdminService adminService, UserRoleRepository userRoleRepository, UserService userService) {
+    public ProjectApplication(PasswordEncoder passwordEncoder, UserRepository userRepository, UserRoleService userRoleService, AdminService adminService, UserRoleRepository userRoleRepository, UserService userService, OrderStatusService orderStatusService, OrderStatusRepository orderStatusRepository) {
         this.userRoleRepository = userRoleRepository;
         this.userRoleService = userRoleService;
         this.adminService = adminService;
         this.userRepository=userRepository;
         this.userService = userService;
+        this.orderStatusService = orderStatusService;
+        this.orderStatusRepository = orderStatusRepository;
     }
 
     public static void main(String[] args) {
@@ -50,6 +58,29 @@ public class ProjectApplication implements CommandLineRunner {
             employee.setRoleType(RoleType.EMPLOYEE);
             employee.setRoleName(RoleType.EMPLOYEE.getName());
             userRoleRepository.save(employee);
+
+        }
+
+        if (orderStatusService.getAllOrderStatuses().isEmpty()) {
+            OrderStatus islenmeyiBekliyor = new OrderStatus();
+            islenmeyiBekliyor.setStatusType(StatusType.ISLENMEYI_BEKLIYOR);
+            islenmeyiBekliyor.setStatusName(StatusType.ISLENMEYI_BEKLIYOR.getName());
+            orderStatusRepository.save(islenmeyiBekliyor);
+
+            OrderStatus islenmekte = new OrderStatus();
+            islenmekte.setStatusType(StatusType.ISLENMEKTE);
+            islenmekte.setStatusName(StatusType.ISLENMEKTE.getName());
+            orderStatusRepository.save(islenmekte);
+
+            OrderStatus tamamlandi = new OrderStatus();
+            tamamlandi.setStatusType(StatusType.TAMAMLANDI);
+            tamamlandi.setStatusName(StatusType.TAMAMLANDI.getName());
+            orderStatusRepository.save(tamamlandi);
+
+            OrderStatus iptal = new OrderStatus();
+            iptal.setStatusType(StatusType.IPTAL_EDILDI);
+            iptal.setStatusName(StatusType.IPTAL_EDILDI.getName());
+            orderStatusRepository.save(iptal);
 
         }
 

@@ -1,7 +1,9 @@
 package com.project.service.business;
 
 import com.project.domain.concretes.business.Order;
+import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.concretes.user.User;
+import com.project.domain.enums.StatusType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.OrderMapper;
@@ -17,12 +19,18 @@ import com.project.service.validator.TimeValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,11 +62,11 @@ public class OrderService {
 
         Order order = methodHelper.findOrderByOrderNumber(orderNumber);
         timeValidator.checkTimeWithException(LocalDate.now(), orderRequest.getDeliveryDate());
-        Order updatedOrder = orderMapper.mapOrderConfirmRequestToOrderConfirm(orderRequest,order);
+        Order updatedOrder = orderMapper.mapOrderConfirmRequestToOrderConfirm(orderRequest);
 
         Order savedOrder = orderRepository.save(updatedOrder);
 
-        return ResponseEntity.ok(orderMapper.mapOrderConfirmToOrderConfirmResponse(savedOrder));
+        return ResponseEntity.ok(orderMapper.mapOrderToOrderResponse(savedOrder));
     }
 
     private void checkUserName(User user) {
@@ -70,19 +78,20 @@ public class OrderService {
 
     public OrderResponse getByOrderNumber(String orderNumber) {
         Order order = methodHelper.findOrderByOrderNumber(orderNumber);
-        return orderMapper.mapOrderConfirmToOrderConfirmResponse(order);
+        return orderMapper.mapOrderToOrderResponse(order);
     }
 
     public Page<OrderResponse> getAllOrders(int page, int size, String sort, String type) {
-        Page<Order> orders = orderRepository.findAll(pageableHelper.getPageableWithProperties(page, size, sort, type));
-        return orders.map(orderMapper::mapOrderConfirmToOrderConfirmResponse);
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+        Page<Order> orders = orderRepository.findAll(pageable);
+        return orders.map(orderMapper::mapOrderToOrderResponse);
     }
 
     public List<OrderResponse> getOrders() {
         return orderRepository
                 .findAll()
                 .stream()
-                .map(orderMapper::mapOrderConfirmToOrderConfirmResponse)
+                .map(orderMapper::mapOrderToOrderResponse)
                 .collect(Collectors.toList());
     }
 
@@ -96,5 +105,47 @@ public class OrderService {
                 .message(SuccessMessages.ORDER_DELETED)
                 .httpStatus(HttpStatus.OK)
                 .build();
+    }
+
+    public Page<OrderResponse> getAllOrdersForSupervisor(
+            HttpServletRequest request, int page, int size, String sort, String type) {
+        String username = (String) request.getAttribute("username");
+        User user = methodHelper.loadUserByUsername(username);
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        Set<StatusType> statuses = EnumSet.of(StatusType.ISLENMEYI_BEKLIYOR, StatusType.ISLENMEKTE);
+        Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusTypeIn(statuses, pageable);
+
+
+        List<OrderResponse> orderResponses = ordersPage.getContent().stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
+
+    }
+
+    public Page<OrderResponse> filterOrdersByStatusAndDate(
+            Set<StatusType> statuses, String startDateStr, String endDateStr, int page, int size, String sort, String type) {
+
+         //Default to filtering by all statuses if none are provided
+        if (statuses == null || statuses.isEmpty()) {
+            statuses = EnumSet.allOf(StatusType.class);
+        }
+
+        // Parse dates
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate startDate = LocalDate.parse(startDateStr, formatter);
+        LocalDate endDate = LocalDate.parse(endDateStr, formatter);
+
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        Page<Order> ordersPage = orderRepository.findByStatusTypeAndOrderDateBetween(statuses, startDate, endDate, pageable);
+
+        List<OrderResponse> orderResponses = ordersPage.getContent().stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
     }
 }

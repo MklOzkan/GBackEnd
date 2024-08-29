@@ -20,7 +20,7 @@ public class OrderResponse {
     private LocalDate orderDate;
     private LocalDate deliveryDate;
     private String orderType;
-    private Integer orderTotal;
+    private Integer orderQuantity;
     private String orderStatus;
     private Integer readyMilCount;
 }

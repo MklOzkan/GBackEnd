@@ -23,5 +23,4 @@ public class OrderStatus {
 
         private String statusName;
 
-        private String statusDescription;
 }

@@ -2,7 +2,6 @@ package com.project.domain.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.domain.concretes.user.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "order_confirm")
+@Table(name = "t_order")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,39 +45,8 @@ public class Order {
         if (this.orderDate == null) {
             this.orderDate = LocalDate.now();
         }
-//        if (this.gasanNo == null) {
-//            this.gasanNo = generateGasanNo();
-//        }
+
     }
 
-//    private String generateGasanNo() {
-//        Random random = new Random();
-//        StringBuilder sb = new StringBuilder();
-//
-//        // 4 rakam ekle
-//        for (int i = 0; i < 4; i++) {
-//            sb.append(random.nextInt(10));
-//        }
-//
-//        // ilk 4 hane sonrası bir boşluk bırak
-//        sb.append(' ');
-//
-//        // 1-3 arası harf ekle
-//        int lettersCount = 1 + random.nextInt(3); // Generates 1, 2, or 3
-//        for (int i = 0; i < lettersCount; i++) {
-//            char letter = (char) (random.nextInt(26) + 'A'); // Uppercase letters A-Z
-//            sb.append(letter);
-//        }
-//
-//        // ilk 4 hane sonrası bir boşluk bırak
-//        sb.append(' ');
-//
-//        // 6 rakam ekle
-//        for (int i = 0; i < 6; i++) {
-//            sb.append(random.nextInt(10));
-//        }
-//
-//        return sb.toString();
-//    }
 }
 
