@@ -1,6 +1,8 @@
 package com.project.domain.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.domain.concretes.user.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +34,11 @@ public class Order {
     private String orderType;
     private Integer orderQuantity;
     private Integer readyMilCount;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id", referencedColumnName = "id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private OrderStatus orderStatus;
 
 
     @PrePersist
