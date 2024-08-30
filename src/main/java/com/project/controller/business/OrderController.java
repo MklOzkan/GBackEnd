@@ -1,5 +1,6 @@
 package com.project.controller.business;
 
+import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.enums.StatusType;
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.response.business.OrderResponse;
@@ -116,28 +117,14 @@ public class OrderController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/filterOrders")
     public Page<OrderResponse> filterOrders(
-            @RequestParam(value = "statuses", required = false) Set<StatusType> statuses,
+            @RequestParam(value = "statuses", required = false) List<String> statuses,
             @RequestParam(value = "startDate") String startDateStr,
             @RequestParam(value = "endDate") String endDateStr,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
+            @RequestParam(value = "sort", defaultValue = "orderQuantity") String sort,
             @RequestParam(value = "type", defaultValue = "desc") String type) {
 
-//        // Default to filtering by all statuses if none are provided
-//        if (statuses == null || statuses.isEmpty()) {
-//            statuses = EnumSet.allOf(StatusType.class);
-//        }
-//
-//        // Parse dates
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-//        LocalDate startDate = LocalDate.parse(startDateStr, formatter);
-//        LocalDate endDate = LocalDate.parse(endDateStr, formatter);
-//
-//        // Create pageable object
-//        Pageable pageable =
-
-        // Call service to get filtered orders
         return orderService.filterOrdersByStatusAndDate(statuses,startDateStr,endDateStr,page,size,sort,type);
     }
 

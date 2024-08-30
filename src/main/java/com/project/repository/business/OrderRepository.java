@@ -1,6 +1,7 @@
 package com.project.repository.business;
 
 import com.project.domain.concretes.business.Order;
+import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.enums.StatusType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,17 +12,18 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Order findByOrderNumber(String orderNumber);
 
-    Page<Order> findByOrderStatus_StatusTypeIn(Set<StatusType> statuses, Pageable pageable);
+    Page<Order> findByOrderStatus_StatusNameIn(List<String> statuses, Pageable pageable);
 
-    @Query("SELECT o FROM Order o WHERE o.orderStatus.statusType IN :statusTypes AND o.orderDate BETWEEN :startDate AND :endDate")
+    @Query("SELECT o FROM Order o WHERE o.orderStatus.statusName IN :statusNames AND o.deliveryDate BETWEEN :startDate AND :endDate")
     Page<Order> findByStatusTypeAndOrderDateBetween(
-            @Param("statusTypes") Set<StatusType> statusTypes,
+            @Param("statusNames") List<String> statusNames,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             Pageable pageable

@@ -42,6 +42,7 @@ public class OrderMapper {
                 .customerName(order.getCustomerName())
                 .gasanNo(order.getGasanNo())
                 .orderNumber(order.getOrderNumber())
+                .orderDate(order.getOrderDate())
                 .deliveryDate(order.getDeliveryDate())
                 .orderType(order.getOrderType())
                 .orderQuantity(order.getOrderQuantity())
@@ -50,20 +51,6 @@ public class OrderMapper {
                 .build();
     }
 
-
-
-    public OrderResponse mapOrderConfirmToOrderConfirmResponse(Order orderConfirm){
-        return OrderResponse.builder().
-                customerName(orderConfirm.getCustomerName())
-                .gasanNo(orderConfirm.getGasanNo())
-                .orderNumber(orderConfirm.getOrderNumber())
-                .orderDate(orderConfirm.getOrderDate())
-                .deliveryDate(orderConfirm.getDeliveryDate())
-                .orderType(orderConfirm.getOrderType())
-                .orderQuantity(orderConfirm.getOrderQuantity())
-                .readyMilCount(orderConfirm.getReadyMilCount())
-                .build();
-    }
 
 
 }
