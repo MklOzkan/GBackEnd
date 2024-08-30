@@ -44,7 +44,7 @@ public class OrderService {
     private final PageableHelper pageableHelper;
 
 
-    public void createOrder(OrderRequest orderRequest, HttpServletRequest request) {
+    public ResponseMessage<OrderResponse> createOrder(OrderRequest orderRequest, HttpServletRequest request) {
         String username = (String) request.getAttribute("username");
         User user = methodHelper.loadUserByUsername(username);
         checkUserName(user);//kullanıcı adı kontrolü yapıyoruz
@@ -53,6 +53,12 @@ public class OrderService {
 
         Order orderConfirmToSave = orderMapper.mapOrderConfirmRequestToOrderConfirm(orderRequest);
         Order savedOrder = orderRepository.save(orderConfirmToSave);
+
+        return ResponseMessage.<OrderResponse>builder()
+                .returnBody(orderMapper.mapOrderToOrderResponse(savedOrder))
+                .message(SuccessMessages.ORDER_CREATED)
+                .httpStatus(HttpStatus.CREATED)
+                .build();
     }
 
 
