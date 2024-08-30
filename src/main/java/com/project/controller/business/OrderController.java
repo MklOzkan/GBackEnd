@@ -45,9 +45,8 @@ public class OrderController {
 
     @PreAuthorize("hasAnyAuthority('Employee')")
     @PostMapping("/createOrder")
-    public ResponseEntity<String> createOrder(@RequestBody @Valid OrderRequest orderRequest, HttpServletRequest request){
-        orderService.createOrder(orderRequest, request);
-        return ResponseEntity.ok("Order created successfully");
+    public ResponseMessage<OrderResponse> createOrder(@RequestBody @Valid OrderRequest orderRequest, HttpServletRequest request){
+        return orderService.createOrder(orderRequest, request);
     }
 
     @PutMapping("/updateOrder{orderNumber}")
@@ -63,12 +62,13 @@ public class OrderController {
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getAllOrders")
-    public ResponseEntity<Page<OrderResponse>> getAllOrders(@RequestParam(value = "page", defaultValue = "0") int page,
+    public Page<OrderResponse> getAllOrders(@RequestParam(value = "page", defaultValue = "0") int page,
                                                            @RequestParam(value = "size", defaultValue = "10") int size,
                                                            @RequestParam(value = "sort", defaultValue = "orderNumber") String sort,
                                                            @RequestParam(value = "type", defaultValue = "desc") String type){
-        Page<OrderResponse> orderResponses = orderService.getAllOrders(page, size, sort, type);
-        return ResponseEntity.ok(orderResponses);
+
+        return orderService.getAllOrders(page, size, sort, type);
+
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
