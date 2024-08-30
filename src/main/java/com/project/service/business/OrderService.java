@@ -116,11 +116,11 @@ public class OrderService {
     public Page<OrderResponse> getAllOrdersForSupervisor(
             HttpServletRequest request, int page, int size, String sort, String type) {
         String username = (String) request.getAttribute("username");
-        User user = methodHelper.loadUserByUsername(username);
+        methodHelper.isUserExist(username);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
-        Set<StatusType> statuses = EnumSet.of(StatusType.ISLENMEYI_BEKLIYOR, StatusType.ISLENMEKTE);
-        Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusTypeIn(statuses, pageable);
+        List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(), StatusType.ISLENMEKTE.getName());
+        Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameIn(statuses, pageable);
 
 
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()
@@ -132,15 +132,15 @@ public class OrderService {
     }
 
     public Page<OrderResponse> filterOrdersByStatusAndDate(
-            Set<StatusType> statuses, String startDateStr, String endDateStr, int page, int size, String sort, String type) {
+            List<String> statuses, String startDateStr, String endDateStr, int page, int size, String sort, String type) {
 
-         //Default to filtering by all statuses if none are provided
-        if (statuses == null || statuses.isEmpty()) {
-            statuses = EnumSet.allOf(StatusType.class);
-        }
+//         //Default to filtering by all statuses if none are provided
+//        if (statuses == null || statuses.isEmpty()) {
+//            statuses = EnumSet.allOf(OrderStatus.class);
+//        }
 
         // Parse dates
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate startDate = LocalDate.parse(startDateStr, formatter);
         LocalDate endDate = LocalDate.parse(endDateStr, formatter);
 
