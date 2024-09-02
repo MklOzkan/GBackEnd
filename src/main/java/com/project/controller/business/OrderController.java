@@ -128,4 +128,15 @@ public class OrderController {
         return orderService.filterOrdersByStatusAndDate(statuses,startDateStr,endDateStr,page,size,sort,type);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getAllOrdersForOtherSupervisor")
+    public Page<OrderResponse> getAllOrdersForOtherSupervisor(
+            HttpServletRequest request,
+            @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
+            @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
+            @RequestParam(value = "type", defaultValue = "desc") String type){
+        return orderService.getAllOrdersForOtherSuperVisor(request,page, size, sort, type);
+    }
+
 }

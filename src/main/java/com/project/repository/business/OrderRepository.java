@@ -21,6 +21,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByOrderStatus_StatusNameIn(List<String> statuses, Pageable pageable);
 
+    
+
     @Query("SELECT o FROM Order o WHERE o.orderStatus.statusName IN :statusNames AND o.deliveryDate BETWEEN :startDate AND :endDate")
     Page<Order> findByStatusTypeAndOrderDateBetween(
             @Param("statusNames") List<String> statusNames,
@@ -28,4 +30,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("endDate") LocalDate endDate,
             Pageable pageable
     );
+
+    Page<Order> findByOrderStatus_StatusName(String status, Pageable pageable);
 }
