@@ -103,7 +103,7 @@ public class OrderService {
 
     public ResponseMessage<String> deleteOrder(String orderNumber, HttpServletRequest request) {
         String username = (String) request.getAttribute("username");
-        methodHelper.isUserExist(username);
+        methodHelper.loadUserByUsername(username);
 
         Order order = methodHelper.findOrderByOrderNumber(orderNumber);
         orderRepository.delete(order);
