@@ -116,11 +116,29 @@ public class OrderService {
     public Page<OrderResponse> getAllOrdersForSupervisor(
             HttpServletRequest request, int page, int size, String sort, String type) {
         String username = (String) request.getAttribute("username");
-        methodHelper.isUserExist(username);
+        methodHelper.loadUserByUsername(username);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
         List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(), StatusType.ISLENMEKTE.getName());
         Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameIn(statuses, pageable);
+
+
+        List<OrderResponse> orderResponses = ordersPage.getContent().stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
+
+    }
+
+    public Page<OrderResponse> getAllOrdersForOtherSuperVisor(
+            HttpServletRequest request, int page, int size, String sort, String type) {
+        String username = (String) request.getAttribute("username");
+        methodHelper.loadUserByUsername(username);
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        String status = StatusType.ISLENMEKTE.getName();
+        Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusName(status, pageable);
 
 
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()
