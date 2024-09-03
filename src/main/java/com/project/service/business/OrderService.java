@@ -10,6 +10,7 @@ import com.project.payload.mappers.OrderMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.OrderRequest;
+import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.OrderRepository;
@@ -62,17 +63,21 @@ public class OrderService {
     }
 
 
-    public ResponseEntity<OrderResponse> updateOrder(OrderRequest orderRequest, String orderNumber, HttpServletRequest request) {
-        String userRole = request.getAttribute("userName").toString();
-        methodHelper.isUserExist(userRole);
+    public ResponseMessage<OrderResponse> updateOrder(UpdateOrderRequest orderRequest, Long id, HttpServletRequest request) {
+        String userRole = (String) request.getAttribute("username");
+        methodHelper.loadUserByUsername(userRole);
 
-        Order order = methodHelper.findOrderByOrderNumber(orderNumber);
+        Order order = methodHelper.findOrderById(id);
         timeValidator.checkTimeWithException(LocalDate.now(), orderRequest.getDeliveryDate());
-        Order updatedOrder = orderMapper.mapOrderConfirmRequestToOrderConfirm(orderRequest);
 
-        Order savedOrder = orderRepository.save(updatedOrder);
+        Order updatedOrder = orderMapper.updateOrderFromRequest(orderRequest, order);
 
-        return ResponseEntity.ok(orderMapper.mapOrderToOrderResponse(savedOrder));
+        orderRepository.save(updatedOrder);
+
+        return ResponseMessage.<OrderResponse>builder()
+                .message(SuccessMessages.ORDER_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     private void checkUserName(User user) {

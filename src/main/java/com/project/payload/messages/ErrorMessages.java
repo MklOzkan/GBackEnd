@@ -27,6 +27,7 @@ public class ErrorMessages {
 
     //Order Error Messages
     public static final String ORDER_NOT_FOUND = "%s No'lu Sipariş bulunamadı";
+    public static final String ORDER_ID_IS_NOT_FOUND = "Sipariş id bulunamadı %s";
 
 
     private ErrorMessages(){}

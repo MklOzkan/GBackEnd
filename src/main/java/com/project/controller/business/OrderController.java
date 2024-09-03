@@ -3,6 +3,7 @@ package com.project.controller.business;
 import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.enums.StatusType;
 import com.project.payload.request.business.OrderRequest;
+import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.service.business.ExcelService;
@@ -49,10 +50,10 @@ public class OrderController {
     public ResponseMessage<OrderResponse> createOrder(@RequestBody @Valid OrderRequest orderRequest, HttpServletRequest request){
         return orderService.createOrder(orderRequest, request);
     }
-
-    @PutMapping("/updateOrder{orderNumber}")
-    public ResponseEntity<OrderResponse> updateOrder(@PathVariable String orderNumber, @RequestBody @Valid OrderRequest orderRequest, HttpServletRequest request){
-       return orderService.updateOrder(orderRequest,orderNumber,request);
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/updateOrder/{id}")
+    public ResponseMessage<OrderResponse> updateOrder(@PathVariable Long id, @RequestBody @Valid UpdateOrderRequest orderRequest, HttpServletRequest request){
+       return orderService.updateOrder(orderRequest,id,request);
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
