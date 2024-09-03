@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class OrderResponse {
 
-
+    private Long id;
     private String customerName;
     private String gasanNo;
     private String orderNumber;

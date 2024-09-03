@@ -78,6 +78,10 @@ public class MethodHelper {
         return order;
     }
 
+    public Order findOrderById(Long id) {
+        return orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.ORDER_ID_IS_NOT_FOUND, id)));
+    }
+
 
 //    public void checkUniqueProperties(User user, String password) {
 //
