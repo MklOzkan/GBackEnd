@@ -50,6 +50,14 @@ public class OrderController {
     public ResponseMessage<OrderResponse> createOrder(@RequestBody @Valid OrderRequest orderRequest, HttpServletRequest request){
         return orderService.createOrder(orderRequest, request);
     }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getOrderById/{id}")
+    public ResponseMessage<OrderResponse> getOrder(@PathVariable Long id, HttpServletRequest request){
+        return orderService.getOrderById(id, request);
+    }
+
+
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/updateOrder/{id}")
     public ResponseMessage<OrderResponse> updateOrder(@PathVariable Long id, @RequestBody @Valid UpdateOrderRequest orderRequest, HttpServletRequest request){

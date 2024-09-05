@@ -49,6 +49,11 @@ public class OrderService {
         String username = (String) request.getAttribute("username");
         User user = methodHelper.loadUserByUsername(username);
         checkUserName(user);//kullanıcı adı kontrolü yapıyoruz
+
+        methodHelper.checkGasanNo(orderRequest.getGasanNo());//gazan numarası kontrolü yapıyoruz
+
+        methodHelper.checkOrderNumber(orderRequest.getOrderNumber());//sipariş numarası kontrolü yapıyoruz
+        
         timeValidator.checkTimeWithException(LocalDate.now(), orderRequest.getDeliveryDate());//teslim tarihi bugünden küçük olamaz
 
 
@@ -176,5 +181,17 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
+    }
+
+    public ResponseMessage<OrderResponse> getOrderById(Long id, HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        methodHelper.loadUserByUsername(username);
+
+        Order order = methodHelper.findOrderById(id);
+        return ResponseMessage.<OrderResponse>builder()
+                .returnBody(orderMapper.mapOrderToOrderResponse(order))
+                .message(SuccessMessages.ORDER_FOUND)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 }

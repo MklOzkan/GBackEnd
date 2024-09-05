@@ -14,6 +14,7 @@ public class SuccessMessages {
     public static final String USER_SAVED = "Kullanıcı kaydedildi";
     public static final String ORDER_CREATED = "Sipariş oluşturuldu";
     public static final String ORDER_UPDATED = "Sipariş güncellendi";
+    public static final String ORDER_FOUND = "Sipariş bulundu";
 
     private SuccessMessages(){}
 }

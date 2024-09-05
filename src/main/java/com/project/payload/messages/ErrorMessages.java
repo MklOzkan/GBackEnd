@@ -28,6 +28,8 @@ public class ErrorMessages {
     //Order Error Messages
     public static final String ORDER_NOT_FOUND = "%s No'lu Sipariş bulunamadı";
     public static final String ORDER_ID_IS_NOT_FOUND = "Sipariş id bulunamadı %s";
+    public static final String GASAN_NO_IS_ALREADY_EXIST = "%s No'lu Gasan numarası zaten mevcut";
+    public static final String ORDER_NUMBER_IS_ALREADY_EXIST = "%s No'lu Sipariş numarası zaten mevcut";
 
 
     private ErrorMessages(){}
