@@ -32,4 +32,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     );
 
     Page<Order> findByOrderStatus_StatusName(String status, Pageable pageable);
+
+    boolean existsByGasanNo(String gasanNo);
+
+    boolean existsByOrderNumber(String orderNumber);
 }

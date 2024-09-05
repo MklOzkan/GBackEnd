@@ -4,12 +4,15 @@ import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.user.User;
 import com.project.domain.enums.RoleType;
 import com.project.exception.BadRequestException;
+import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.repository.business.OrderRepository;
 import com.project.repository.user.UserRepository;
 import com.project.service.user.UserRoleService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -80,6 +83,20 @@ public class MethodHelper {
 
     public Order findOrderById(Long id) {
         return orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.ORDER_ID_IS_NOT_FOUND, id)));
+    }
+
+    public void checkGasanNo(String gasanNo) {
+        boolean isExist = orderRepository.existsByGasanNo(gasanNo);
+        if (isExist) {
+            throw new ConflictException(String.format(ErrorMessages.GASAN_NO_IS_ALREADY_EXIST, gasanNo));
+        }
+    }
+
+    public void checkOrderNumber( String orderNumber) {
+        boolean isExist = orderRepository.existsByOrderNumber(orderNumber);
+        if (isExist) {
+            throw new ConflictException(String.format(ErrorMessages.ORDER_NUMBER_IS_ALREADY_EXIST, orderNumber));
+        }
     }
 
 
