@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -23,4 +24,7 @@ public class OrderResponse {
     private Integer orderQuantity;
     private String orderStatus;
     private Integer readyMilCount;
+    // Başlama ve Bitiş tarihleri eklendi
+    private LocalDateTime productionStartDate;
+    private LocalDateTime productionEndDate;
 }

@@ -194,4 +194,48 @@ public class OrderService {
                 .httpStatus(HttpStatus.OK)
                 .build();
     }
+
+    // Siparişi başlatan method
+    public void startOrder(Long orderId) {
+        // İlgili siparişi bul
+        Order order = methodHelper.findOrderById(orderId);
+
+        // Siparişin durumu ISLENMEYI_BEKLIYOR ise ISLENMEKTE olarak değiştir
+        if (order.getOrderStatus().getStatusType() == StatusType.ISLENMEYI_BEKLIYOR) {
+            order.startProduction();  // Başlama tarihini ayarla
+            order.getOrderStatus().setStatusType(StatusType.ISLENMEKTE);
+            orderRepository.save(order);  // Siparişi güncelle ve kaydet
+        } else {
+            throw new IllegalStateException("Sipariş zaten işleniyor veya tamamlandı.");
+        }
+    }
+
+    // Siparişi tamamlayan method
+    public void completeOrder(Long orderId) {
+        // İlgili siparişi bul
+        Order order = methodHelper.findOrderById(orderId);
+
+        // Siparişin durumu ISLENMEKTE ise TAMAMLANDI olarak değiştir
+        if (order.getOrderStatus().getStatusType() == StatusType.ISLENMEKTE) {
+            order.completeProduction();  // Tamamlanma tarihini ayarla
+            orderRepository.save(order);  // Siparişi güncelle ve kaydet
+        } else {
+            throw new IllegalStateException("Sipariş zaten tamamlanmış veya durdurulmuş.");
+        }
+    }
+
+    // Siparişin durumunu ISLENMEKTE'den BEKLEMEDE'ye çeken method
+    public void pauseOrder(Long orderId) {
+        // İlgili siparişi bul
+        Order order = methodHelper.findOrderById(orderId);
+
+        // Siparişin durumu ISLENMEKTE ise BEKLEMEDE olarak değiştir
+        if (order.getOrderStatus().getStatusType() == StatusType.ISLENMEKTE) {
+            order.getOrderStatus().setStatusType(StatusType.BEKLEMEDE);
+            orderRepository.save(order);  // Siparişi güncelle ve kaydet
+        } else {
+            throw new IllegalStateException("Sipariş şu anda durdurulamaz, mevcut durumu: " + order.getOrderStatus().getStatusType());
+        }
+    }
+
 }

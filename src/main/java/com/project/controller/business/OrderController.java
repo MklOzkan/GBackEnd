@@ -2,6 +2,7 @@ package com.project.controller.business;
 
 import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.enums.StatusType;
+import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.OrderResponse;
@@ -146,6 +147,30 @@ public class OrderController {
             @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
             @RequestParam(value = "type", defaultValue = "desc") String type){
         return orderService.getAllOrdersForOtherSuperVisor(request,page, size, sort, type);
+    }
+
+    // "Başlat" düğmesine basıldığında siparişin durumu ISLENMEKTE yapılacak
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PostMapping("/start/{orderId}")
+    public ResponseEntity<String> startOrder(@PathVariable Long orderId) {
+        orderService.startOrder(orderId);  // Servis katmanında sipariş başlatma işlemi
+        return ResponseEntity.ok(SuccessMessages.ORDER_STARTED);
+    }
+
+    // "Bitir" düğmesine basıldığında siparişin durumu TAMAMLANDI yapılacak
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PostMapping("/complete/{orderId}")
+    public ResponseEntity<String> completeOrder(@PathVariable Long orderId) {
+        orderService.completeOrder(orderId);  // Servis katmanında sipariş bitirme işlemi
+        return ResponseEntity.ok(SuccessMessages.ORDER_COMPLETED);
+    }
+
+    // "Durdur" düğmesine basıldığında siparişin durumu BEKLEMEDE yapılacak
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PostMapping("/pause/{orderId}")
+    public ResponseEntity<String> pauseOrder(@PathVariable Long orderId) {
+        orderService.pauseOrder(orderId);  // Servis katmanında durumu değiştirir
+        return ResponseEntity.ok(SuccessMessages.ORDER_PAUSED);
     }
 
 }

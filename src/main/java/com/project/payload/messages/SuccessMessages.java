@@ -15,6 +15,9 @@ public class SuccessMessages {
     public static final String ORDER_CREATED = "Sipariş oluşturuldu";
     public static final String ORDER_UPDATED = "Sipariş güncellendi";
     public static final String ORDER_FOUND = "Sipariş bulundu";
+    public static final String ORDER_STARTED = "Sipariş başlatıldı";
+    public static final String ORDER_COMPLETED = "Sipariş tamamlandı";
+    public static final String ORDER_PAUSED = "Sipariş durduruldu ve beklemeye alındı";
 
     private SuccessMessages(){}
 }

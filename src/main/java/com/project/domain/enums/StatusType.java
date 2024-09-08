@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum StatusType {
     ISLENMEYI_BEKLIYOR("İşlenmeyi Bekliyor"),
     ISLENMEKTE("İşlenmekte"),
+    BEKLEMEDE("Beklemede"),
     TAMAMLANDI("Tamamlandı"),
     IPTAL_EDILDI("İptal Edildi");
 
