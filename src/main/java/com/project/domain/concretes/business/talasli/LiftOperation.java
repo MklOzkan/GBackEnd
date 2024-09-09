@@ -1,7 +1,5 @@
 package com.project.domain.concretes.business.talasli;
 
-import com.project.domain.concretes.business.Order;
-import com.project.domain.concretes.business.kalitekontrol.QualityControl;
 import com.project.domain.concretes.business.talasli.enums.LiftOperationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,10 +37,10 @@ public class LiftOperation {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    // LiftOperation -> Order ilişkisi
+    // LiftOperation -> LiftOrder ilişkisi
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private Order order;
+    @JoinColumn(name = "lift_order_id", referencedColumnName = "id")
+    private LiftOrder liftOrder;  // LiftOrder ile ilişkilendirme
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "next_operation_id")
@@ -55,14 +52,12 @@ public class LiftOperation {
     @PrePersist
     public void onPrePersist() {
         if (this.startDate == null) {
-            this.startDate = LocalDateTime.now();  // Üretim başladığında start date atanacak
+            this.startDate = LocalDateTime.now();
         }
     }
 
     public void completeOperation() {
         this.isCompleted = true;
-        this.endDate = LocalDateTime.now();  // Üretim bitiş tarihi atanır
+        this.endDate = LocalDateTime.now();
     }
 }
-
-

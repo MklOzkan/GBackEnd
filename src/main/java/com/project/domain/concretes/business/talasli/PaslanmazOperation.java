@@ -1,7 +1,5 @@
 package com.project.domain.concretes.business.talasli;
 
-import com.project.domain.concretes.business.Order;
-import com.project.domain.concretes.business.kalitekontrol.QualityControl;
 import com.project.domain.concretes.business.talasli.enums.PaslanmazOperationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,10 +37,10 @@ public class PaslanmazOperation {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    // PaslanmazOperation -> Order ilişkisi
+    // PaslanmazOperation -> PaslanmazOrder ilişkisi
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private Order order;
+    @JoinColumn(name = "paslanmaz_order_id", referencedColumnName = "id")
+    private PaslanmazOrder paslanmazOrder;  // PaslanmazOrder ile ilişkilendirme
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "next_operation_id")
@@ -60,10 +58,6 @@ public class PaslanmazOperation {
 
     public void completeOperation() {
         this.isCompleted = true;
-        this.endDate = LocalDateTime.now();  // Üretim bitiş tarihi atanır
+        this.endDate = LocalDateTime.now();
     }
-
 }
-
-
-

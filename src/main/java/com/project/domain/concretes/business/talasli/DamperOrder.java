@@ -1,5 +1,6 @@
 package com.project.domain.concretes.business.talasli;
 
+import com.project.domain.concretes.business.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,28 +16,27 @@ import java.util.List;
 @Entity
 @Table(name = "damper_orders")
 public class DamperOrder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Ürün tipi (Damper)
     @Column(name = "product_type")
     private String productType = "DAMPER";
 
-    // Toplam sipariş miktarı
     @Column(name = "total_quantity")
     private Integer totalQuantity;
 
-    // Üretimdeki kalan miktar
     @Column(name = "remaining_quantity")
     private Integer remainingQuantity;
 
-    // Sipariş tamamlandı mı?
     @Column(name = "completed")
     private Boolean completed = false;
 
-    // DamperOrder -> DamperOperation ilişkisi
-    @OneToMany(mappedBy = "damperOrder", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private Order order;
+
+    @OneToMany(mappedBy = "damperOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DamperOperation> operations;
 }
-

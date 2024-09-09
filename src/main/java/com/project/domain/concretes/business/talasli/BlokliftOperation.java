@@ -1,7 +1,5 @@
 package com.project.domain.concretes.business.talasli;
 
-import com.project.domain.concretes.business.Order;
-import com.project.domain.concretes.business.kalitekontrol.QualityControl;
 import com.project.domain.concretes.business.talasli.enums.BlokliftOperationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,10 +37,9 @@ public class BlokliftOperation {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    // BlokliftOperation -> Order ilişkisi
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private Order order;
+    @JoinColumn(name = "bloklift_order_id", referencedColumnName = "id")
+    private BlokliftOrder blokliftOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "next_operation_id")
@@ -60,9 +57,6 @@ public class BlokliftOperation {
 
     public void completeOperation() {
         this.isCompleted = true;
-        this.endDate = LocalDateTime.now();  // Üretim bitiş tarihi atanır
+        this.endDate = LocalDateTime.now();
     }
 }
-
-
-
