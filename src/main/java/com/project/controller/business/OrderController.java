@@ -173,4 +173,11 @@ public class OrderController {
         return ResponseEntity.ok(SuccessMessages.ORDER_PAUSED);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/status/{orderId}")
+    public ResponseEntity<String> changeOrderStatus(@PathVariable Long orderId) {
+        orderService.changeOrderStatus(orderId);  // Servis katmanında durumu değiştirir
+        return ResponseEntity.ok(SuccessMessages.ORDER_STATUS_CHANGED);
+    }
+
 }

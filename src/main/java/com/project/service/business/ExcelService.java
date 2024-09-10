@@ -47,7 +47,7 @@ public class ExcelService {
                 row.createCell(2).setCellValue(order.getGasanNo());
                 row.createCell(3).setCellValue(order.getOrderDate());
                 row.createCell(4).setCellValue(order.getDeliveryDate());
-                row.createCell(5).setCellValue(order.getOrderType());
+                row.createCell(5).setCellValue(order.getOrderType().ordinal());
                 row.createCell(6).setCellValue(order.getOrderQuantity());
                 row.createCell(7).setCellValue(order.getReadyMilCount());
             }

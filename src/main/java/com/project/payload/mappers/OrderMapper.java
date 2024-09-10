@@ -1,6 +1,7 @@
 package com.project.payload.mappers;
 
 import com.project.domain.concretes.business.Order;
+import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.request.business.UpdateOrderRequest;
@@ -21,12 +22,22 @@ public class OrderMapper {
                 .gasanNo(orderRequest.getGasanNo())
                 .orderNumber(orderRequest.getOrderNumber())
                 .deliveryDate(orderRequest.getDeliveryDate())
-                .orderType(orderRequest.getOrderType())
+//                .orderType(orderRequest.getOrderType())
                 .orderQuantity(orderRequest.getOrderQuantity())
                 .readyMilCount(orderRequest.getReadyMilCount())
                 .productionStartDate(null)  // Başlangıçta null
                 .productionEndDate(null)    // Başlangıçta null
                 .build();
+
+        if (orderRequest.getOrderType().equalsIgnoreCase("Blok Lift")){
+            order.setOrderType(OrderType.BLOKLIFT);
+        }else if (orderRequest.getOrderType().equalsIgnoreCase("Damper")){
+            order.setOrderType(OrderType.DAMPER);
+        }else if (orderRequest.getOrderType().equalsIgnoreCase("Lift")){
+            order.setOrderType(OrderType.LIFT);
+        }else if (orderRequest.getOrderType().equalsIgnoreCase("Paslanmaz")){
+            order.setOrderType(OrderType.PASLANMAZ);
+        }
 
         if (orderRequest.getOrderStatus().equalsIgnoreCase("İşlenmeyi Bekliyor")){
             order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEYI_BEKLIYOR));
@@ -64,9 +75,18 @@ public class OrderMapper {
         order.setOrderNumber(orderRequest.getOrderNumber());
         order.setOrderDate(order.getOrderDate());
         order.setDeliveryDate(orderRequest.getDeliveryDate());
-        order.setOrderType(orderRequest.getOrderType());
         order.setOrderQuantity(orderRequest.getOrderQuantity());
         order.setReadyMilCount(orderRequest.getReadyMilCount());
+
+        if (orderRequest.getOrderType().equalsIgnoreCase("Bloklift")) {
+            order.setOrderType(OrderType.BLOKLIFT);
+        } else if (orderRequest.getOrderType().equalsIgnoreCase("Damper")) {
+            order.setOrderType(OrderType.DAMPER);
+        } else if (orderRequest.getOrderType().equalsIgnoreCase("Lift")) {
+            order.setOrderType(OrderType.LIFT);
+        } else if (orderRequest.getOrderType().equalsIgnoreCase("Paslanmaz")) {
+            order.setOrderType(OrderType.PASLANMAZ);
+        }
 
         if (orderRequest.getOrderStatus().equalsIgnoreCase("İşlenmeyi Bekliyor")) {
             order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEYI_BEKLIYOR));

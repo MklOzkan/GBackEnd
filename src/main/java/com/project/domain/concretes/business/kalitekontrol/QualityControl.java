@@ -6,7 +6,15 @@ import com.project.domain.concretes.business.talasli.DamperOperation;
 import com.project.domain.concretes.business.talasli.LiftOperation;
 import com.project.domain.concretes.business.talasli.PaslanmazOperation;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "quality_controls")
 public class QualityControl {

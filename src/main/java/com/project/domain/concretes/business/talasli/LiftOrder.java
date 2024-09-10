@@ -22,21 +22,21 @@ public class LiftOrder {
     private Long id;
 
     @Column(name = "product_type")
-    private String productType = "LIFT";
+    private String productType = "LIFT";// ürün tipi
 
     @Column(name = "total_quantity")
-    private Integer totalQuantity;
+    private Integer totalQuantity;// toplam miktar
 
     @Column(name = "remaining_quantity")
-    private Integer remainingQuantity;
+    private Integer remainingQuantity;// kalan miktar
 
     @Column(name = "completed")
-    private Boolean completed = false;
+    private Boolean completed = false;// tamamlandı mı
 
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;  // Order ile ilişkilendirme
 
     @OneToMany(mappedBy = "liftOrder", cascade = CascadeType.ALL)
-    private List<LiftOperation> operations;
+    private List<LiftOperation> operations;// LiftOperation ile ilişkilendirme
 }

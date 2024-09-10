@@ -82,6 +82,11 @@ public class ProjectApplication implements CommandLineRunner {
             iptal.setStatusName(StatusType.IPTAL_EDILDI.getName());
             orderStatusRepository.save(iptal);
 
+            OrderStatus beklemede = new OrderStatus();
+            beklemede.setStatusType(StatusType.BEKLEMEDE);
+            beklemede.setStatusName(StatusType.BEKLEMEDE.getName());
+            orderStatusRepository.save(beklemede);
+
         }
 
         if (userService.getAllUsers().isEmpty()) {

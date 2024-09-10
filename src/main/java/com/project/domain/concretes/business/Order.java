@@ -6,6 +6,7 @@ import com.project.domain.concretes.business.talasli.BlokliftOrder;
 import com.project.domain.concretes.business.talasli.DamperOrder;
 import com.project.domain.concretes.business.talasli.LiftOrder;
 import com.project.domain.concretes.business.talasli.PaslanmazOrder;
+import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,8 @@ public class Order {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;
 
-    private String orderType;
+    @Enumerated(EnumType.STRING)
+    private OrderType orderType;
 
     private Integer orderQuantity;
 
@@ -74,14 +76,12 @@ public class Order {
     public void startProduction() {
         if (this.productionStartDate == null) {
             this.productionStartDate = LocalDateTime.now();
-            this.orderStatus.setStatusType(StatusType.ISLENMEKTE);
         }
     }
 
     public void completeProduction() {
         if (this.productionEndDate == null) {
             this.productionEndDate = LocalDateTime.now();
-            this.orderStatus.setStatusType(StatusType.TAMAMLANDI);
         }
     }
 

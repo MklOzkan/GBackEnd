@@ -43,6 +43,7 @@ public class OrderService {
     private final TimeValidator timeValidator;
     private final MethodHelper methodHelper;
     private final PageableHelper pageableHelper;
+    private final OrderStatusService orderStatusService;
 
 
     public ResponseMessage<OrderResponse> createOrder(OrderRequest orderRequest, HttpServletRequest request) {
@@ -55,6 +56,8 @@ public class OrderService {
         methodHelper.checkOrderNumber(orderRequest.getOrderNumber());//sipariş numarası kontrolü yapıyoruz
         
         timeValidator.checkTimeWithException(LocalDate.now(), orderRequest.getDeliveryDate());//teslim tarihi bugünden küçük olamaz
+
+
 
 
         Order orderConfirmToSave = orderMapper.mapOrderConfirmRequestToOrderConfirm(orderRequest);
@@ -238,4 +241,21 @@ public class OrderService {
         }
     }
 
+    public void changeOrderStatus(Long orderId) {
+        // İlgili siparişi bul
+        Order order = methodHelper.findOrderById(orderId);
+
+        if (order.getOrderStatus().getStatusType() == StatusType.ISLENMEYI_BEKLIYOR) {
+            order.startProduction();
+            order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
+            orderRepository.save(order);  // Siparişi güncelle ve kaydet
+        }else if (order.getOrderStatus().getStatusType() == StatusType.ISLENMEKTE) {
+            order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.BEKLEMEDE));
+            orderRepository.save(order);  // Siparişi güncelle ve kaydet
+        }else if (order.getOrderStatus().getStatusType() == StatusType.BEKLEMEDE) {
+            order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
+            orderRepository.save(order);  // Siparişi güncelle ve kaydet
+        }
+
+    }
 }

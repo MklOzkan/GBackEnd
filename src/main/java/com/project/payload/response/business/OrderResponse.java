@@ -1,5 +1,6 @@
 package com.project.payload.response.business;
 
+import com.project.domain.enums.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class OrderResponse {
     private String orderNumber;
     private LocalDate orderDate;
     private LocalDate deliveryDate;
-    private String orderType;
+    private OrderType orderType;
     private Integer orderQuantity;
     private String orderStatus;
     private Integer readyMilCount;
