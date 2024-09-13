@@ -2,12 +2,8 @@ package com.project.domain.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.domain.concretes.business.talasli.BlokliftOrder;
-import com.project.domain.concretes.business.talasli.DamperOrder;
-import com.project.domain.concretes.business.talasli.LiftOrder;
-import com.project.domain.concretes.business.talasli.PaslanmazOrder;
+import com.project.domain.concretes.business.liftorder.LiftOrder;
 import com.project.domain.enums.OrderType;
-import com.project.domain.enums.StatusType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,14 +60,14 @@ public class Order {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private LiftOrder liftOrder;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    private BlokliftOrder blokliftOrder;
-
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    private DamperOrder damperOrder;
-
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    private PaslanmazOrder paslanmazOrder;
+//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+//    private BlokliftOrder blokliftOrder;
+//
+//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+//    private DamperOrder damperOrder;
+//
+//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+//    private PaslanmazOrder paslanmazOrder;
 
     public void startProduction() {
         if (this.productionStartDate == null) {
