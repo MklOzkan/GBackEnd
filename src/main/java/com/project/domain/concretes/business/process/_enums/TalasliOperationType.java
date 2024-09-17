@@ -1,4 +1,4 @@
-package com.project.domain.concretes.business.liftorder._enums;
+package com.project.domain.concretes.business.process._enums;
 
 public enum TalasliOperationType {
     MIL_KOPARMA,

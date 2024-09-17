@@ -19,8 +19,8 @@ public class OrderStatus {
         private Long id;
 
         @Enumerated(EnumType.STRING)
-        private StatusType statusType;
+        private StatusType statusType;//Durum tipi
 
-        private String statusName;
+        private String statusName;//Durum adı
 
 }

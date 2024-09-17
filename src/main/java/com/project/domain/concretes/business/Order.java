@@ -1,8 +1,9 @@
 package com.project.domain.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.domain.concretes.business.liftorder.LiftOrder;
+import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.enums.OrderType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,61 +26,34 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String customerName;
+    private String customerName;//Müşteri adı
 
     @Column(unique = true)
     private String gasanNo;
 
     @Column(unique = true)
-    private String orderNumber;
+    private String orderNumber;//Sipariş numarası
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate orderDate;
+    private LocalDate orderDate;//Sipariş tarihi
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate deliveryDate;
+    private LocalDate deliveryDate;//Teslim tarihi
 
     @Enumerated(EnumType.STRING)
-    private OrderType orderType;
+    private OrderType orderType;//Sipariş tipi
 
-    private Integer orderQuantity;
+    private Integer orderQuantity;//Sipariş miktarı
 
-    private Integer readyMilCount;
+    private Integer readyMilCount;//Hazır mil sayısı
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private OrderStatus orderStatus;
-
-    @Column(name = "production_start_date")
-    private LocalDateTime productionStartDate;
-
-    @Column(name = "production_end_date")
-    private LocalDateTime productionEndDate;
+    private OrderStatus orderStatus;//Sipariş durumu
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    private LiftOrder liftOrder;
-
-//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-//    private BlokliftOrder blokliftOrder;
-//
-//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-//    private DamperOrder damperOrder;
-//
-//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-//    private PaslanmazOrder paslanmazOrder;
-
-    public void startProduction() {
-        if (this.productionStartDate == null) {
-            this.productionStartDate = LocalDateTime.now();
-        }
-    }
-
-    public void completeProduction() {
-        if (this.productionEndDate == null) {
-            this.productionEndDate = LocalDateTime.now();
-        }
-    }
+    private ProductionProcess productionProcess;//Üretim süreci
 
     @PrePersist
     public void onPrePersist() {

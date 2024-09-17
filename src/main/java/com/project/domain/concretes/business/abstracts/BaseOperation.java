@@ -1,10 +1,16 @@
 package com.project.domain.concretes.business.abstracts;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@MappedSuperclass
+@Getter
+@Setter
 public abstract class BaseOperation {
 
     @Column(name = "remaining_quantity")
@@ -22,14 +28,13 @@ public abstract class BaseOperation {
     @Column(name = "is_completed")
     private Boolean isCompleted = false;  // Operasyonun tamamlanma durumu
 
-    @PrePersist
-    public void onPrePersist() {
-        if (this.startDate == null) {
-            this.startDate = LocalDateTime.now();  // Başlama tarihi atanır
-        }
+    public void startOperation(int remainingQty) {  // Başlangıçta kalan miktar
+        this.remainingQuantity = remainingQty;  // Kalan miktar
+        this.completedQuantity = 0;  // Tamamlanan miktar
+        this.startDate = this.startDate == null ? LocalDateTime.now() : this.startDate;  // Başlangıç tarihi
     }
 
-    private void rejectOperation(int rejectedQty) { // Reddedilen miktar
+    public void rejectOperation(int rejectedQty) { // Reddedilen miktar
         this.remainingQuantity += rejectedQty;  // Kalan miktar
         this.completedQuantity -= rejectedQty;  // Tamamlanan miktar
         if (this.completedQuantity <= 0) {

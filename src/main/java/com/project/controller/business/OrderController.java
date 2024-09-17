@@ -149,35 +149,6 @@ public class OrderController {
         return orderService.getAllOrdersForOtherSuperVisor(request,page, size, sort, type);
     }
 
-    // "Başlat" düğmesine basıldığında siparişin durumu ISLENMEKTE yapılacak
-    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PostMapping("/start/{orderId}")
-    public ResponseEntity<String> startOrder(@PathVariable Long orderId) {
-        orderService.startOrder(orderId);  // Servis katmanında sipariş başlatma işlemi
-        return ResponseEntity.ok(SuccessMessages.ORDER_STARTED);
-    }
 
-    // "Bitir" düğmesine basıldığında siparişin durumu TAMAMLANDI yapılacak
-    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PostMapping("/complete/{orderId}")
-    public ResponseEntity<String> completeOrder(@PathVariable Long orderId) {
-        orderService.completeOrder(orderId);  // Servis katmanında sipariş bitirme işlemi
-        return ResponseEntity.ok(SuccessMessages.ORDER_COMPLETED);
-    }
-
-    // "Durdur" düğmesine basıldığında siparişin durumu BEKLEMEDE yapılacak
-    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PostMapping("/pause/{orderId}")
-    public ResponseEntity<String> pauseOrder(@PathVariable Long orderId) {
-        orderService.pauseOrder(orderId);  // Servis katmanında durumu değiştirir
-        return ResponseEntity.ok(SuccessMessages.ORDER_PAUSED);
-    }
-
-    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/status/{orderId}")
-    public ResponseEntity<String> changeOrderStatus(@PathVariable Long orderId) {
-        orderService.changeOrderStatus(orderId);  // Servis katmanında durumu değiştirir
-        return ResponseEntity.ok(SuccessMessages.ORDER_STATUS_CHANGED);
-    }
 
 }

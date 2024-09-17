@@ -25,8 +25,8 @@ public class OrderMapper {
 //                .orderType(orderRequest.getOrderType())
                 .orderQuantity(orderRequest.getOrderQuantity())
                 .readyMilCount(orderRequest.getReadyMilCount())
-                .productionStartDate(null)  // Başlangıçta null
-                .productionEndDate(null)    // Başlangıçta null
+//                .productionStartDate(null)  // Başlangıçta null
+//                .productionEndDate(null)    // Başlangıçta null
                 .build();
 
         if (orderRequest.getOrderType().equalsIgnoreCase("Blok Lift")){
@@ -63,8 +63,8 @@ public class OrderMapper {
                 .orderQuantity(order.getOrderQuantity())
                 .readyMilCount(order.getReadyMilCount())
                 .orderStatus(order.getOrderStatus().getStatusType().getName())
-                .productionStartDate(order.getProductionStartDate())  // Başlama tarihi
-                .productionEndDate(order.getProductionEndDate())      // Bitiş tarihi
+//                .productionStartDate(order.getProductionStartDate())  // Başlama tarihi
+//                .productionEndDate(order.getProductionEndDate())      // Bitiş tarihi
                 .build();
     }
 
