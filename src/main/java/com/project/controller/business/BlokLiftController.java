@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/polisaj")
+@RequestMapping("/bloklift")
 @RequiredArgsConstructor
-public class PolisajController {
+public class BlokLiftController {
 }
