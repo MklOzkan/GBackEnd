@@ -1,0 +1,9 @@
+            ENDPOINTS:
+
+1-/talasli/startstop
+===>Bu end poınt ilk çağrıldığın da orderStatus'ü update eder ve siparişin durumunu "İşlenmekte" yapar.
+===>Siparişin başlama tarihini belirler.
+===>orderStatus "İşlenmekte"yken bu end poınt çağrılırsa, orderStatus'ü "Beklemede" yapar.
+===>orderStatus "Bekleme"deyken bu end point çağrılırsa, orderStatus "İşlenmekte" yapar.
+2-/talasli/finish
+===>Bu end point çağrıldığında orderStatus'ü "Tamamlandı" yapar. Ve siparişin bitiş tarihini belirler.
