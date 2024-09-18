@@ -133,8 +133,11 @@ public class OrderService {
         }
 
         PolisajImalat polisaj = new PolisajImalat();
-        polisaj.setProductionProcess(productionProcess);
-        polisajImalatRepository.save(polisaj);
+        if (!savedOrder.getOrderType().equals(OrderType.PASLANMAZ)){
+            polisaj.setProductionProcess(productionProcess);
+            polisajImalatRepository.save(polisaj);
+        }
+
 
         LiftMontaj boruKapama = new LiftMontaj();
         LiftMontaj boruKaynak = new LiftMontaj();
