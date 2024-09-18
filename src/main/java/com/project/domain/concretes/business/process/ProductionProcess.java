@@ -12,6 +12,7 @@ import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliI
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,19 +34,19 @@ public class ProductionProcess extends BaseOperation {
     private Order order;//sipariş
 
     @OneToMany(mappedBy = "productionProcess", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TalasliImalat> talasliOperations;//talaslı işlemler
+    private List<TalasliImalat> talasliOperations = new ArrayList<>();//talaslı işlemler
 
     @OneToMany(mappedBy = "productionProcess", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LiftMontaj> liftOperations;//lift montaj işlemleri
+    private List<LiftMontaj> liftOperations = new ArrayList<>();//lift montaj işlemleri
 
     @OneToMany(mappedBy = "productionProcess", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<KaliteKontrol> kaliteKontrolOperations;//kalite kontrol işlemleri
+    private List<KaliteKontrol> kaliteKontrolOperations = new ArrayList<>();//kalite kontrol işlemleri
 
     @OneToMany(mappedBy = "productionProcess", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoyaVePaketleme> boyaPaketOperations;//boya ve paketleme işlemleri
+    private List<BoyaVePaketleme> boyaPaketOperations = new ArrayList<>();//boya ve paketleme işlemleri
 
     @OneToMany(mappedBy = "productionProcess", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BlokLiftMontaj> blokLiftOperations;//blok lift montaj işlemleri
+    private List<BlokLiftMontaj> blokLiftOperations = new ArrayList<>();//blok lift montaj işlemleri
 
     @OneToOne(mappedBy = "productionProcess", cascade = CascadeType.ALL, orphanRemoval = true)
     private PolisajImalat polisajOperation;//polisaj işlemi

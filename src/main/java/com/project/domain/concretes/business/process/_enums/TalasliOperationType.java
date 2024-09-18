@@ -5,6 +5,7 @@ public enum TalasliOperationType {
     MIL_TORNALAMA,
     MIL_TASLAMA,
     ISIL_ISLEM,
-    BORU_KESME_HAVSA
+    BORU_KESME_HAVSA,
+    EZME
 }
 
