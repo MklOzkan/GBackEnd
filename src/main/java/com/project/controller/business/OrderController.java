@@ -72,6 +72,12 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/getOrderById/{id}")
+    public ResponseMessage<OrderResponse> getOrderById(@PathVariable Long id, HttpServletRequest request){
+        return orderService.getOrderById(id, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getAllOrders")
     public Page<OrderResponse> getAllOrders(@RequestParam(value = "page", defaultValue = "0") int page,
                                                            @RequestParam(value = "size", defaultValue = "10") int size,

@@ -369,4 +369,7 @@ public class OrderService {
     }
 
 
+    public void save(Order order) {
+        orderRepository.save(order);
+    }
 }

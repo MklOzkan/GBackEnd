@@ -30,6 +30,8 @@ public class ErrorMessages {
     public static final String ORDER_ID_IS_NOT_FOUND = "Sipariş id bulunamadı %s";
     public static final String GASAN_NO_IS_ALREADY_EXIST = "%s No'lu Gasan numarası zaten mevcut";
     public static final String ORDER_NUMBER_IS_ALREADY_EXIST = "%s No'lu Sipariş numarası zaten mevcut";
+    public static final String PRODUCTION_PROCESS_NOT_FOUND = "%s No'lu üretim süreci bulunamadı";
+    public static final String TALASLI_IMALAT_NOT_FOUND = "%s No'lu talasli operasyonu bulunamadı";
 
 
     private ErrorMessages(){}

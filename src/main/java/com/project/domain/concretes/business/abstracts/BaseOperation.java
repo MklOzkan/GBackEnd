@@ -28,9 +28,7 @@ public abstract class BaseOperation {
     @Column(name = "is_completed")
     private Boolean isCompleted = false;  // Operasyonun tamamlanma durumu
 
-    public void startOperation(int remainingQty) {  // Başlangıçta kalan miktar
-        this.remainingQuantity = remainingQty;  // Kalan miktar
-        this.completedQuantity = 0;  // Tamamlanan miktar
+    public void startOperation() {
         this.startDate = this.startDate == null ? LocalDateTime.now() : this.startDate;  // Başlangıç tarihi
     }
 
