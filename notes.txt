@@ -2,8 +2,20 @@
 
 1-/talasli/startstop
 ===>Bu end poınt ilk çağrıldığın da orderStatus'ü update eder ve siparişin durumunu "İşlenmekte" yapar.
-===>Siparişin başlama tarihini belirler.
+===>ProductıonProcess, MılKoparma ve BoruKesme'lerin başlama tarihini belirler.
 ===>orderStatus "İşlenmekte"yken bu end poınt çağrılırsa, orderStatus'ü "Beklemede" yapar.
 ===>orderStatus "Bekleme"deyken bu end point çağrılırsa, orderStatus "İşlenmekte" yapar.
-2-/talasli/finish
-===>Bu end point çağrıldığında orderStatus'ü "Tamamlandı" yapar. Ve siparişin bitiş tarihini belirler.
+
+2-/talasli/borukesme
+===>Bu endpoint cagrildiginda param icerinde gelen üretilen borusayisi
+boru kesmenin kalan kisminda´n düdüsülür ve tamamlanan boru sayisi gelen miktar kadar arttirilir.
+
+3-/talasli/milkoparma
+
+4-/talasli/miltornalama
+
+5-/talasli/miltaslama
+
+6-/talasli/ezme
+
+7-/talasli/isilislem

@@ -14,7 +14,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
 public class BoyaVePaketlemeRequest extends BaseOperationRequest {
     @NotNull(message = "işlem tipi boş olamaz")

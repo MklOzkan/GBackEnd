@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
 public class TalasliImalatRequest extends BaseOperationRequest {
