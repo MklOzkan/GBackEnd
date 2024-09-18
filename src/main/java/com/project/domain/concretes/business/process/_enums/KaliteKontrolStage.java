@@ -5,4 +5,6 @@ public enum KaliteKontrolStage {
     AFTER_POLISAJ,
     AFTER_MONTAJ,
     AFTER_MIL_TASLAMA,
+    AFTER_EZME,
+
 }

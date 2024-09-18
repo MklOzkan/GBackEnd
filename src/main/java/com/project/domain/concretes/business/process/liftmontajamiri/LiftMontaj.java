@@ -31,6 +31,7 @@ public class LiftMontaj extends BaseOperation {
     private Integer scarapCountAfterTest;//test sonrası hurda sayısı
 
     @Column(name = "operation_type")
+    @Enumerated(EnumType.STRING)
     private LiftMontajOperationTye operationType;//işlem tipi
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -29,6 +29,7 @@ public class BlokLiftMontaj extends BaseOperation {
     private Integer scrapCountAfterTest;//test sonrası hurda sayısı
 
     @Column(name = "operation_type")
+    @Enumerated(EnumType.STRING)
     private BlokLiftOperationType operationType;
 
     @ManyToOne(fetch = FetchType.LAZY)
