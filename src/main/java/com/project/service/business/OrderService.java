@@ -16,16 +16,21 @@ import com.project.domain.enums.StatusType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.OrderMapper;
+import com.project.payload.mappers.TalasliMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.request.business.UpdateOrderRequest;
+import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.process.ProductionProcessResponse;
+import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.repository.business.OrderRepository;
 import com.project.repository.business.process.*;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
+import com.project.service.helper.TalasliHelper;
 import com.project.service.validator.TimeValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +67,8 @@ public class OrderService {
     private final KaliteKontrolRepository kaliteKontrolRepository;
     private final BoyaVePaketlemeRepository boyaVePaketlemeRepository;
     private final ProductionProcessRepository productionProcessRepository;
-
+    private final TalasliHelper talasliHelper;
+    private final TalasliMapper talasliMapper;
 
 
     public ResponseMessage<OrderResponse> createOrder(OrderRequest orderRequest, HttpServletRequest request) {
@@ -356,7 +362,29 @@ public class OrderService {
         return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
     }
 
-    public ResponseMessage<OrderResponse> getOrderById(Long id, HttpServletRequest request) {
+    public MultipleResponses<OrderResponse, List<TalasliImalatResponse>, ProductionProcessResponse> getOrderById(Long id, HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        methodHelper.loadUserByUsername(username);
+
+        Order order = methodHelper.findOrderById(id);
+        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(order.getProductionProcess().getId());
+        List<TalasliImalat> talasliOperations = talasliHelper.talasliOperations(productionProcess);
+
+        return MultipleResponses.<OrderResponse, List<TalasliImalatResponse>, ProductionProcessResponse>builder()
+                .returnBody(orderMapper.mapOrderToOrderResponse(order))
+                .returnBody2(talasliMapper.mapTalasliListToResponse(talasliOperations))
+                .returnBody3(talasliMapper.mapProductionProcessToResponse(productionProcess))
+                .message(SuccessMessages.ORDER_FOUND)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
+
+    public void save(Order order) {
+        orderRepository.save(order);
+    }
+
+    public ResponseMessage<OrderResponse> getOrder(Long id, HttpServletRequest request) {
         String username = (String) request.getAttribute("username");
         methodHelper.loadUserByUsername(username);
 
@@ -366,10 +394,5 @@ public class OrderService {
                 .message(SuccessMessages.ORDER_FOUND)
                 .httpStatus(HttpStatus.OK)
                 .build();
-    }
-
-
-    public void save(Order order) {
-        orderRepository.save(order);
     }
 }

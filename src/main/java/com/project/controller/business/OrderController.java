@@ -1,12 +1,16 @@
 package com.project.controller.business;
 
 import com.project.domain.concretes.business.OrderStatus;
+import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.enums.StatusType;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.request.business.UpdateOrderRequest;
+import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.process.ProductionProcessResponse;
+import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.service.business.ExcelService;
 import com.project.service.business.OrderService;
 import com.project.service.helper.MethodHelper;
@@ -55,7 +59,7 @@ public class OrderController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getOrderById/{id}")
     public ResponseMessage<OrderResponse> getOrder(@PathVariable Long id, HttpServletRequest request){
-        return orderService.getOrderById(id, request);
+        return orderService.getOrder(id, request);
     }
 
 
@@ -72,8 +76,8 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/getOrderById/{id}")
-    public ResponseMessage<OrderResponse> getOrderById(@PathVariable Long id, HttpServletRequest request){
+    @GetMapping("/getMultipleResponseById/{id}")
+    public MultipleResponses<OrderResponse, List<TalasliImalatResponse>, ProductionProcessResponse> getOrderById(@PathVariable Long id, HttpServletRequest request){
         return orderService.getOrderById(id, request);
     }
 

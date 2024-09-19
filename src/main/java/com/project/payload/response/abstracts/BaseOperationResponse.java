@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @SuperBuilder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class BaseOperationResponse {
 
     private Integer remainingQuantity;  // Kalan miktar
