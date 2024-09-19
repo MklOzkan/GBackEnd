@@ -25,7 +25,5 @@ public class OrderResponse {
     private Integer orderQuantity;
     private String orderStatus;
     private Integer readyMilCount;
-    // Başlama ve Bitiş tarihleri eklendi
-    private LocalDateTime productionStartDate;
-    private LocalDateTime productionEndDate;
+    private Long productionProcessId;
 }

@@ -16,13 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class TalasliHelper {
 
     private final TalasliImalatRepository talasliImalatRepository;
-    private final OrderService orderService;
     private final MethodHelper methodHelper;
     private final OrderStatusService orderStatusService;
     private final ProductionProcessRepository productionProcessRepository;
@@ -72,6 +72,10 @@ public class TalasliHelper {
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.TALASLI_IMALAT_NOT_FOUND, operationType)));
 
+    }
+
+    public List<TalasliImalat> talasliOperations (ProductionProcess productionProcess) {
+        return productionProcess.getTalasliOperations();
     }
 
 
