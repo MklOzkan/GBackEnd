@@ -63,9 +63,8 @@ public class OrderMapper {
                 .orderType(order.getOrderType())
                 .orderQuantity(order.getOrderQuantity())
                 .readyMilCount(order.getReadyMilCount())
-                .orderStatus(order.getOrderStatus().getStatusType().getName())
-//                .productionStartDate(order.getProductionStartDate())  // Başlama tarihi
-//                .productionEndDate(order.getProductionEndDate())      // Bitiş tarihi
+                .orderStatus(order.getOrderStatus().getStatusType().getName())// Bitiş tarihi
+                .productionProcessId(order.getProductionProcess().getId())
                 .build();
     }
 
