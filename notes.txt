@@ -9,8 +9,12 @@
 2-/talasli/borukesme
 ===>Bu endpoint cagrildiginda param icerinde gelen üretilen borusayisi
 boru kesmenin kalan kisminda´n düdüsülür ve tamamlanan boru sayisi gelen miktar kadar arttirilir.
+==>boru kesmeden gelen üretilen adet ile lift montajdaki boru kapama kalan adet toplanarak güncellenir. ayni zamanda boru kapamanin startDate kontrol edilir, eger null ise startDate set edilir.
 
-3-/talasli/milkoparma
+3-/talasli/milkoparma(Post)
+==>Bu endpoint cagrildiginda param icerinde gelen üretilen milkoparma sayisi DB de ki milkoparma sayisi ile toplanir ve güncellenir.
+==>Ayni zamanda miltornalamanin kalan kismi, mil koparmadan gelen adet ile toplanarak güncellenir. Mil tornalamanin startDate kontrol edilir, eger null ise startDate set edilir.
+==>Respose olarak milkoparma ve miltornalama doner.
 
 4-/talasli/miltornalama
 
@@ -19,3 +23,8 @@ boru kesmenin kalan kisminda´n düdüsülür ve tamamlanan boru sayisi gelen mi
 6-/talasli/ezme
 
 7-/talasli/isilislem
+
+8-/polisaj
+
+9-/liftmontaj/borukapama
+==>

@@ -29,12 +29,12 @@ public class TalasliHelper {
     public Order updateOrderStatus(Order order) {
         Long productionId = order.getProductionProcess().getId();
         ProductionProcess productionProcess = findProductionProcessById(productionId);
-        TalasliImalat talasliImalat = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
+        TalasliImalat milKoparma = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
 
         if (order.getOrderStatus().equals(orderStatusService.getOrderStatus(StatusType.ISLENMEYI_BEKLIYOR))) {
             order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
-            if (talasliImalat.getStartDate() == null) {
-                talasliImalat.startOperation(); // This will set the startDate if it's null
+            if (milKoparma.getStartDate() == null) {
+                milKoparma.startOperation(); // This will set the startDate if it's null
             }
 
             if (productionProcess.getStartDate() == null) {
@@ -47,7 +47,7 @@ public class TalasliHelper {
         }
 
         productionProcessRepository.save(productionProcess);
-        talasliImalatRepository.save(talasliImalat);
+        talasliImalatRepository.save(milKoparma);
         return order;
     }
 
