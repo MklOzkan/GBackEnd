@@ -6,10 +6,7 @@ import com.project.service.business.process.TalasliService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/talasli")
@@ -22,6 +19,13 @@ public class TalasliController {
     @PutMapping("/startStop/{id}")
     public ResponseMessage<String> startStopTalasli(@PathVariable Long id) {
         return talasliService.startStop(id);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/borukesme/{id}")
+    public ResponseMessage<String> borukesmeTalasli(@PathVariable Long id, @RequestParam Integer quantity) {
+        return talasliService.borukesme(quantity,id);
     }
 
 
