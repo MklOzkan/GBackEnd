@@ -25,9 +25,7 @@ public class TalasliService {
     private final MethodHelper methodHelper;
     private final OrderStatusService orderStatusService;
     private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
     private final TalasliHelper talasliHelper;
-    private final OrderService orderService;
 
     public ResponseMessage<String> startStop(Long id) {
 
