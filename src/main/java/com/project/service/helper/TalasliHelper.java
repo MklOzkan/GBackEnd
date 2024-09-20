@@ -11,30 +11,37 @@ import com.project.repository.business.process.ProductionProcessRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
 import com.project.service.business.OrderService;
 import com.project.service.business.OrderStatusService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class TalasliHelper {
 
     private final TalasliImalatRepository talasliImalatRepository;
-    private final OrderService orderService;
     private final MethodHelper methodHelper;
     private final OrderStatusService orderStatusService;
     private final ProductionProcessRepository productionProcessRepository;
 
+    @Transactional
     public Order updateOrderStatus(Order order) {
         Long productionId = order.getProductionProcess().getId();
         ProductionProcess productionProcess = findProductionProcessById(productionId);
         TalasliImalat milKoparma = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
+        TalasliImalat boruKesme = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.BORU_KESME_HAVSA);
 
         if (order.getOrderStatus().equals(orderStatusService.getOrderStatus(StatusType.ISLENMEYI_BEKLIYOR))) {
             order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
             if (milKoparma.getStartDate() == null) {
-                milKoparma.startOperation(); // This will set the startDate if it's null
+                milKoparma.startOperation();
+            }
+
+            if (boruKesme.getStartDate() == null) {
+                boruKesme.startOperation();
             }
 
             if (productionProcess.getStartDate() == null) {
@@ -48,6 +55,7 @@ public class TalasliHelper {
 
         productionProcessRepository.save(productionProcess);
         talasliImalatRepository.save(milKoparma);
+        talasliImalatRepository.save(boruKesme);
         return order;
     }
 
@@ -65,5 +73,11 @@ public class TalasliHelper {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.TALASLI_IMALAT_NOT_FOUND, operationType)));
 
     }
+
+    public List<TalasliImalat> talasliOperations (ProductionProcess productionProcess) {
+        return productionProcess.getTalasliOperations();
+    }
+
+
 }
 
