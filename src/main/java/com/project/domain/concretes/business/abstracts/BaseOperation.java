@@ -50,4 +50,11 @@ public abstract class BaseOperation {
             this.endDate = LocalDateTime.now();  // Bitiş tarihi atanır
         }
     }
+
+    public void updateNextOperation(int completedQty) {
+        if (this.remainingQuantity == 0) {
+            this.startDate = LocalDateTime.now();
+        }
+        this.remainingQuantity += completedQty;
+    }
 }

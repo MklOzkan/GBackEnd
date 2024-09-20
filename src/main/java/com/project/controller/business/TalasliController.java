@@ -1,11 +1,11 @@
 package com.project.controller.business;
 
 
+import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.service.business.process.TalasliService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,10 +31,10 @@ public class TalasliController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PostMapping("/milkoparma")
-    public ResponseMessage<Map<String, TalasliImalatResponse>> milkoparma(@RequestBody Map<String, Integer> requestBody){
+    @PostMapping("/milkoparma/{oprateionId}")
+    public MultipleResponses<TalasliImalatResponse, TalasliImalatResponse, Void> milkoparma(@RequestBody Map<String, Integer> requestBody, @PathVariable Long oprateionId){
         int uretilenMilkoparmaSayisi = requestBody.get("uretilenMilkoparmaSayisi");
-        return talasliService.milkoparma(uretilenMilkoparmaSayisi);
+        return talasliService.milkoparma(uretilenMilkoparmaSayisi, oprateionId);
     }
 
 
