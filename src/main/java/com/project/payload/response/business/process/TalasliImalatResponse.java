@@ -2,6 +2,7 @@ package com.project.payload.response.business.process;
 
 
 import com.project.domain.concretes.business.process.ProductionProcess;
+import com.project.domain.concretes.business.process._enums.TalasliOperationType;
 import com.project.payload.request.abstracts.BaseOperationRequest;
 import com.project.payload.response.abstracts.BaseOperationResponse;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class TalasliImalatResponse extends BaseOperationResponse {
     private Long id;
-    private String operationType;//işlem tipi
+    private TalasliOperationType operationType;//işlem tipi
     private Long productionProcessId;
 
 }
