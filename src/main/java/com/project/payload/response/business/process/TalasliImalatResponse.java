@@ -19,6 +19,6 @@ import lombok.experimental.SuperBuilder;
 public class TalasliImalatResponse extends BaseOperationResponse {
     private Long id;
     private String operationType;//işlem tipi
-    private Long productionProcessId;
+    private ProductionProcess productionProcessId;
 
 }

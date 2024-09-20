@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -34,6 +35,13 @@ public class TalasliController {
     public ResponseMessage<Map<String, TalasliImalatResponse>> milkoparma(@RequestBody Map<String, Integer> requestBody){
         int uretilenMilkoparmaSayisi = requestBody.get("uretilenMilkoparmaSayisi");
         return talasliService.milkoparma(uretilenMilkoparmaSayisi);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/borukesme/{id}")
+    public ResponseMessage<String> borukesmeTalasli(@PathVariable Long id, @RequestParam Integer quantity) {
+        return talasliService.borukesme(quantity,id);
     }
 
 
