@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface TalasliImalatRepository extends JpaRepository<TalasliImalat, Long> {
 
     Optional<TalasliImalat> findFirstByOperationType(TalasliOperationType operationType);
+
+
 }

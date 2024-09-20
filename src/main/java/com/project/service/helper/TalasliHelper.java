@@ -78,6 +78,11 @@ public class TalasliHelper {
         return productionProcess.getTalasliOperations();
     }
 
+    public TalasliImalat findTalasliImalatByOperationType(TalasliOperationType operationType) {
+        return talasliImalatRepository.findFirstByOperationType(operationType)
+                .orElseThrow(() -> new RuntimeException(String.format(ErrorMessages.TALASLI_IMALAT_OPERATION_TYPE_NOT_FOUND,operationType)));
+    }
+
 
 }
 
