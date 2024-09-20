@@ -33,6 +33,7 @@ public class ErrorMessages {
     public static final String PRODUCTION_PROCESS_NOT_FOUND = "%s No'lu üretim süreci bulunamadı";
     public static final String TALASLI_IMALAT_NOT_FOUND = "%s No'lu talasli operasyonu bulunamadı";
 
+    public static final String TALASLI_IMALAT_OPERATION_TYPE_NOT_FOUND = "Belirtilen işlem tipinde talaşlı imalat bulunamadı: %s";
 
     private ErrorMessages(){}
 

@@ -8,16 +8,23 @@ import com.project.payload.response.business.process.ProductionProcessResponse;
 import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.service.business.process.TalasliService;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+//@Data
+@Getter
+@Setter
 @Component
 public class TalasliMapper {
 
-    private final TalasliService talasliService;
+    private TalasliService talasliService;
+
 
     public TalasliImalatResponse mapTalasliToResponse(TalasliImalat talasliImalat) {
         return TalasliImalatResponse.builder()
@@ -27,7 +34,7 @@ public class TalasliMapper {
                 .endDate(talasliImalat.getEndDate())
                 .startDate(talasliImalat.getStartDate())
                 .isCompleted(talasliImalat.getIsCompleted())
-                .operationType(talasliImalat.getOperationType())
+                .operationType(String.valueOf(talasliImalat.getOperationType()))
                 .productionProcessId(talasliImalat.getProductionProcess().getId())
                 .build();
     }
