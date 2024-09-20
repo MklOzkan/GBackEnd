@@ -27,6 +27,7 @@ public class TalasliMapper {
                 .endDate(talasliImalat.getEndDate())
                 .startDate(talasliImalat.getStartDate())
                 .isCompleted(talasliImalat.getIsCompleted())
+                .operationType(talasliImalat.getOperationType())
                 .productionProcessId(talasliImalat.getProductionProcess().getId())
                 .build();
     }

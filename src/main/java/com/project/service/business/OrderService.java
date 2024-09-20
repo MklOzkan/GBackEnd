@@ -93,6 +93,9 @@ public class OrderService {
         productionProcess.setRemainingQuantity(savedOrder.getOrderQuantity());
         productionProcess = productionProcessRepository.save(productionProcess);
 
+        savedOrder.setProductionProcess(productionProcess);
+        orderRepository.save(savedOrder);
+
         TalasliImalat boruKesme = new TalasliImalat();
         boruKesme.setOperationType(TalasliOperationType.BORU_KESME_HAVSA);
         boruKesme.setRemainingQuantity(savedOrder.getOrderQuantity());
