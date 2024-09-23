@@ -20,13 +20,13 @@ public class KaliteKontrolRequest {
     @NotNull(message = "işlem tipi boş olamaz")
     private String kaliteKontrolStage;//kalite kontrol aşaması
 
-    private Integer approveCount;//onay sayısı
+    private Integer approveCount =0;//onay sayısı
 
-    private Integer scrapCount;//hurda sayısı
+    private Integer scrapCount =0;//hurda sayısı
 
-    private Integer returnedToIsilIslem;//isıl işlem geri dönüş
+    private Integer returnedToIsilIslem =0;//isıl işlem geri dönüş
 
-    private Integer returnedToMilTaslama;//mil taşlama geri dönüş
+    private Integer returnedToMilTaslama =0;//mil taşlama geri dönüş
 
     
 }

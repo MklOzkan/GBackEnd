@@ -4,6 +4,7 @@ import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.TalasliOperationType;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
+import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
@@ -31,13 +32,18 @@ public class TalasliHelper {
     public Order updateOrderStatus(Order order) {
         Long productionId = order.getProductionProcess().getId();
         ProductionProcess productionProcess = findProductionProcessById(productionId);
-        TalasliImalat milKoparma = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
+        TalasliImalat operation ;
+        if (order.getOrderType().equals(OrderType.BLOKLIFT)){
+            operation  = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+        }else{
+            operation = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
+        }
         TalasliImalat boruKesme = findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.BORU_KESME_HAVSA);
 
         if (order.getOrderStatus().equals(orderStatusService.getOrderStatus(StatusType.ISLENMEYI_BEKLIYOR))) {
             order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
-            if (milKoparma.getStartDate() == null) {
-                milKoparma.startOperation();
+            if (operation.getStartDate() == null) {
+                operation.startOperation();
             }
 
             if (boruKesme.getStartDate() == null) {
@@ -54,7 +60,7 @@ public class TalasliHelper {
         }
 
         productionProcessRepository.save(productionProcess);
-        talasliImalatRepository.save(milKoparma);
+        talasliImalatRepository.save(operation);
         talasliImalatRepository.save(boruKesme);
         return order;
     }
