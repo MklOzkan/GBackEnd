@@ -311,7 +311,7 @@ public class OrderService {
         methodHelper.loadUserByUsername(username);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
-        List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(), StatusType.ISLENMEKTE.getName());
+        List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(), StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
         Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameIn(statuses, pageable);
 
 

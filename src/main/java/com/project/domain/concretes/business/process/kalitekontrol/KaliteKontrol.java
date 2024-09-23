@@ -28,6 +28,8 @@ public class KaliteKontrol {
     @Enumerated(EnumType.STRING)
     private KaliteKontrolStage kaliteKontrolStage;//kalite kontrol aşaması
 
+    private Integer milCount;//mil sayısı
+
     private Integer approveCount;//onay sayısı
 
     private Integer scrapCount;//hurda sayısı

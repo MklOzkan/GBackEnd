@@ -9,7 +9,11 @@
 2-/talasli/borukesme
 ===>Bu endpoint cagrildiginda param icerinde gelen üretilen borusayisi
 boru kesmenin kalan kisminda´n düdüsülür ve tamamlanan boru sayisi gelen miktar kadar arttirilir.
-==>boru kesmeden gelen üretilen adet ile lift montajdaki boru kapama kalan adet toplanarak güncellenir. ayni zamanda boru kapamanin startDate kontrol edilir, eger null ise startDate set edilir.
+==>Öncelikle orderType kontrol edilir, eger orderType "BLOKLIFT" degilse, bir sonraki asama olan "Lift Montaj" baslar.
+Boru kesmeden gelen üretilen adet ile lift montajdaki boru kapama kalan adet toplanarak güncellenir. ayni zamanda boru kapamanin startDate kontrol edilir, eger null ise startDate set edilir.
+==>Respose olarak borukesme ve boru kapama doner.
+==>Eger orderType "BLOKLIF" ise, bir sonraki asama olan "BLOK_LIFT_MONTAJ" baslar. BLOK_LIFT_MONTAJ startDate kontrol edilir, eger null ise startDate set edilir.
+==>Blok lift montajdaki kalan kismi, boru kesmeden gelen adet ile toplanarak güncellenir. Respose olarak borukesme ve blok lift montaj doner.
 
 3-/talasli/milkoparma(Post)
 ==>Bu endpoint cagrildiginda param icerinde gelen üretilen milkoparma sayisi DB de ki milkoparma sayisi ile toplanir ve güncellenir.
@@ -17,12 +21,31 @@ boru kesmenin kalan kisminda´n düdüsülür ve tamamlanan boru sayisi gelen mi
 ==>Respose olarak milkoparma ve miltornalama doner.
 
 4-/talasli/miltornalama
+==>Bu endpoint cagrildiginda param icerinde gelen üretilen miltornalama sayisi DB de ki miltornalama sayisi ile toplanir ve güncellenir.
+==>Ayni zamanda miltaslamanin kalan kismi, mil tornalamadan gelen adet ile toplanarak güncellenir. Mil taslamanin startDate kontrol edilir, eger null ise startDate set edilir.
+==>Respose olarak miltornalama ve miltaslama doner.
 
 5-/talasli/miltaslama
+==>Bu endpoint cagrildiginda param icerinde gelen üretilen miltaslama sayisi DB de ki miltaslama sayisi ile toplanir ve güncellenir.Ayni zamanda miltaslamanin kalan kismi, mil taslamadan gelen adet ile cikartilarak güncellenir.
+==>Sonra orderType kontrol edilir, eger orderType "PASLANMAZ" ise, bir sonraki asama olan "Kalite Kontrol" baslar.
+==>DB'den AFTER_MIL_TASLAMA asamasindaki startDate kontrol edilir, eger null ise startDate set edilir.
+==>Ayni zamanda kalite kontrolde ki milCount, miltaslamanin gelen adet ile toplanarak güncellenir. Respose olarak miltaslama ve kalite kontrol doner.
+
+==>Eger orderType "PASLANMAZ" degil ise, bir sonraki asama olan "ISIL ISLEM" baslar. Isil islemin startDate kontrol edilir, eger null ise startDate set edilir.
+Ayni zamanda isil islemin kalan kismi, miltaslamanin gelen adet ile toplanarak güncellenir. Respose olarak miltaslama ve isil islem doner.
 
 6-/talasli/ezme
+==>Bu endpoint cagrildiginda param icerinde gelen üretilen ezme sayisi DB de ki ezme tamamlanan sayisi ile toplanir ve güncellenir.
+==>Ayni zamanda ezmenin kalan kismi, ezmeden gelen adet ile cikartilarak güncellenir.
+==>Bir sonraki Asama olan Kalite Kontrol'ün AFTER_EZME asamasina gecilir. Kalite kontrolun startDate kontrol edilir, eger null ise startDate set edilir.
+==>Kalite kontrolde ki milCount, ezmeden gelen adet ile toplanarak güncellenir. Respose olarak ezme ve kalite kontrol doner.
+
 
 7-/talasli/isilislem
+==>Bu endpoint cagrildiginda param icerinde gelen üretilen isil islem sayisi DB de ki isil islem tamamlanan sayisi ile toplanir ve güncellenir.
+==>Ayni zamanda isil islemin kalan kismi, isil islemden gelen adet ile cikartilarak güncellenir.
+==>Bir sonra ki asama olan Polisaj baslar. Polisajin startDate kontrol edilir, eger null ise startDate set edilir.
+==>Polisajin kalan kismi, isil islemden gelen adet ile toplanarak güncellenir. Respose olarak isil islem ve polisaj doner.
 
 8-/polisaj
 

@@ -17,13 +17,19 @@ import lombok.experimental.SuperBuilder;
 public class BlokLiftRequest extends BaseOperationRequest {
 
 
-    private Integer milCount;//mil sayısı
+    private Integer milRemainingCount =0;//mil sayısı
 
-    private Integer scrapPipeCount;//hurda boru sayısı
+    private Integer milCompletedCount =0;//tamamlanan mil sayısı
 
-    private Integer scrapMilCount;//hurda mil sayısı
+    private Integer pipeRemainingCount =0;//boru sayısı
 
-    private Integer scrapCountAfterTest;//test sonrası hurda sayısı
+    private Integer pipeCompletedCount =0;//tamamlanan boru sayısı
+
+    private Integer scrapPipeCount =0;//hurda boru sayısı
+
+    private Integer scrapMilCount =0;//hurda mil sayısı
+
+    private Integer scrapCountAfterTest =0;//test sonrası hurda sayısı
 
     @NotNull(message = "Islem tipi bos olamaz")
     private String operationType;

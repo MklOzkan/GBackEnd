@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @SuperBuilder
 public abstract class BaseOperationRequest {
 
-    private Integer remainingQuantity;  // Kalan miktar
+    private Integer remainingQuantity =0;  // Kalan miktar
 
-    private Integer completedQuantity;  // Tamamlanan miktar
+    private Integer completedQuantity =0;  // Tamamlanan miktar
 
     private LocalDateTime startDate;  // Operasyon başlama tarihi
 
