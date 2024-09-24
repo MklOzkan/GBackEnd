@@ -53,16 +53,13 @@ public class TalasliService {
         return ResponseMessage.<String>builder()
                 .httpStatus(HttpStatus.OK)
                 .build();
-
-
-
     }
 
 
     @Transactional
-    public MultipleResponses<TalasliImalatResponse, TalasliImalatResponse, Void> milkoparma(int uretilenMilkoparmaSayisi, Long oprateionId) {
+    public ResponseMessage<String> milkoparma(TalasliImalatRequest request, Long operationId) {
 
-        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(oprateionId);
+        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
         TalasliImalat milkoparma = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
 
         if(milkoparma.getCompletedQuantity() == null){
@@ -72,10 +69,9 @@ public class TalasliService {
             milkoparma.setRemainingQuantity(0);
         }
 
-        milkoparma.completeOperation(uretilenMilkoparmaSayisi);
+        milkoparma.completeOperation(request.getCompletedQuantity());
 
         TalasliImalat milTornalama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
-
 
         if (milTornalama.getRemainingQuantity() == null) {
             milTornalama.setRemainingQuantity(0);
@@ -85,18 +81,12 @@ public class TalasliService {
             milTornalama.setCompletedQuantity(0);
         }
 
-        milTornalama.updateNextOperation(uretilenMilkoparmaSayisi);
+        milTornalama.updateNextOperation(request.getCompletedQuantity());
 
         talasliImalatRepository.save(milkoparma);
         talasliImalatRepository.save(milTornalama);
 
-
-        TalasliImalatResponse milkoparmaResponse = talasliMapper.mapTalasliToResponse(milkoparma);
-        TalasliImalatResponse milTornalamaResponse = talasliMapper.mapTalasliToResponse(milTornalama);
-
-        return MultipleResponses.<TalasliImalatResponse, TalasliImalatResponse, Void>builder()
-                .returnBody(milkoparmaResponse)
-                .returnBody2(milTornalamaResponse)
+        return ResponseMessage.<String>builder()
                 .message(SuccessMessages.MILKOPARMA_COMPLETED)
                 .httpStatus(HttpStatus.OK)
                 .build();

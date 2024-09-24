@@ -33,10 +33,10 @@ public class TalasliController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PostMapping("/milkoparma/{oprateionId}")
-    public MultipleResponses<TalasliImalatResponse, TalasliImalatResponse, Void> milkoparma(@RequestBody Map<String, Integer> requestBody, @PathVariable Long oprateionId){
-        int uretilenMilkoparmaSayisi = requestBody.get("uretilenMilkoparmaSayisi");
-        return talasliService.milkoparma(uretilenMilkoparmaSayisi, oprateionId);
+    @PutMapping("/milkoparma/{operationId}")
+    public ResponseMessage<String> milkoparma(@RequestBody @Valid TalasliImalatRequest  request, @PathVariable Long operationId) {
+
+        return talasliService.milkoparma(request, operationId);
     }
 
 
