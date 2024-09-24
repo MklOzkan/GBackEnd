@@ -20,6 +20,9 @@ public class SuccessMessages {
     public static final String ORDER_PAUSED = "Sipariş durduruldu ve beklemeye alındı";
     public static final String ORDER_STATUS_CHANGED = "Sipariş durumu değiştirildi";
     public static final String MILKOPARMA_COMPLETED = "Milkoparma islemi basariliyla tamamlandi.";
+    public static final String MILTORNALAMA_COMPLETED = "Miltornalama islemi basariliyla tamamlandi.";
+    public static final String MILTASLAMA_COMPLETED = "Miltaslama islemi basariliyla tamamlandi.";
+    public static final String ISILISLEM_COMPLETED = "Isıl işlem islemi basariliyla tamamlandi.";
 
     private SuccessMessages(){}
 }

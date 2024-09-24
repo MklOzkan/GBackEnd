@@ -6,6 +6,7 @@ import com.project.domain.concretes.business.process._enums.LiftMontajOperationT
 import com.project.domain.concretes.business.process._enums.TalasliOperationType;
 import com.project.domain.concretes.business.process.blokliftmontajamiri.BlokLiftMontaj;
 import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
+import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.enums.OrderType;
@@ -16,6 +17,7 @@ import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.repository.business.OrderRepository;
+import com.project.repository.business.process.PolisajImalatRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
 import com.project.service.business.OrderStatusService;
 import com.project.service.helper.MethodHelper;
@@ -40,6 +42,7 @@ public class TalasliService {
     private final OrderRepository orderRepository;
     private final TalasliHelper talasliHelper;
     private final TalasliImalatRepository talasliImalatRepository;
+    private final PolisajImalatRepository polisajImalatRepository;
     private final TalasliMapper talasliMapper;
     private final MontajHelper montajHelper;
 
@@ -128,4 +131,111 @@ public class TalasliService {
 //        }
 //
 //    }
+
+    @Transactional
+    public ResponseMessage<String> milTornalama(TalasliImalatRequest request, Long operationId) {
+
+        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
+        TalasliImalat miltornalama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
+
+        if(miltornalama.getCompletedQuantity() == null){
+            miltornalama.setCompletedQuantity(0);
+        }
+        if (miltornalama.getRemainingQuantity() == null) {
+            miltornalama.setRemainingQuantity(0);
+        }
+
+        miltornalama.completeOperation(request.getCompletedQuantity());
+
+        TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+
+        if (miltaslama.getRemainingQuantity() == null) {
+            miltaslama.setRemainingQuantity(0);
+        }
+
+        if(miltornalama.getCompletedQuantity() == null){
+            miltaslama.setCompletedQuantity(0);
+        }
+
+        miltaslama.updateNextOperation(request.getCompletedQuantity());
+
+        talasliImalatRepository.save(miltornalama);
+        talasliImalatRepository.save(miltaslama);
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.MILTORNALAMA_COMPLETED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
+
+    @Transactional
+    public ResponseMessage<String> milTaslama(TalasliImalatRequest request, Long operationId) {
+
+        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
+        TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+
+        if(miltaslama.getCompletedQuantity() == null){
+            miltaslama.setCompletedQuantity(0);
+        }
+        if (miltaslama.getRemainingQuantity() == null) {
+            miltaslama.setRemainingQuantity(0);
+        }
+
+        miltaslama.completeOperation(request.getCompletedQuantity());
+
+        TalasliImalat isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+
+        if (isilIslem.getRemainingQuantity() == null) {
+            isilIslem.setRemainingQuantity(0);
+        }
+
+        if(isilIslem.getCompletedQuantity() == null){
+            isilIslem.setCompletedQuantity(0);
+        }
+
+        isilIslem.updateNextOperation(request.getCompletedQuantity());
+
+        talasliImalatRepository.save(miltaslama);
+        talasliImalatRepository.save(isilIslem);
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.MILTASLAMA_COMPLETED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }@Transactional
+    public ResponseMessage<String> isilIslem(TalasliImalatRequest request, Long operationId) {
+
+        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
+        TalasliImalat isilislem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+
+        if(isilislem.getCompletedQuantity() == null){
+            isilislem.setCompletedQuantity(0);
+        }
+        if (isilislem.getRemainingQuantity() == null) {
+            isilislem.setRemainingQuantity(0);
+        }
+
+        isilislem.completeOperation(request.getCompletedQuantity());
+
+        PolisajImalat polisajImalat = talasliHelper.findPolisajImalatByProductionProcess(productionProcess);
+
+        if (polisajImalat.getRemainingQuantity() == null) {
+            polisajImalat.setRemainingQuantity(0);
+        }
+
+        if(polisajImalat.getCompletedQuantity() == null){
+            polisajImalat.setCompletedQuantity(0);
+        }
+
+        polisajImalat.updateNextOperation(request.getCompletedQuantity());
+
+        talasliImalatRepository.save(isilislem);
+        polisajImalatRepository.save(polisajImalat);
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.ISILISLEM_COMPLETED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
 }

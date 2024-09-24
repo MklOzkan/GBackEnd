@@ -3,11 +3,13 @@ package com.project.service.helper;
 import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.TalasliOperationType;
+import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
 import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.repository.business.process.PolisajImalatRepository;
 import com.project.repository.business.process.ProductionProcessRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
 import com.project.service.business.OrderService;
@@ -27,6 +29,7 @@ public class TalasliHelper {
     private final MethodHelper methodHelper;
     private final OrderStatusService orderStatusService;
     private final ProductionProcessRepository productionProcessRepository;
+    private final PolisajImalatRepository polisajImalatRepository;
 
     @Transactional
     public Order updateOrderStatus(Order order) {
@@ -92,6 +95,13 @@ public class TalasliHelper {
     public TalasliImalat findOperationById(Long id) {
         return talasliImalatRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.TALASLI_IMALAT_NOT_FOUND, id)));
+    }
+
+    public PolisajImalat findPolisajImalatByProductionProcess(ProductionProcess productionProcess) {
+        return polisajImalatRepository.findPolisajImalatByProductionProcess(productionProcess)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.POLISAJ_IMALAT_NOT_FOUND)));
+
+
     }
 
 
