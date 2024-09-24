@@ -12,7 +12,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class TalasliImalatRequest extends BaseOperationRequest {
+    //private Long id;
     @NotNull(message = "işlem tipi boş olamaz")
     private String operationType;//işlem tipi
+    private Long productionProcessId;
 
 }
