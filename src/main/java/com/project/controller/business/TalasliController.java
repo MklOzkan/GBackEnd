@@ -41,9 +41,9 @@ public class TalasliController {
 
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/borukesme/{id}")
-    public ResponseMessage<String> borukesmeTalasli(@PathVariable Long id, @RequestParam Integer quantity) {
-        return talasliService.borukesme(quantity,id);
+    @PostMapping("/borukesme/{id}")
+    public  ResponseMessage<TalasliImalatResponse>  borukesmeTalasli(@PathVariable Long id, @RequestBody @Valid TalasliImalatRequest request) {
+        return talasliService.borukesme(request,id);
     }
 
 

@@ -1,7 +1,11 @@
 package com.project.service.business.process;
 
 import com.project.domain.concretes.business.Order;
+import com.project.domain.concretes.business.process._enums.BlokLiftOperationType;
+import com.project.domain.concretes.business.process._enums.LiftMontajOperationTye;
 import com.project.domain.concretes.business.process._enums.TalasliOperationType;
+import com.project.domain.concretes.business.process.blokliftmontajamiri.BlokLiftMontaj;
+import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.enums.OrderType;
@@ -15,6 +19,7 @@ import com.project.repository.business.OrderRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
 import com.project.service.business.OrderStatusService;
 import com.project.service.helper.MethodHelper;
+import com.project.service.helper.MontajHelper;
 import com.project.service.helper.TalasliHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +41,7 @@ public class TalasliService {
     private final TalasliHelper talasliHelper;
     private final TalasliImalatRepository talasliImalatRepository;
     private final TalasliMapper talasliMapper;
-
+    private final MontajHelper montajHelper;
 
 
     public ResponseMessage<String> startStop(Long id) {
@@ -86,22 +92,40 @@ public class TalasliService {
                 .build();
     }
 
-
-    public ResponseMessage<String> borukesme(Integer quantity, Long id) {
-
-        Order order = methodHelper.findOrderById(id);
-        ProductionProcess productionProcessId= talasliHelper.findProductionProcessById(order.getProductionProcess().getId());
-        TalasliImalat boruKesme=talasliHelper.findTalasliImalatByProductionProcess(productionProcessId, TalasliOperationType.BORU_KESME_HAVSA);
-        boruKesme.completeOperation(quantity);
-        if(order.getOrderType().equals(OrderType.LIFT)){
-
-        }
-
-
-        return ResponseMessage.<String>builder()
-                .httpStatus(HttpStatus.OK)
-                .build();
-
-
-    }
+//    @Transactional
+//    public  ResponseMessage<TalasliImalatResponse>  borukesme(TalasliImalatRequest request, Long id) {
+//
+//        Order order = methodHelper.findOrderById(id);
+//        ProductionProcess productionProcess= talasliHelper.findProductionProcessById(order.getProductionProcess().getId());
+//        TalasliImalat boruKesme=talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.BORU_KESME_HAVSA);
+//        boruKesme.completeOperation(request.getCompletedQuantity());
+//
+//        ResponseMessage<TalasliImalatResponse>rs;
+//        if(!(order.getOrderType().equals(OrderType.BLOKLIFT))){
+//
+//            LiftMontaj liftMontaj =montajHelper.findLiftMontajByProductionProcess(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
+//            liftMontaj.completeOperation(request.getCompletedQuantity());
+//
+//
+//            return ResponseMessage.<TalasliImalatResponse>builder()
+//                    .message(SuccessMessages.ORDER_STARTED)
+//                    .returnBody(talasliMapper.mapTalasliToResponse(boruKesme))
+//                    .httpStatus(HttpStatus.OK)
+//                    .build();
+//
+//        }else if(order.getOrderType().equals(OrderType.BLOKLIFT)){
+//            BlokLiftMontaj blokLiftMontaj =  montajHelper.findBlokLiftMontajByOperationType( BlokLiftOperationType.BORU_KAPAMA);
+//            blokLiftMontaj.completeOperation(request.getCompletedQuantity());
+//
+//
+//            return MultipleResponses.<TalasliImalatResponse,TalasliImalatResponse,Void>builder()
+//                    .returnBody(talasliMapper.mapTalasliToResponse(blokLiftMontaj))
+//                    .returnBody2(talasliMapper.mapTalasliToResponse(boruKesme))
+//                    .message(SuccessMessages.ORDER_STARTED)
+//                    .httpStatus(HttpStatus.OK)
+//                    .build();
+//
+//        }
+//
+//    }
 }
