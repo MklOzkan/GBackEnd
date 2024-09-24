@@ -2,9 +2,11 @@ package com.project.service.business.process;
 
 import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.business.process._enums.BlokLiftOperationType;
+import com.project.domain.concretes.business.process._enums.KaliteKontrolStage;
 import com.project.domain.concretes.business.process._enums.LiftMontajOperationTye;
 import com.project.domain.concretes.business.process._enums.TalasliOperationType;
 import com.project.domain.concretes.business.process.blokliftmontajamiri.BlokLiftMontaj;
+import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol;
 import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
@@ -17,9 +19,11 @@ import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.repository.business.OrderRepository;
+import com.project.repository.business.process.KaliteKontrolRepository;
 import com.project.repository.business.process.PolisajImalatRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
 import com.project.service.business.OrderStatusService;
+import com.project.service.helper.KaliteKontrolHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.MontajHelper;
 import com.project.service.helper.TalasliHelper;
@@ -43,6 +47,8 @@ public class TalasliService {
     private final TalasliHelper talasliHelper;
     private final TalasliImalatRepository talasliImalatRepository;
     private final PolisajImalatRepository polisajImalatRepository;
+    private final KaliteKontrolRepository kaliteKontrolRepository;
+    private final KaliteKontrolHelper kaliteKontrolHelper;
     private final TalasliMapper talasliMapper;
     private final MontajHelper montajHelper;
 
@@ -173,6 +179,7 @@ public class TalasliService {
     public ResponseMessage<String> milTaslama(TalasliImalatRequest request, Long operationId) {
 
         ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
+        OrderType orderType = productionProcess.getOrder().getOrderType();
         TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
 
         if(miltaslama.getCompletedQuantity() == null){
@@ -184,26 +191,42 @@ public class TalasliService {
 
         miltaslama.completeOperation(request.getCompletedQuantity());
 
-        TalasliImalat isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+        TalasliImalat isilIslem;
+        KaliteKontrol afterMiltaslama;
 
-        if (isilIslem.getRemainingQuantity() == null) {
-            isilIslem.setRemainingQuantity(0);
+        if (orderType.equals(OrderType.PASLANMAZ)){
+            afterMiltaslama = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+            if (afterMiltaslama.getMilCount() == null) {
+                afterMiltaslama.setMilCount(0);
+                afterMiltaslama.setStartDate(LocalDateTime.now());
+            }
+
+            afterMiltaslama.setMilCount(request.getCompletedQuantity());
+            kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMiltaslama);
+        } else {
+            isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+            if (isilIslem.getRemainingQuantity() == null) {
+                isilIslem.setRemainingQuantity(0);
+            }
+
+            if(isilIslem.getCompletedQuantity() == null){
+                isilIslem.setCompletedQuantity(0);
+            }
+
+            isilIslem.updateNextOperation(request.getCompletedQuantity());
+            talasliImalatRepository.save(isilIslem);
         }
-
-        if(isilIslem.getCompletedQuantity() == null){
-            isilIslem.setCompletedQuantity(0);
-        }
-
-        isilIslem.updateNextOperation(request.getCompletedQuantity());
 
         talasliImalatRepository.save(miltaslama);
-        talasliImalatRepository.save(isilIslem);
 
         return ResponseMessage.<String>builder()
                 .message(SuccessMessages.MILTASLAMA_COMPLETED)
                 .httpStatus(HttpStatus.OK)
                 .build();
-    }@Transactional
+
+    }
+
+    @Transactional
     public ResponseMessage<String> isilIslem(TalasliImalatRequest request, Long operationId) {
 
         ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
@@ -237,5 +260,37 @@ public class TalasliService {
                 .message(SuccessMessages.ISILISLEM_COMPLETED)
                 .httpStatus(HttpStatus.OK)
                 .build();
+    }
+
+    @Transactional
+    public ResponseMessage<String> ezme(TalasliImalatRequest request, Long operationId) {
+
+        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
+        TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
+
+        if(ezme.getCompletedQuantity() == null){
+            ezme.setCompletedQuantity(0);
+        }
+        if (ezme.getRemainingQuantity() == null) {
+            ezme.setRemainingQuantity(0);
+        }
+
+        ezme.completeOperation(request.getCompletedQuantity());
+
+        KaliteKontrol afterEzme= kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+
+        if (afterEzme.getMilCount() == null) {
+            afterEzme.setMilCount(0);
+        }
+        afterEzme.setMilCount(request.getCompletedQuantity());
+
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterEzme);
+        talasliImalatRepository.save(ezme);
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.EZME_COMPLETED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+
     }
 }

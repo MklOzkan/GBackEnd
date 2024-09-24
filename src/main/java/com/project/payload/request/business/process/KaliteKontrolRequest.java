@@ -28,5 +28,7 @@ public class KaliteKontrolRequest {
 
     private Integer returnedToMilTaslama =0;//mil taşlama geri dönüş
 
+    private Long productionProcessId;//üretim işlemi id
+
     
 }

@@ -104,6 +104,14 @@ public class TalasliHelper {
 
     }
 
+    public TalasliImalat saveTalasliImalatWithReturn(TalasliImalat talasliImalat) {
+        return talasliImalatRepository.save(talasliImalat);
+    }
+
+    public void saveTalasliImalatWithoutReturn(TalasliImalat talasliImalat) {
+        talasliImalatRepository.save(talasliImalat);
+    }
+
 
 }
 
