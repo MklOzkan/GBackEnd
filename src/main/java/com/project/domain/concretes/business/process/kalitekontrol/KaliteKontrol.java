@@ -1,7 +1,9 @@
 package com.project.domain.concretes.business.process.kalitekontrol;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.KaliteKontroOperationType;
 import com.project.domain.concretes.business.process._enums.KaliteKontrolStage;
@@ -11,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,6 +41,12 @@ public class KaliteKontrol {
     private Integer returnedToIsilIslem;//isıl işlem geri dönüş
 
     private Integer returnedToMilTaslama;//mil taşlama geri dönüş
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endDate;
 
 
 

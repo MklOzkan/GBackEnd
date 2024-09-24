@@ -23,6 +23,8 @@ public class SuccessMessages {
     public static final String MILTORNALAMA_COMPLETED = "Miltornalama islemi basariliyla tamamlandi.";
     public static final String MILTASLAMA_COMPLETED = "Miltaslama islemi basariliyla tamamlandi.";
     public static final String ISILISLEM_COMPLETED = "Isıl işlem islemi basariliyla tamamlandi.";
+    public static final String EZME_COMPLETED = "Ezme islemi basariliyla tamamlandi.";
+    public static final String KALITE_KONTROL_UPDATED = "Kalite kontrol güncellendi";
 
     private SuccessMessages(){}
 }

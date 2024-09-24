@@ -67,5 +67,12 @@ public class TalasliController {
         return talasliService.isilIslem(request, operationId);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/ezme/{operationId}")
+    public ResponseMessage<String> ezme(@RequestBody @Valid TalasliImalatRequest  request, @PathVariable Long operationId) {
+
+        return talasliService.ezme(request, operationId);
+    }
+
 
 }
