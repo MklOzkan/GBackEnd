@@ -43,7 +43,28 @@ public class TalasliController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PostMapping("/borukesme/{id}")
     public  ResponseMessage<TalasliImalatResponse>  borukesmeTalasli(@PathVariable Long id, @RequestBody @Valid TalasliImalatRequest request) {
-        return talasliService.borukesme(request,id);
+        return null;//talasliService.borukesme(request,id);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/miltornalama/{operationId}")
+    public ResponseMessage<String> milTornalama(@RequestBody @Valid TalasliImalatRequest  request, @PathVariable Long operationId) {
+
+        return talasliService.milTornalama(request, operationId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/miltaslama/{operationId}")
+    public ResponseMessage<String> milTaslama(@RequestBody @Valid TalasliImalatRequest  request, @PathVariable Long operationId) {
+
+        return talasliService.milTaslama(request, operationId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/isilislem/{operationId}")
+    public ResponseMessage<String> isilIslem(@RequestBody @Valid TalasliImalatRequest  request, @PathVariable Long operationId) {
+
+        return talasliService.isilIslem(request, operationId);
     }
 
 
