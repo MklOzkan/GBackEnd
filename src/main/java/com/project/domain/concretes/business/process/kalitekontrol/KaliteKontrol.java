@@ -42,6 +42,14 @@ public class KaliteKontrol {
 
     private Integer returnedToMilTaslama;//mil taşlama geri dönüş
 
+    private int lastApproveCount;//son onay sayısı
+
+    private int lastScrapCount;//son hurda sayısı
+
+    private int lastReturnedToIsilIslem;//son isıl işlem geri dönüş
+
+    private int lastReturnedToMilTaslama;//son mil taşlama geri dönüş
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;
 
@@ -54,5 +62,72 @@ public class KaliteKontrol {
     @JsonIgnore
     @JoinColumn(name = "production_process_id", referencedColumnName = "id")
     private ProductionProcess productionProcess;
+
+    public void completedPart(int approveCount, int scrapCount, int returnedToIsilIslem, int returnedToMilTaslama) {
+        if (this.approveCount == null) {
+            this.approveCount = 0;
+        }
+        if (this.scrapCount == null) {
+            this.scrapCount = 0;
+        }
+        if (this.returnedToIsilIslem == null) {
+            this.returnedToIsilIslem = 0;
+        }
+        if (this.returnedToMilTaslama == null) {
+            this.returnedToMilTaslama = 0;
+        }
+
+        if (approveCount > 0) {
+            this.approveCount += approveCount;
+            this.milCount -= approveCount;
+            this.lastApproveCount = approveCount;
+        }
+        if (scrapCount > 0) {
+            this.scrapCount += scrapCount;
+            this.milCount -= scrapCount;
+            this.lastScrapCount = scrapCount;
+        }
+        if (returnedToIsilIslem > 0) {
+            this.returnedToIsilIslem += returnedToIsilIslem;
+            this.milCount -= returnedToIsilIslem;
+            this.lastReturnedToIsilIslem = returnedToIsilIslem;
+        }
+        if (returnedToMilTaslama > 0) {
+            this.returnedToMilTaslama += returnedToMilTaslama;
+            this.milCount -= returnedToMilTaslama;
+            this.lastReturnedToMilTaslama = returnedToMilTaslama;
+        }
+
+        if (this.milCount == 0) {
+            this.endDate = LocalDateTime.now();
+        }
+    }
+
+    public void nextOperationByKaliteKontrol(int completedQty) {
+        if (this.milCount == null) {
+            this.milCount = 0;
+            this.startDate = LocalDateTime.now();
+        }
+        this.milCount += completedQty;
+    }
+
+    public void removeLastCompletedQty() {
+        this.approveCount -= this.lastApproveCount;
+        this.scrapCount -= this.lastScrapCount;
+        this.returnedToIsilIslem -= this.lastReturnedToIsilIslem;
+        this.returnedToMilTaslama -= this.lastReturnedToMilTaslama;
+        this.milCount += (this.lastApproveCount + this.lastScrapCount + this.lastReturnedToIsilIslem + this.lastReturnedToMilTaslama);
+        this.lastApproveCount = 0;
+        this.lastScrapCount = 0;
+        this.lastReturnedToIsilIslem = 0;
+        this.lastReturnedToMilTaslama = 0;
+    }
+
+    public void removeLastFromNextOperation(int lastAmount) {
+        this.milCount -= lastAmount;
+        if (this.milCount == 0 && this.startDate != null) {
+            this.startDate = null;
+        }
+    }
     
 }

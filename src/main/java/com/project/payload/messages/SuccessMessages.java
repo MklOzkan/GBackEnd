@@ -25,6 +25,7 @@ public class SuccessMessages {
     public static final String ISILISLEM_COMPLETED = "Isıl işlem islemi basariliyla tamamlandi.";
     public static final String EZME_COMPLETED = "Ezme islemi basariliyla tamamlandi.";
     public static final String KALITE_KONTROL_UPDATED = "Kalite kontrol güncellendi";
+    public static final String LAST_CHANGE_REMOVED = "Son değişiklik kaldırıldı";
 
     private SuccessMessages(){}
 }

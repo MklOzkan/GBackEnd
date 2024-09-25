@@ -39,7 +39,6 @@ public class TalasliController {
         return talasliService.milkoparma(request, operationId);
     }
 
-
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PostMapping("/borukesme/{id}")
     public  ResponseMessage<TalasliImalatResponse>  borukesmeTalasli(@PathVariable Long id, @RequestBody @Valid TalasliImalatRequest request) {
@@ -72,6 +71,12 @@ public class TalasliController {
     public ResponseMessage<String> ezme(@RequestBody @Valid TalasliImalatRequest  request, @PathVariable Long operationId) {
 
         return talasliService.ezme(request, operationId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/removelastchange/{operationId}")
+    public ResponseMessage<String> removeLastChange(@PathVariable Long operationId) {
+        return talasliService.removeLastChange(operationId);
     }
 
 
