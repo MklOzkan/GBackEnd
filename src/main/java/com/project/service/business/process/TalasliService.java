@@ -335,8 +335,9 @@ public class TalasliService {
                         blokLiftMontaj.removeLastFromNextOperation(lastCompletedQty);
                         montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
                     }else {
-                    boruKapama.removeLastFromNextOperation(lastCompletedQty);
-                    montajHelper.saveLiftMontajWithoutReturn(boruKapama);
+                    //boruKapama.removeLastFromNextOperation(lastCompletedQty);
+                    //montajHelper.saveLiftMontajWithoutReturn(boruKapama);
+                    }
                 }else if (operationType.equals(TalasliOperationType.MIL_KOPARMA)){
                     nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
                     nextOperation.removeLastFromNextOperation(lastCompletedQty);
