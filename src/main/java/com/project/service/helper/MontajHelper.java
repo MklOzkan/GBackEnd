@@ -59,6 +59,22 @@ public class MontajHelper {
         return productionProcess.getBlokLiftOperations();
     }
 
+    public BlokLiftMontaj findBLByProductionProcessAndOperationType(ProductionProcess productionProcess, BlokLiftOperationType operationType) {
+        return productionProcess.getBlokLiftOperations()
+                .stream()
+                .filter(t -> t.getOperationType().equals(operationType))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.TALASLI_IMALAT_NOT_FOUND, operationType)));
+    }
+
+    public LiftMontaj findLiftByProductionProcessAndOperationType(ProductionProcess productionProcess, LiftMontajOperationTye operationType) {
+        return productionProcess.getLiftOperations()
+                .stream()
+                .filter(t -> t.getOperationType().equals(operationType))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.TALASLI_IMALAT_NOT_FOUND, operationType)));
+    }
+
     public LiftMontaj findLiftMontajByOperationType(LiftMontajOperationTye operationType) {
         return liftMontajRepository.findFirstByOperationType(operationType)
                 .orElseThrow(() -> new RuntimeException(String.format(ErrorMessages.TALASLI_IMALAT_OPERATION_TYPE_NOT_FOUND,operationType)));
@@ -79,4 +95,11 @@ public class MontajHelper {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.TALASLI_IMALAT_NOT_FOUND, id)));
     }
 
+    public void saveLiftMontajWithoutReturn(LiftMontaj liftMontaj) {
+        liftMontajRepository.save(liftMontaj);
+    }
+
+    public LiftMontaj saveLiftMontajWithReturn(LiftMontaj liftMontaj) {
+        return liftMontajRepository.save(liftMontaj);
+    }
 }
