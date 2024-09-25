@@ -102,4 +102,12 @@ public class MontajHelper {
     public LiftMontaj saveLiftMontajWithReturn(LiftMontaj liftMontaj) {
         return liftMontajRepository.save(liftMontaj);
     }
+
+    public void saveBlokLiftMontajWithoutReturn(BlokLiftMontaj blokLiftMontaj) {
+        blokLiftMontajRepository.save(blokLiftMontaj);
+    }
+
+    public BlokLiftMontaj saveBlokLiftMontajWithReturn(BlokLiftMontaj blokLiftMontaj) {
+        return blokLiftMontajRepository.save(blokLiftMontaj);
+    }
 }
