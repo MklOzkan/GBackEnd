@@ -21,4 +21,22 @@ public class KaliteKontrolController {
     public ResponseMessage<String> afterMilTaslamaKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
         return kaliteKontrolService.afterMilTaslamaKaliteKontrol(request, stageId);
     }
+    //TODO: Adem
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/afterezme/{stageId}")
+    public ResponseMessage<String> afterEzmeKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
+        return null;//kaliteKontrolService.afterEzmeKaliteKontrol(request, stageId);
+    }
+    //TODO: Cahit
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/afterpolisaj/{stageId}")
+    public ResponseMessage<String> afterPolisajKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
+        return null;//kaliteKontrolService.afterPolisajKaliteKontrol(request, stageId);
+    }
+    //TODO: Adem
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/aftermontaj/{stageId}")
+    public ResponseMessage<String> afterMontajKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
+        return null;//kaliteKontrolService.afterMontajKaliteKontrol(request, stageId);
+    }
 }
