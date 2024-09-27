@@ -28,4 +28,10 @@ public class BlokLiftResponse extends BaseOperationResponse {
 
     private BlokLiftOperationType operationType;
 
+    private int lastMilCount;//son mil sayısı
+
+    private int lastPipeCount;//son boru sayısı
+
+    private Integer pipeCount;//boru sayısı
+
 }

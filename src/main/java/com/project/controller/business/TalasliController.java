@@ -40,9 +40,9 @@ public class TalasliController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PostMapping("/borukesme/{id}")
-    public  ResponseMessage<TalasliImalatResponse>  borukesmeTalasli(@PathVariable Long id, @RequestBody @Valid TalasliImalatRequest request) {
-        return null;//talasliService.borukesme(request,id);
+    @PutMapping("/borukesme/{operationId}")
+    public  ResponseMessage<String>  borukesmeTalasli(@PathVariable Long operationId, @RequestBody @Valid TalasliImalatRequest request) {
+        return talasliService.borukesme(request,operationId);
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
@@ -74,7 +74,7 @@ public class TalasliController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/removelastchange/{operationId}")
+    @GetMapping("/removelastchange/{operationId}")
     public ResponseMessage<String> removeLastChange(@PathVariable Long operationId) {
         return talasliService.removeLastChange(operationId);
     }

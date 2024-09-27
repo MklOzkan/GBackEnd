@@ -2,14 +2,20 @@ package com.project.domain.concretes.business.abstracts;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public abstract class BaseOperation {
 
     @Column(name = "remaining_quantity")
@@ -47,10 +53,9 @@ public abstract class BaseOperation {
         this.completedQuantity += completedQty;  // Tamamlanan miktar
         this.remainingQuantity -= completedQty;  // Kalan miktar
         this.lastCompletedQty = completedQty;  // Son tamamlanan miktar
-        if (this.remainingQuantity <= 0) {
-            this.isCompleted = true;  // Kalan miktar sıfırlanırsa operasyon tamamlanır
-            this.endDate = LocalDateTime.now();  // Bitiş tarihi atanır
-        }
+//        if (this.remainingQuantity < 0) {
+//            this.remainingQuantity = 0;  // Kalan miktar sıfırdan küçük olamaz
+//        }
     }
 
     public void updateNextOperation(int completedQty) {
@@ -68,8 +73,11 @@ public abstract class BaseOperation {
 
     public void removeLastFromNextOperation(int lastCompletedQty) {
         this.remainingQuantity -= lastCompletedQty;
+
         if (this.remainingQuantity == 0 && this.endDate != null) {
             this.endDate = null;
         }
+
+        if (this.remainingQuantity==0) this.remainingQuantity=null;
     }
 }

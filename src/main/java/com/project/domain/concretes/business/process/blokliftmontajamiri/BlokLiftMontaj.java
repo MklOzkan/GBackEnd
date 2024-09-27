@@ -44,6 +44,23 @@ public class BlokLiftMontaj extends BaseOperation {
     @JoinColumn(name = "production_process_id", referencedColumnName = "id")
     private ProductionProcess productionProcess;
 
+    public void updateNextMilOperation(int completedQty) {
+        this.lastMilCount = completedQty;
+        if (this.getRemainingQuantity() == null) {
+            this.setRemainingQuantity(0);
+        }
+        this.setRemainingQuantity(this.getRemainingQuantity() + completedQty);
+
+    }
+
+    public void updateNextPipeOperation(int completedQty) {
+        this.lastPipeCount = completedQty;
+        if (this.pipeCount == null) {
+            this.pipeCount = 0;
+        }
+        this.pipeCount += completedQty;
+    }
+
     public void updateCompletedQuantity(){
 
         if (this.milCount>=this.pipeCount){
@@ -68,15 +85,14 @@ public class BlokLiftMontaj extends BaseOperation {
         this.pipeCount+=this.lastPipeCount;
     }
 
-    public void removeLastMilCount(){
-        this.milCount-=this.lastMilCount;
-        this.removeLastFromNextOperation(this.lastMilCount);
+    public void removeLastMilCount(int lastMilCount){
+
+        this.removeLastFromNextOperation(lastMilCount);
         this.lastMilCount=0;
     }
 
-    public void removeLastPipeCount(){
-        this.pipeCount-=this.lastPipeCount;
-        this.removeLastFromNextOperation(this.lastPipeCount);
+    public void removeLastPipeCount(int lastPipeCount){
+        this.pipeCount-=lastPipeCount;
         this.lastPipeCount=0;
     }
 
