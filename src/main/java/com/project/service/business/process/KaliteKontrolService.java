@@ -61,4 +61,46 @@ public class KaliteKontrolService {
     }
 
 
+    public ResponseMessage<String> afterEzmeKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+
+        kaliteKontrol.completedPart(request.getApproveCount(), request.getScrapCount(), request.getReturnedToIsilIslem(), request.getReturnedToMilTaslama());
+
+        if(request.getApproveCount()>0){
+            TalasliImalat polisaj = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.POLISAJ);
+            polisaj.updateNextOperation(request.getApproveCount());
+            talasliHelper.saveTalasliImalatWithoutReturn(polisaj);
+        }
+
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+
+    }
+
+
+    public ResponseMessage<String> afterMontajKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+
+        kaliteKontrol.completedPart(request.getApproveCount(), request.getScrapCount(), request.getReturnedToIsilIslem(), request.getReturnedToMilTaslama());
+
+        if(request.getApproveCount()>0){
+            TalasliImalat boyaVePaketleme  = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.PAKETLEME);
+            boyaVePaketleme .updateNextOperation(request.getApproveCount());
+            talasliHelper.saveTalasliImalatWithoutReturn(boyaVePaketleme );
+        }
+
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+
+    }
 }

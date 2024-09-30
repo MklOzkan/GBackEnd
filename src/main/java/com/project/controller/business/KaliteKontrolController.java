@@ -25,7 +25,7 @@ public class KaliteKontrolController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/afterezme/{stageId}")
     public ResponseMessage<String> afterEzmeKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
-        return null;//kaliteKontrolService.afterEzmeKaliteKontrol(request, stageId);
+        return kaliteKontrolService.afterEzmeKaliteKontrol(request, stageId);
     }
     //TODO: Cahit
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
@@ -37,6 +37,6 @@ public class KaliteKontrolController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/aftermontaj/{stageId}")
     public ResponseMessage<String> afterMontajKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
-        return null;//kaliteKontrolService.afterMontajKaliteKontrol(request, stageId);
+        return kaliteKontrolService.afterMontajKaliteKontrol(request, stageId);
     }
 }
