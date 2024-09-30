@@ -24,4 +24,6 @@ public abstract class BaseOperationRequest {
 
     private Boolean isCompleted = false;  // Operasyonun tamamlanma durumu
 
+    private boolean active = false;  // Operasyonun aktif olup olmadığı
+
 }

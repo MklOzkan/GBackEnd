@@ -37,6 +37,7 @@ public class TalasliMapper {
                 .operationType(String.valueOf(talasliImalat.getOperationType()))
                 .productionProcessId(talasliImalat.getProductionProcess().getId())
                 .lastCompletedQty(talasliImalat.getLastCompletedQty())
+                .active(talasliImalat.isActive())
                 .build();
     }
 
@@ -56,6 +57,7 @@ public class TalasliMapper {
                 .completedQuantity(productionProcess.getCompletedQuantity())
                 .remainingQuantity(productionProcess.getRemainingQuantity())
                 .isCompleted(productionProcess.getIsCompleted())
+                .active(productionProcess.isActive())
                 .build();
     }
 }

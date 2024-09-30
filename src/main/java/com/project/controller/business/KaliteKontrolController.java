@@ -2,12 +2,18 @@ package com.project.controller.business;
 
 
 import com.project.payload.request.business.process.KaliteKontrolRequest;
+import com.project.payload.response.business.MultipleResponses;
+import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.process.KaliteKontrolResponse;
+import com.project.payload.response.business.process.ProductionProcessResponse;
 import com.project.service.business.process.KaliteKontrolService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/kalitekontrol")
@@ -38,5 +44,11 @@ public class KaliteKontrolController {
     @PutMapping("/aftermontaj/{stageId}")
     public ResponseMessage<String> afterMontajKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
         return null;//kaliteKontrolService.afterMontajKaliteKontrol(request, stageId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getAllByProductionProcessId/{id}")
+    public MultipleResponses<OrderResponse, ProductionProcessResponse, List<KaliteKontrolResponse> > getKaliteKontrolStages(@PathVariable Long id) {
+        return kaliteKontrolService.getKaliteKontrolStages(id);
     }
 }
