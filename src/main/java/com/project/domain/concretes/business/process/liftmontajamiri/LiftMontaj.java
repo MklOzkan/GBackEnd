@@ -22,9 +22,9 @@ public class LiftMontaj extends BaseOperation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer milRemainingCount;//mil sayısı
+    private int milCount;//mil sayısı
 
-    private Integer milCompletedCount;
+    private int lastMilCount;//son mil sayısı
 
     private Integer scrapPipeCount;//hurda boru sayısı
 

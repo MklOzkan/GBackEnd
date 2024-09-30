@@ -3,9 +3,11 @@ package com.project.service.business.process;
 import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.BoyaPaketOperationType;
+import com.project.domain.concretes.business.process._enums.LiftMontajOperationTye;
 import com.project.domain.concretes.business.process._enums.TalasliOperationType;
 import com.project.domain.concretes.business.process.boyavepaket.BoyaVePaketleme;
 import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol;
+import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
 import com.project.domain.enums.OrderType;
@@ -20,10 +22,7 @@ import com.project.payload.response.business.process.KaliteKontrolResponse;
 import com.project.payload.response.business.process.ProductionProcessResponse;
 import com.project.repository.business.process.KaliteKontrolRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
-import com.project.service.helper.BoyaPaketHelper;
-import com.project.service.helper.KaliteKontrolHelper;
-import com.project.service.helper.PolisajHelper;
-import com.project.service.helper.TalasliHelper;
+import com.project.service.helper.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,6 +42,7 @@ public class KaliteKontrolService {
     private final KaliteKontrolMapper kaliteKontrolMapper;
     private final BoyaPaketHelper boyaPaketHelper;
     private final PolisajHelper polisajHelper;
+    private final MontajHelper montajHelper;
 
     public ResponseMessage<String> afterMilTaslamaKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
@@ -81,13 +81,15 @@ public class KaliteKontrolService {
     public ResponseMessage<String> afterEzmeKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+        LiftMontaj liftMontaj;
+        int approveCount = request.getApproveCount();
 
-        kaliteKontrol.completedPart(request.getApproveCount(), request.getScrapCount(), request.getReturnedToIsilIslem(), request.getReturnedToMilTaslama());
+        kaliteKontrol.completedPart(approveCount, request.getScrapCount(), 0, request.getReturnedToMilTaslama());
 
         if(request.getApproveCount()>0){
-            PolisajImalat polisaj = productionProcess.getPolisajOperation();
-            polisaj.updateNextOperation(request.getApproveCount());
-            polisajHelper.savePolisajWithoutReturn(polisaj);
+            liftMontaj  = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
+            liftMontaj.setMilCount(approveCount);
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
         }
 
         kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
