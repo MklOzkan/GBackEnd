@@ -50,6 +50,9 @@ public class KaliteKontrol {
 
     private int lastReturnedToMilTaslama;//son mil taşlama geri dönüş
 
+    private boolean active = false;  // Operasyonun aktif olup olmadığı
+
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;
 

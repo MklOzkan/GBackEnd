@@ -25,4 +25,6 @@ public abstract class BaseOperationResponse {
 
     private int lastCompletedQty;  // Son tamamlanan miktar
 
+    private boolean active;  // Operasyonun aktif olup olmadığı
+
 }

@@ -30,5 +30,7 @@ public class KaliteKontrolRequest {
 
     private Long productionProcessId;//üretim işlemi id
 
+    private boolean active = false;  // Operasyonun aktif olup olmadığı
+
     
 }

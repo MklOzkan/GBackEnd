@@ -33,6 +33,8 @@ public abstract class BaseOperation {
     @Column(name = "is_completed")
     private Boolean isCompleted = false;  // Operasyonun tamamlanma durumu
 
+    private boolean active = false;  // Operasyonun aktif olup olmadığı
+
     private int lastCompletedQty;  // Son tamamlanan miktar
 
     public void startOperation() {
