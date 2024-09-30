@@ -49,4 +49,23 @@ public class PolisajService {
 
 
     }
+
+    public ResponseMessage<String> removeLastChange(Long id) {
+        PolisajImalat polisajImalat = polisajHelper.findPolisajById(id);
+        ProductionProcess productionProcess = polisajImalat.getProductionProcess();
+
+        KaliteKontrol afterPolisaj = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
+        afterPolisaj.removeLastFromNextOperation(polisajImalat.getLastCompletedQty());
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterPolisaj);
+
+        polisajImalat.removeLastCompletedQty();
+        polisajHelper.savePolisajWithoutReturn(polisajImalat);
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.POLISAJ_UPDATED)
+                .httpStatus(HttpStatus.OK).build();
+
+
+
+    }
 }
