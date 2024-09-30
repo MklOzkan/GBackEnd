@@ -21,7 +21,7 @@ public class BlokLiftMontaj extends BaseOperation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer milCount;//mil sayısı
+    private int milCount;//mil sayısı
 
     private int lastMilCount;//son mil sayısı
 
