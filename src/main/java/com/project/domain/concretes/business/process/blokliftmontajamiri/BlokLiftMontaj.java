@@ -53,6 +53,19 @@ public class BlokLiftMontaj extends BaseOperation {
 
     }
 
+    public void updateNextMilOperation1(int completedQty) {
+
+
+
+        this.lastMilCount = completedQty;
+        if (this.getRemainingQuantity() == null) {
+            this.setRemainingQuantity(0);
+        }
+        this.setRemainingQuantity(this.getRemainingQuantity() + completedQty);
+
+    }
+
+
     public void updateNextPipeOperation(int completedQty) {
         this.lastPipeCount = completedQty;
         if (this.pipeCount == null) {

@@ -2,9 +2,11 @@ package com.project.service.business.process;
 
 import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.business.process.ProductionProcess;
+import com.project.domain.concretes.business.process._enums.BlokLiftOperationType;
 import com.project.domain.concretes.business.process._enums.BoyaPaketOperationType;
 import com.project.domain.concretes.business.process._enums.LiftMontajOperationTye;
 import com.project.domain.concretes.business.process._enums.TalasliOperationType;
+import com.project.domain.concretes.business.process.blokliftmontajamiri.BlokLiftMontaj;
 import com.project.domain.concretes.business.process.boyavepaket.BoyaVePaketleme;
 import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol;
 import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
@@ -26,6 +28,7 @@ import com.project.service.helper.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -135,5 +138,38 @@ public class KaliteKontrolService {
                 .returnBody(orderMapper.mapOrderToOrderResponse(order))
 
                 .build();
+    }
+
+    public ResponseMessage<String> afterPolisajKaliteKontrol(KaliteKontrolRequest request, Long stageId) {
+
+        KaliteKontrol kaliteKontrol=kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess=kaliteKontrol.getProductionProcess();
+        Order order=productionProcess.getOrder();
+        OrderType orderType=order.getOrderType();
+
+        BlokLiftMontaj blokLiftMontaj;
+
+
+
+         int approveCount= request.getApproveCount();
+         int scrap=request.getScrapCount();
+         int isilIslem= request.getReturnedToIsilIslem();
+         int milTaslama=request.getReturnedToMilTaslama();
+
+
+
+        if(orderType.equals(OrderType.BLOKLIFT)){
+            kaliteKontrol.completedPart(approveCount,scrap,isilIslem,milTaslama);
+            blokLiftMontaj=montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+            blokLiftMontaj.updateNextMilOperation(approveCount);
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+        }else{
+
+        }
+
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+
+
+
     }
 }

@@ -22,4 +22,10 @@ public class PolisajController {
         return polisajService.updatePolisaj(id, request);
     }
 
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('Employee')")
+    public ResponseMessage<String>removeLastChange(@PathVariable Long id){
+        return polisajService.removeLastChange(id);
+    }
 }
