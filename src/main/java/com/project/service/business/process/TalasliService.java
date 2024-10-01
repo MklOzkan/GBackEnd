@@ -68,27 +68,12 @@ public class TalasliService {
     @Transactional
     public ResponseMessage<String> milkoparma(TalasliImalatRequest request, Long operationId) {
 
-        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
-        TalasliImalat milkoparma = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
-
-        if(milkoparma.getCompletedQuantity() == null){
-            milkoparma.setCompletedQuantity(0);
-        }
-        if (milkoparma.getRemainingQuantity() == null) {
-            milkoparma.setRemainingQuantity(0);
-        }
+        TalasliImalat milkoparma = talasliHelper.findOperationById(operationId);
+        ProductionProcess productionProcess = milkoparma.getProductionProcess();
 
         milkoparma.completeOperation(request.getCompletedQuantity());
 
         TalasliImalat milTornalama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
-
-        if (milTornalama.getRemainingQuantity() == null) {
-            milTornalama.setRemainingQuantity(0);
-        }
-
-        if(milTornalama.getCompletedQuantity() == null){
-            milTornalama.setCompletedQuantity(0);
-        }
 
         milTornalama.updateNextOperation(request.getCompletedQuantity());
 
@@ -105,38 +90,27 @@ public class TalasliService {
     public  ResponseMessage<String>  borukesme(TalasliImalatRequest request, Long id) {
 
         TalasliImalat boruKesme = talasliHelper.findOperationById(id);
-        ProductionProcess productionProcess= talasliHelper.findProductionProcessById(request.getProductionProcessId());
+        ProductionProcess productionProcess= boruKesme.getProductionProcess();
         OrderType orderType = productionProcess.getOrder().getOrderType();
         LiftMontaj liftBoruKapama;
-        BlokLiftMontaj blokLiftBoruKapama;
-
-        if (boruKesme.getCompletedQuantity() == null) {
-            boruKesme.setCompletedQuantity(0);
-        }
+        BlokLiftMontaj blokLiftBoru;
 
         boruKesme.completeOperation(request.getCompletedQuantity());
 
         if((orderType.equals(OrderType.LIFT)||orderType.equals(OrderType.PASLANMAZ))){
             liftBoruKapama =montajHelper.findLiftMontajByProductionProcess(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
-            if (liftBoruKapama.getCompletedQuantity() == null||liftBoruKapama.getRemainingQuantity() == null) {
-                liftBoruKapama.setCompletedQuantity(0);
-                liftBoruKapama.setRemainingQuantity(0);
-            }
             liftBoruKapama.completeOperation(request.getCompletedQuantity());
             montajHelper.saveLiftMontajWithoutReturn(liftBoruKapama);
 
         }else if(orderType.equals(OrderType.DAMPER)){
-            blokLiftBoruKapama = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAPAMA);
-            if (blokLiftBoruKapama.getCompletedQuantity() == null||blokLiftBoruKapama.getRemainingQuantity() == null) {
-                blokLiftBoruKapama.setCompletedQuantity(0);
-                blokLiftBoruKapama.setRemainingQuantity(0);
-            }
-            blokLiftBoruKapama.updateNextOperation(request.getCompletedQuantity());
-            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKapama);
+            blokLiftBoru = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAPAMA);
+            blokLiftBoru.updateNextOperation(request.getCompletedQuantity());
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoru);
         }else {
-            blokLiftBoruKapama = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
-            blokLiftBoruKapama.updateNextPipeOperation(request.getCompletedQuantity());
-            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKapama);
+            blokLiftBoru = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+            blokLiftBoru.updateNextPipeOperation(request.getCompletedQuantity());
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoru);
+            montajHelper.compareMilCountAndPipeCountForBLMontaj(blokLiftBoru);
         }
 
         talasliHelper.saveTalasliImalatWithoutReturn(boruKesme);
@@ -152,27 +126,12 @@ public class TalasliService {
     @Transactional
     public ResponseMessage<String> milTornalama(TalasliImalatRequest request, Long operationId) {
 
-        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
-        TalasliImalat miltornalama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
-
-        if(miltornalama.getCompletedQuantity() == null){
-            miltornalama.setCompletedQuantity(0);
-        }
-        if (miltornalama.getRemainingQuantity() == null) {
-            miltornalama.setRemainingQuantity(0);
-        }
+        TalasliImalat miltornalama = talasliHelper.findOperationById(operationId);
+        ProductionProcess productionProcess = miltornalama.getProductionProcess();
 
         miltornalama.completeOperation(request.getCompletedQuantity());
 
         TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
-
-        if (miltaslama.getRemainingQuantity() == null) {
-            miltaslama.setRemainingQuantity(0);
-        }
-
-        if(miltornalama.getCompletedQuantity() == null){
-            miltaslama.setCompletedQuantity(0);
-        }
 
         miltaslama.updateNextOperation(request.getCompletedQuantity());
 
@@ -189,16 +148,9 @@ public class TalasliService {
     @Transactional
     public ResponseMessage<String> milTaslama(TalasliImalatRequest request, Long operationId) {
 
-        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
+        TalasliImalat miltaslama = talasliHelper.findOperationById(operationId);
+        ProductionProcess productionProcess = miltaslama.getProductionProcess();
         OrderType orderType = productionProcess.getOrder().getOrderType();
-        TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
-
-        if(miltaslama.getCompletedQuantity() == null){
-            miltaslama.setCompletedQuantity(0);
-        }
-        if (miltaslama.getRemainingQuantity() == null) {
-            miltaslama.setRemainingQuantity(0);
-        }
 
         miltaslama.completeOperation(request.getCompletedQuantity());
 
@@ -207,21 +159,12 @@ public class TalasliService {
 
         if (orderType.equals(OrderType.PASLANMAZ)){
             afterMiltaslama = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
-
             afterMiltaslama.nextOperationByKaliteKontrol(request.getCompletedQuantity());
             kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMiltaslama);
         } else {
             isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
-            if (isilIslem.getRemainingQuantity() == null) {
-                isilIslem.setRemainingQuantity(0);
-            }
-
-            if(isilIslem.getCompletedQuantity() == null){
-                isilIslem.setCompletedQuantity(0);
-            }
-
             isilIslem.updateNextOperation(request.getCompletedQuantity());
-            talasliImalatRepository.save(isilIslem);
+            talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
         }
 
         talasliImalatRepository.save(miltaslama);
@@ -235,28 +178,12 @@ public class TalasliService {
 
     @Transactional
     public ResponseMessage<String> isilIslem(TalasliImalatRequest request, Long operationId) {
-
-        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
-        TalasliImalat isilislem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
-
-        if(isilislem.getCompletedQuantity() == null){
-            isilislem.setCompletedQuantity(0);
-        }
-        if (isilislem.getRemainingQuantity() == null) {
-            isilislem.setRemainingQuantity(0);
-        }
+        TalasliImalat isilislem = talasliHelper.findOperationById(operationId);
+        ProductionProcess productionProcess = isilislem.getProductionProcess();
 
         isilislem.completeOperation(request.getCompletedQuantity());
 
         PolisajImalat polisajImalat = talasliHelper.findPolisajImalatByProductionProcess(productionProcess);
-
-        if (polisajImalat.getRemainingQuantity() == null) {
-            polisajImalat.setRemainingQuantity(0);
-        }
-
-        if(polisajImalat.getCompletedQuantity() == null){
-            polisajImalat.setCompletedQuantity(0);
-        }
 
         polisajImalat.updateNextOperation(request.getCompletedQuantity());
 
@@ -271,20 +198,12 @@ public class TalasliService {
 
     @Transactional
     public ResponseMessage<String> ezme(TalasliImalatRequest request, Long operationId) {
-
-        ProductionProcess productionProcess = talasliHelper.findProductionProcessById(request.getProductionProcessId());
-        TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
-
-        if(ezme.getCompletedQuantity() == null){
-            ezme.setCompletedQuantity(0);
-        }
-        if (ezme.getRemainingQuantity() == null) {
-            ezme.setRemainingQuantity(0);
-        }
+        TalasliImalat ezme = talasliHelper.findOperationById(operationId);
+        ProductionProcess productionProcess = ezme.getProductionProcess();
 
         ezme.completeOperation(request.getCompletedQuantity());
 
-        KaliteKontrol afterEzme= kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+        KaliteKontrol afterEzme= kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_EZME);
 
         afterEzme.nextOperationByKaliteKontrol(request.getCompletedQuantity());
 
@@ -297,136 +216,78 @@ public class TalasliService {
                 .build();
 
     }
-
+    @Transactional
     public ResponseMessage<String> removeLastChange(@Valid Long operationId) {
-
         TalasliImalat talasliImalat = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = talasliImalat.getProductionProcess();
         TalasliOperationType operationType = talasliImalat.getOperationType();
         int lastCompletedQty = talasliImalat.getLastCompletedQty();
-        OrderType orderType = talasliImalat.getProductionProcess().getOrder().getOrderType();
-        TalasliImalat nextOperation;
-        KaliteKontrol kaliteKontrol;
+        OrderType orderType = productionProcess.getOrder().getOrderType();
         PolisajImalat polisajImalat = talasliHelper.findPolisajImalatByProductionProcess(productionProcess);
-        LiftMontaj boruKapama;
-        BlokLiftMontaj blokLiftMontaj;
 
-        if (operationType.equals(TalasliOperationType.BORU_KESME_HAVSA)){
-            if(orderType.equals(OrderType.BLOKLIFT)){
-                blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
-                blokLiftMontaj.removeLastPipeCount(lastCompletedQty);
-                montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
-            }else if(orderType.equals(OrderType.DAMPER)){
-                blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAPAMA);
-                blokLiftMontaj.removeLastFromNextOperation(lastCompletedQty);
-                montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
-            }
-            else {
-                boruKapama= montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
-                boruKapama.removeLastFromNextOperation(lastCompletedQty);
-                montajHelper.saveLiftMontajWithoutReturn(boruKapama);
-            }
-        }else if (operationType.equals(TalasliOperationType.MIL_KOPARMA)){
-            nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
-            nextOperation.removeLastFromNextOperation(lastCompletedQty);
-            talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-        } else if (operationType.equals(TalasliOperationType.MIL_TORNALAMA)){
-            nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
-            nextOperation.removeLastFromNextOperation(lastCompletedQty);
-            talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-        } else if (operationType.equals(TalasliOperationType.MIL_TASLAMA)){
-            if ((orderType.equals(OrderType.PASLANMAZ))){
-                kaliteKontrol = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+        switch (operationType) {
+            case BORU_KESME_HAVSA:
+                handleBoruKesmeHavsa(productionProcess, orderType, lastCompletedQty);
+                break;
+            case MIL_KOPARMA:
+                handleNextOperation(productionProcess, TalasliOperationType.MIL_TORNALAMA, lastCompletedQty);
+                break;
+            case MIL_TORNALAMA:
+                handleNextOperation(productionProcess, TalasliOperationType.MIL_TASLAMA, lastCompletedQty);
+                break;
+            case MIL_TASLAMA:
+                handleMilTaslama(productionProcess, orderType, lastCompletedQty);
+                break;
+            case ISIL_ISLEM:
+                polisajImalat.removeLastFromNextOperation(lastCompletedQty);
+                polisajImalatRepository.save(polisajImalat);
+                break;
+            case EZME:
+                KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_EZME);
                 kaliteKontrol.removeLastFromNextOperation(lastCompletedQty);
                 kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
-            }else {
-                nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
-                nextOperation.removeLastFromNextOperation(lastCompletedQty);
-                talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-            }
-        } else if (operationType.equals(TalasliOperationType.ISIL_ISLEM)){
-            polisajImalat.removeLastFromNextOperation(lastCompletedQty);
-            polisajImalatRepository.save(polisajImalat);
-        }else if (operationType.equals(TalasliOperationType.EZME)){
-            kaliteKontrol = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_EZME);
-            kaliteKontrol.removeLastFromNextOperation(lastCompletedQty);
-            kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
         }
 
         talasliImalat.removeLastCompletedQty();
         talasliImalatRepository.save(talasliImalat);
 
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.LAST_CHANGE_REMOVED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
 
+    private void handleBoruKesmeHavsa(ProductionProcess productionProcess, OrderType orderType, int lastCompletedQty) {
+        if (orderType.equals(OrderType.BLOKLIFT)) {
+            BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+            blokLiftMontaj.removeLastPipeCount(lastCompletedQty);
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+            montajHelper.compareMilCountAndPipeCountForBLMontaj(blokLiftMontaj);
+        } else if (orderType.equals(OrderType.DAMPER)) {
+            BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAPAMA);
+            blokLiftMontaj.removeLastFromNextOperation(lastCompletedQty);
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+        } else {
+            LiftMontaj boruKapama = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
+            boruKapama.removeLastFromNextOperation(lastCompletedQty);
+            montajHelper.saveLiftMontajWithoutReturn(boruKapama);
+        }
+    }
 
+    private void handleNextOperation(ProductionProcess productionProcess, TalasliOperationType nextOperationType, int lastCompletedQty) {
+        TalasliImalat nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, nextOperationType);
+        nextOperation.removeLastFromNextOperation(lastCompletedQty);
+        talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
+    }
 
-
-//            if (orderType.equals(OrderType.PASLANMAZ)){
-//                if (operationType.equals(TalasliOperationType.BORU_KESME_HAVSA)){
-//                    boruKapama = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
-//                    boruKapama.removeLastFromNextOperation(lastCompletedQty);
-//                    montajHelper.saveLiftMontajWithoutReturn(boruKapama);
-//                }else if (operationType.equals(TalasliOperationType.MIL_KOPARMA)){
-//                    nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
-//                    nextOperation.removeLastFromNextOperation(lastCompletedQty);
-//                    talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-//                } else if (operationType.equals(TalasliOperationType.MIL_TORNALAMA)){
-//                    nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
-//                    nextOperation.removeLastFromNextOperation(lastCompletedQty);
-//                    talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-//                } else if (operationType.equals(TalasliOperationType.MIL_TASLAMA)){
-//                    kaliteKontrol = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
-//                    kaliteKontrol.removeLastFromNextOperation(lastCompletedQty);
-//                    kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
-//
-//                } else if (operationType.equals(TalasliOperationType.EZME)){
-//                    kaliteKontrol = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_EZME);
-//                    kaliteKontrol.removeLastFromNextOperation(lastCompletedQty);
-//                    kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
-//                }
-//
-//                talasliImalat.removeLastCompletedQty();
-//            }else {
-//                if (operationType.equals(TalasliOperationType.BORU_KESME_HAVSA)){
-//                    if(orderType.equals(OrderType.BLOKLIFT)){
-//                        blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
-//                        blokLiftMontaj.removeLastPipeCount(lastCompletedQty);
-//                        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
-//                    }else if(orderType.equals(OrderType.DAMPER)){
-//                        blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAPAMA);
-//                        blokLiftMontaj.removeLastFromNextOperation(lastCompletedQty);
-//                        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
-//                    }
-//                    else {
-//                        boruKapama= montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
-//                    boruKapama.removeLastFromNextOperation(lastCompletedQty);
-//                    montajHelper.saveLiftMontajWithoutReturn(boruKapama);
-//                    }
-//                }else if (operationType.equals(TalasliOperationType.MIL_KOPARMA)){
-//                    nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TORNALAMA);
-//                    nextOperation.removeLastFromNextOperation(lastCompletedQty);
-//                    talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-//                } else if (operationType.equals(TalasliOperationType.MIL_TORNALAMA)){
-//                    nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
-//                    nextOperation.removeLastFromNextOperation(lastCompletedQty);
-//                    talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-//                } else if (operationType.equals(TalasliOperationType.MIL_TASLAMA)){
-//                   nextOperation = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
-//                    nextOperation.removeLastFromNextOperation(lastCompletedQty);
-//                    talasliHelper.saveTalasliImalatWithoutReturn(nextOperation);
-//
-//                } else if (operationType.equals(TalasliOperationType.ISIL_ISLEM)){
-//                    polisajImalat.removeLastFromNextOperation(lastCompletedQty);
-//                    polisajImalatRepository.save(polisajImalat);
-//                }
-//
-//                talasliImalat.removeLastCompletedQty();
-//            }
-
-            talasliImalatRepository.save(talasliImalat);
-
-            return ResponseMessage.<String>builder()
-                    .message(SuccessMessages.LAST_CHANGE_REMOVED)
-                    .httpStatus(HttpStatus.OK)
-                    .build();
+    private void handleMilTaslama(ProductionProcess productionProcess, OrderType orderType, int lastCompletedQty) {
+        if (orderType.equals(OrderType.PASLANMAZ)) {
+            KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+            kaliteKontrol.removeLastFromNextOperation(lastCompletedQty);
+            kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+        } else {
+            handleNextOperation(productionProcess, TalasliOperationType.ISIL_ISLEM, lastCompletedQty);
+        }
     }
 }

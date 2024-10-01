@@ -2,10 +2,7 @@ package com.project.service.business.process;
 
 import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.business.process.ProductionProcess;
-import com.project.domain.concretes.business.process._enums.BlokLiftOperationType;
-import com.project.domain.concretes.business.process._enums.BoyaPaketOperationType;
-import com.project.domain.concretes.business.process._enums.LiftMontajOperationTye;
-import com.project.domain.concretes.business.process._enums.TalasliOperationType;
+import com.project.domain.concretes.business.process._enums.*;
 import com.project.domain.concretes.business.process.blokliftmontajamiri.BlokLiftMontaj;
 import com.project.domain.concretes.business.process.boyavepaket.BoyaVePaketleme;
 import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol;
@@ -23,15 +20,12 @@ import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.business.process.KaliteKontrolResponse;
 import com.project.payload.response.business.process.ProductionProcessResponse;
 import com.project.repository.business.process.KaliteKontrolRepository;
-import com.project.repository.business.process.TalasliImalatRepository;
 import com.project.service.helper.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -42,82 +36,60 @@ public class KaliteKontrolService {
     private final KaliteKontrolHelper kaliteKontrolHelper;
     private final TalasliHelper talasliHelper;
     private final OrderMapper orderMapper;
-    private final KaliteKontrolMapper kaliteKontrolMapper;
-    private final BoyaPaketHelper boyaPaketHelper;
     private final PolisajHelper polisajHelper;
     private final MontajHelper montajHelper;
-
+    //paslanmaz icin mil taslama sonrası kalite kontrol
     public ResponseMessage<String> afterMilTaslamaKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
         TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
-        TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
-        TalasliImalat isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
 
-        kaliteKontrol.completedPart(request.getApproveCount(), request.getScrapCount(), request.getReturnedToIsilIslem(), request.getReturnedToMilTaslama());
-
-
-
-        if(request.getApproveCount()>0){
-            ezme.updateNextOperation(request.getApproveCount());
-            talasliHelper.saveTalasliImalatWithoutReturn(ezme);
-        }
-
-        if (request.getReturnedToIsilIslem()>0){
-            isilIslem.updateNextOperation(request.getReturnedToIsilIslem());
-            talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
-        }
-        if (request.getReturnedToMilTaslama()>0){
-            milTaslama.updateNextOperation(request.getReturnedToMilTaslama());
-            talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
-        }
-
-        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+        handleKaliteKontrolUpdates(kaliteKontrol, request);
+        updateNextOperation(ezme, request.getApproveCount());
 
         return ResponseMessage.<String>builder()
                 .message(SuccessMessages.KALITE_KONTROL_UPDATED)
                 .httpStatus(HttpStatus.OK)
                 .build();
-
     }
 
+    private void updateNextOperation(TalasliImalat operation, int count) {
+        if (count > 0) {
+            operation.updateNextOperation(count);
+            talasliHelper.saveTalasliImalatWithoutReturn(operation);
+        }
+    }
+
+    //paslanmaz icin ezme sonrası kalite kontrol
     public ResponseMessage<String> afterEzmeKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
-        LiftMontaj liftMontaj;
+
         int approveCount = request.getApproveCount();
 
-        kaliteKontrol.completedPart(approveCount, request.getScrapCount(), 0, request.getReturnedToMilTaslama());
-
-        if(request.getApproveCount()>0){
-            liftMontaj  = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
-            liftMontaj.setMilCount(approveCount);
-            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
-        }
-
+        kaliteKontrol.completedPart(request);
         kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
 
+        if(request.getApproveCount()>0){
+            LiftMontaj liftMontaj  = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
+            liftMontaj.setMilCount(approveCount);
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+            montajHelper.compareMilCountAndPipeCountForLiftMontaj(liftMontaj);
+        }
         return ResponseMessage.<String>builder()
                 .message(SuccessMessages.KALITE_KONTROL_UPDATED)
                 .httpStatus(HttpStatus.OK)
                 .build();
-
     }
 
-
-    public ResponseMessage<String> afterMontajKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
+    //montaj sonrası kalite kontrol
+    public ResponseMessage<String> afterMontajKaliteKontrol(KaliteKontrolRequest request, Long stageId) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
 
-        kaliteKontrol.completedPart(request.getApproveCount(), request.getScrapCount(), request.getReturnedToIsilIslem(), request.getReturnedToMilTaslama());
+        handleKaliteKontrolUpdates(kaliteKontrol, request);
 
-        if (request.getApproveCount() > 0) {
-            BoyaVePaketleme boyaVePaketleme = boyaPaketHelper.findBoyaVePaketlemeByProductionProcess(productionProcess, BoyaPaketOperationType.PAKETLEME);
-            boyaVePaketleme.updateNextOperation(request.getApproveCount());
-            boyaPaketHelper.saveBoyaVePaketlemeWithoutReturn(boyaVePaketleme);
-        }
-
-        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+        updateNextMontaj(productionProcess, request.getApproveCount());
 
         return ResponseMessage.<String>builder()
                 .message(SuccessMessages.KALITE_KONTROL_UPDATED)
@@ -125,6 +97,49 @@ public class KaliteKontrolService {
                 .build();
     }
 
+    private void handleKaliteKontrolUpdates(KaliteKontrol kaliteKontrol, KaliteKontrolRequest request) {
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+        TalasliImalat isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+        TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+        PolisajImalat polisaj = productionProcess.getPolisajOperation();
+
+        if (request.getApproveCount() > 0) {
+            kaliteKontrol.approvedPart(request.getApproveCount());
+        }
+        if (request.getApproveCount() > 0) {
+            kaliteKontrol.scrapPart(request.getScrapCount());
+        }
+        if (request.getReturnedToIsilIslem() > 0) {
+            kaliteKontrol.returnedToIsilIslem(request.getReturnedToIsilIslem());
+            isilIslem.returnedToOperation(request.getReturnedToIsilIslem());
+            polisaj.decreaseCompletedQuantity(request.getReturnedToIsilIslem());
+            talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
+            polisajHelper.savePolisajWithoutReturn(polisaj);
+        }
+        if (request.getReturnedToMilTaslama() > 0) {
+            kaliteKontrol.returnedToMilTaslama(request.getReturnedToMilTaslama());
+            milTaslama.returnedToOperation(request.getReturnedToMilTaslama());
+            isilIslem.decreaseCompletedQuantity(request.getReturnedToMilTaslama());
+            polisaj.decreaseCompletedQuantity(request.getReturnedToMilTaslama());
+            talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+            talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
+            polisajHelper.savePolisajWithoutReturn(polisaj);
+        }
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+    }
+
+    private void updateNextMontaj(ProductionProcess productionProcess, int approveCount) {
+        OrderType orderType = productionProcess.getOrder().getOrderType();
+        if (orderType.equals(OrderType.DAMPER)) {
+            BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.GAZ_DOLUM);
+            blokLiftMontaj.updateNextOperation(approveCount);
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+        } else {
+            LiftMontaj liftMontaj = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.GAZ_DOLUM);
+            liftMontaj.updateNextOperation(approveCount);
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+        }
+    }
 
     public MultipleResponses<OrderResponse, ProductionProcessResponse, List<KaliteKontrolResponse>> getKaliteKontrolStages(Long id) {
 
@@ -132,44 +147,166 @@ public class KaliteKontrolService {
         List<KaliteKontrol> kaliteKontrolList = kaliteKontrolRepository.findAllByProductionProcess(productionProcess);
         Order order = productionProcess.getOrder();
         OrderType orderType = order.getOrderType();
-
-
         return MultipleResponses.<OrderResponse, ProductionProcessResponse, List<KaliteKontrolResponse>>builder()
                 .returnBody(orderMapper.mapOrderToOrderResponse(order))
 
                 .build();
     }
-
+    //polisan sonrası kalite kontrol
     public ResponseMessage<String> afterPolisajKaliteKontrol(KaliteKontrolRequest request, Long stageId) {
 
         KaliteKontrol kaliteKontrol=kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess=kaliteKontrol.getProductionProcess();
-        Order order=productionProcess.getOrder();
-        OrderType orderType=order.getOrderType();
-
+        OrderType orderType=productionProcess.getOrder().getOrderType();
         BlokLiftMontaj blokLiftMontaj;
+        LiftMontaj liftMontaj;
 
+        handleKaliteKontrolUpdates(kaliteKontrol, request);
 
-
-         int approveCount= request.getApproveCount();
-         int scrap=request.getScrapCount();
-         int isilIslem= request.getReturnedToIsilIslem();
-         int milTaslama=request.getReturnedToMilTaslama();
-
-
-
-        if(orderType.equals(OrderType.BLOKLIFT)){
-            kaliteKontrol.completedPart(approveCount,scrap,isilIslem,milTaslama);
+        if(orderType.equals(OrderType.BLOKLIFT)||orderType.equals(OrderType.DAMPER)){
             blokLiftMontaj=montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
-            blokLiftMontaj.updateNextMilOperation(approveCount);
+            blokLiftMontaj.updateNextMilOperation(request.getApproveCount());
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+            montajHelper.compareMilCountAndPipeCountForBLMontaj(blokLiftMontaj);
         }else{
-
+            liftMontaj=montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
+            liftMontaj.updateNextMilOperation(request.getApproveCount());
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+            montajHelper.compareMilCountAndPipeCountForLiftMontaj(liftMontaj);
         }
 
-        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
+    public ResponseMessage<String> rollbackAfterPolisajKaliteKontrol(Long stageId, KaliteKontrolRequest request) {
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+        PolisajImalat polisaj = productionProcess.getPolisajOperation();
+        TalasliImalat isilIslem;
 
 
+
+        switch (request.getRollBack()){
+            case "Mil_Taslama":
+                TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+                isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+                milTaslama.rollbackOperation(kaliteKontrol.getLastReturnedToMilTaslama());
+                isilIslem.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
+                polisaj.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
+                talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+                talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
+                polisajHelper.savePolisajWithoutReturn(polisaj);
+                kaliteKontrol.rollBackLastReturnedToMilTaslama();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+            case "Isil_Islem":
+                isilIslem= talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+                isilIslem.rollbackOperation(kaliteKontrol.getLastReturnedToIsilIslem());
+                polisaj.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToIsilIslem());
+                talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
+                polisajHelper.savePolisajWithoutReturn(polisaj);
+                kaliteKontrol.rollBackLastReturnedToIsilIslem();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+            case "Scrap":
+                kaliteKontrol.rollBackLastScrap();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+            case "Approve":
+                rollbackApprove(productionProcess, stageId);
+                kaliteKontrol.rollBackLastApprove();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+        }
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
+    private void rollbackApprove(ProductionProcess productionProcess, Long id){
+        OrderType orderType = productionProcess.getOrder().getOrderType();
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(id);
+        if (orderType.equals(OrderType.LIFT)||orderType.equals(OrderType.PASLANMAZ)){
+            LiftMontaj liftMontaj = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
+            liftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+            montajHelper.compareMilCountAndPipeCountForLiftMontaj(liftMontaj);
+        }else{
+            BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+            blokLiftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+            montajHelper.compareMilCountAndPipeCountForBLMontaj(blokLiftMontaj);
+        }
+    }
+
+    public ResponseMessage<String> rollbackAfterMontajKaliteKontrol(Long stageId, KaliteKontrolRequest request) {
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+        if (request.getRollBack().equals("Approve")) {
+            rollbackApproveForAfterMontaj(productionProcess, stageId);//approve geri al
+        } else if(request.getRollBack().equals("Scrap")){
+            kaliteKontrol.rollBackLastScrap();//son hurda sayısını geri al
+            kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+        }
+
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+    //montaj sonrası kalite kontrol içinde approve geri alma
+    private void rollbackApproveForAfterMontaj(ProductionProcess productionProcess, Long id){
+        OrderType orderType = productionProcess.getOrder().getOrderType();
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(id);
+        if (orderType.equals(OrderType.LIFT)||orderType.equals(OrderType.PASLANMAZ)){
+            LiftMontaj liftMontaj = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.GAZ_DOLUM);
+            liftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+        }else{
+            BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.GAZ_DOLUM);
+            blokLiftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+        }
+    }
+
+    public ResponseMessage<String> rollbackAfterEzmeKaliteKontrol(Long stageId, KaliteKontrolRequest request) {
+
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+
+        switch (request.getRollBack()){
+            case "Mil_Taslama":
+                TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+                TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
+                KaliteKontrol afterMilTaslama = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+                milTaslama.rollbackOperation(kaliteKontrol.getLastReturnedToMilTaslama());
+                afterMilTaslama.rollbackLastApproveCount(kaliteKontrol.getLastReturnedToMilTaslama());
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMilTaslama);
+                ezme.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
+                talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+                talasliHelper.saveTalasliImalatWithoutReturn(ezme);
+                kaliteKontrol.rollBackLastReturnedToMilTaslama();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+
+            case "Scrap":
+                kaliteKontrol.rollBackLastScrap();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+            case "Approve":
+                rollbackApprove(productionProcess, stageId);
+                kaliteKontrol.rollBackLastApprove();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+        }
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
 
     }
 }

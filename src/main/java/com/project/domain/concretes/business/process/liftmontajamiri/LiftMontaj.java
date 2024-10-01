@@ -24,13 +24,15 @@ public class LiftMontaj extends BaseOperation {
 
     private int milCount;//mil sayısı
 
+    private int pipeCount;//boru sayısı
+
     private int lastMilCount;//son mil sayısı
 
-    private Integer scrapPipeCount;//hurda boru sayısı
+    private int scrapPipeCount;//hurda boru sayısı
 
-    private Integer scrapMilCount;//hurda mil sayısı
+    private int scrapMilCount;//hurda mil sayısı
 
-    private Integer scarapCountAfterTest;//test sonrası hurda sayısı
+    private int scarapCountAfterTest;//test sonrası hurda sayısı
 
     @Column(name = "operation_type")
     @Enumerated(EnumType.STRING)
@@ -40,4 +42,17 @@ public class LiftMontaj extends BaseOperation {
     @JsonIgnore
     @JoinColumn(name = "production_process_id", referencedColumnName = "id")
     private ProductionProcess productionProcess;
+
+    public void updateNextMilOperation(int completedQty) {
+        this.milCount += completedQty;
+    }
+
+    public void updateNextPipeOperation(int completedQty) {
+        this.pipeCount += completedQty;
+    }
+
+    //Eger kalite kontrol hatali giris yaparsa geri almak icin kullanilir
+    public void rollbackNextMilCount(int rollbackQty) {
+        this.milCount -= rollbackQty;
+    }
 }

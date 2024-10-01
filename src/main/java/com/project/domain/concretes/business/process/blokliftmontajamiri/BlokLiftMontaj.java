@@ -23,17 +23,13 @@ public class BlokLiftMontaj extends BaseOperation {
 
     private int milCount;//mil sayısı
 
-    private int lastMilCount;//son mil sayısı
+    private int pipeCount;//boru sayısı
 
-    private Integer pipeCount;//boru sayısı
+    private int scrapPipeCount;//hurda boru sayısı
 
-    private int lastPipeCount;//son boru sayısı
+    private int scrapMilCount;//hurda mil sayısı
 
-    private Integer scrapPipeCount;//hurda boru sayısı
-
-    private Integer scrapMilCount;//hurda mil sayısı
-
-    private Integer scrapCountAfterTest;//test sonrası hurda sayısı
+    private int scrapCountAfterTest;//test sonrası hurda sayısı
 
     @Column(name = "operation_type")
     @Enumerated(EnumType.STRING)
@@ -45,32 +41,15 @@ public class BlokLiftMontaj extends BaseOperation {
     private ProductionProcess productionProcess;
 
     public void updateNextMilOperation(int completedQty) {
-        this.lastMilCount = completedQty;
-        if (this.getRemainingQuantity() == null) {
-            this.setRemainingQuantity(0);
-        }
-        this.setRemainingQuantity(this.getRemainingQuantity() + completedQty);
-
+        this.milCount += completedQty;
     }
 
     public void updateNextMilOperation1(int completedQty) {
-
-
-
-        this.lastMilCount = completedQty;
-        if (this.getRemainingQuantity() == null) {
-            this.setRemainingQuantity(0);
-        }
         this.setRemainingQuantity(this.getRemainingQuantity() + completedQty);
-
     }
 
 
     public void updateNextPipeOperation(int completedQty) {
-        this.lastPipeCount = completedQty;
-        if (this.pipeCount == null) {
-            this.pipeCount = 0;
-        }
         this.pipeCount += completedQty;
     }
 
@@ -90,23 +69,21 @@ public class BlokLiftMontaj extends BaseOperation {
         }
     }
 
-    public void updateMilCount(){
-        this.milCount+=this.lastMilCount;
-    }
 
-    public void updatePipeCount(){
-        this.pipeCount+=this.lastPipeCount;
-    }
 
     public void removeLastMilCount(int lastMilCount){
 
         this.removeLastFromNextOperation(lastMilCount);
-        this.lastMilCount=0;
+
     }
 
     public void removeLastPipeCount(int lastPipeCount){
         this.pipeCount-=lastPipeCount;
-        this.lastPipeCount=0;
+
+    }
+
+    public void rollbackNextMilCount(int rollbackQty) {
+        this.milCount -= rollbackQty;
     }
 
 

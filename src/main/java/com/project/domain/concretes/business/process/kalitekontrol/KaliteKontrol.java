@@ -8,6 +8,7 @@ import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.KaliteKontroOperationType;
 import com.project.domain.concretes.business.process._enums.KaliteKontrolStage;
 import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
+import com.project.payload.request.business.process.KaliteKontrolRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,15 +33,15 @@ public class KaliteKontrol {
     @Enumerated(EnumType.STRING)
     private KaliteKontrolStage kaliteKontrolStage;//kalite kontrol aşaması
 
-    private Integer milCount;//mil sayısı
+    private int milCount;//mil sayısı
 
-    private Integer approveCount;//onay sayısı
+    private int approveCount;//onay sayısı
 
-    private Integer scrapCount;//hurda sayısı
+    private int scrapCount;//hurda sayısı
 
-    private Integer returnedToIsilIslem;//isıl işlem geri dönüş
+    private int returnedToIsilIslem;//isıl işlem geri dönüş
 
-    private Integer returnedToMilTaslama;//mil taşlama geri dönüş
+    private int returnedToMilTaslama;//mil taşlama geri dönüş
 
     private int lastApproveCount;//son onay sayısı
 
@@ -66,52 +67,80 @@ public class KaliteKontrol {
     @JoinColumn(name = "production_process_id", referencedColumnName = "id")
     private ProductionProcess productionProcess;
 
-    public void completedPart(int approveCount, int scrapCount, int returnedToIsilIslem, int returnedToMilTaslama) {
-        if (this.approveCount == null) {
-            this.approveCount = 0;
-        }
-        if (this.scrapCount == null) {
-            this.scrapCount = 0;
-        }
-        if (this.returnedToIsilIslem == null) {
-            this.returnedToIsilIslem = 0;
-        }
-        if (this.returnedToMilTaslama == null) {
-            this.returnedToMilTaslama = 0;
-        }
+    public void approvedPart(int approveCount) {
+        this.approveCount += approveCount;
+        this.milCount -= approveCount;
+        this.lastApproveCount = approveCount;
+    }
 
-        if (approveCount > 0) {
-            this.approveCount += approveCount;
-            this.milCount -= approveCount;
-            this.lastApproveCount = approveCount;
-        }
-        if (scrapCount > 0) {
-            this.scrapCount += scrapCount;
-            this.milCount -= scrapCount;
-            this.lastScrapCount = scrapCount;
-        }
-        if (returnedToIsilIslem > 0) {
-            this.returnedToIsilIslem += returnedToIsilIslem;
-            this.milCount -= returnedToIsilIslem;
-            this.lastReturnedToIsilIslem = returnedToIsilIslem;
-        }
-        if (returnedToMilTaslama > 0) {
-            this.returnedToMilTaslama += returnedToMilTaslama;
-            this.milCount -= returnedToMilTaslama;
-            this.lastReturnedToMilTaslama = returnedToMilTaslama;
-        }
+    public void scrapPart(int scrapCount) {
+        this.scrapCount += scrapCount;
+        this.milCount -= scrapCount;
+        this.lastScrapCount = scrapCount;
+    }
 
-        if (this.milCount == 0) {
-            this.endDate = LocalDateTime.now();
+    public void returnedToIsilIslem(int returnedToIsilIslem) {
+        this.returnedToIsilIslem += returnedToIsilIslem;
+        this.milCount -= returnedToIsilIslem;
+        this.lastReturnedToIsilIslem = returnedToIsilIslem;
+    }
+
+    public void returnedToMilTaslama(int returnedToMilTaslama) {
+        this.returnedToMilTaslama += returnedToMilTaslama;
+        this.milCount -= returnedToMilTaslama;
+        this.lastReturnedToMilTaslama = returnedToMilTaslama;
+    }
+
+    public void completedPart(KaliteKontrolRequest request) {
+
+        if (request.getApproveCount() > 0) {
+            this.approveCount += request.getApproveCount();
+            this.milCount -= request.getApproveCount();
+            this.lastApproveCount = request.getApproveCount();
+        }
+        if (request.getScrapCount() > 0) {
+            this.scrapCount += request.getScrapCount();
+            this.milCount -= request.getScrapCount();
+            this.lastScrapCount = request.getScrapCount();
+        }
+        if (request.getReturnedToIsilIslem() > 0) {
+            this.returnedToIsilIslem += request.getReturnedToIsilIslem();
+            this.milCount -= request.getReturnedToIsilIslem();
+            this.lastReturnedToIsilIslem = request.getReturnedToIsilIslem();
+        }
+        if (request.getReturnedToMilTaslama() > 0) {
+            this.returnedToMilTaslama += request.getReturnedToMilTaslama();
+            this.milCount -= request.getReturnedToMilTaslama();
+            this.lastReturnedToMilTaslama = request.getReturnedToMilTaslama();
         }
     }
 
     public void nextOperationByKaliteKontrol(int completedQty) {
-        if (this.milCount == null) {
-            this.milCount = 0;
-            this.startDate = LocalDateTime.now();
-        }
         this.milCount += completedQty;
+    }
+
+    public void rollBackLastScrap(){
+        this.scrapCount -= this.lastScrapCount;
+        this.milCount += this.lastScrapCount;
+        this.lastScrapCount = 0;
+    }
+
+    public void rollBackLastApprove(){
+        this.approveCount -= this.lastApproveCount;
+        this.milCount += this.lastApproveCount;
+        this.lastApproveCount = 0;
+    }
+
+    public void rollBackLastReturnedToIsilIslem(){
+        this.returnedToIsilIslem -= this.lastReturnedToIsilIslem;
+        this.milCount += this.lastReturnedToIsilIslem;
+        this.lastReturnedToIsilIslem = 0;
+    }
+
+    public void rollBackLastReturnedToMilTaslama(){
+        this.returnedToMilTaslama -= this.lastReturnedToMilTaslama;
+        this.milCount += this.lastReturnedToMilTaslama;
+        this.lastReturnedToMilTaslama = 0;
     }
 
     public void removeLastCompletedQty() {
@@ -128,9 +157,10 @@ public class KaliteKontrol {
 
     public void removeLastFromNextOperation(int lastAmount) {
         this.milCount -= lastAmount;
-        if (this.milCount == 0 && this.startDate != null) {
-            this.startDate = null;
-        }
+    }
+
+    public void rollbackLastApproveCount(int lastApproveCount) {
+        this.approveCount -= lastApproveCount;
     }
     
 }
