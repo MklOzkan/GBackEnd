@@ -19,10 +19,10 @@ import java.time.LocalDateTime;
 public abstract class BaseOperation {
 
     @Column(name = "remaining_quantity")
-    private Integer remainingQuantity;  // Kalan miktar
+    private int remainingQuantity;  // Kalan miktar
 
     @Column(name = "completed_quantity")
-    private Integer completedQuantity;  // Tamamlanan miktar
+    private int completedQuantity;  // Tamamlanan miktar
 
     @Column(name = "start_date")
     private LocalDateTime startDate;  // Operasyon başlama tarihi
@@ -41,13 +41,23 @@ public abstract class BaseOperation {
         this.startDate = this.startDate == null ? LocalDateTime.now() : this.startDate;  // Başlangıç tarihi
     }
 
-    public void rejectOperation(int rejectedQty) { // Reddedilen miktar
-        this.remainingQuantity += rejectedQty;  // Kalan miktar
-        this.completedQuantity -= rejectedQty;  // Tamamlanan miktar
-        if (this.completedQuantity <= 0) {
-            this.isCompleted = false;  // Tamamlanan miktar sıfırlanırsa operasyon tamamlanmamış olur
-            this.endDate = null;  // Bitiş tarihi sıfırlanır
-        }
+    //kalite kontrolden geri dönüş olduğunda kullanılır
+    public void returnedToOperation(int returnedQty) {
+        this.remainingQuantity += returnedQty;  // Kalan miktar
+        this.completedQuantity -= returnedQty;  // Tamamlanan miktar
+    }
+    //kalite kontrolde geri dönüş olduğunda kullanılır
+    public void decreaseCompletedQuantity(int decreaseQty) {
+        this.completedQuantity -= decreaseQty;  // Tamamlanan miktar
+    }
+    //Yanlışlıkla yapılan işlemi geri almak için kullanılır
+    public void rollbackOperation(int rollbackQty) {
+        this.remainingQuantity -= rollbackQty;  // Kalan miktar
+        this.completedQuantity += rollbackQty;  // Tamamlanan miktar
+    }
+    //Yanlışlıkla yapılan işlemi geri almak için kullanılır
+    public void increaseCompletedQuantity(int increaseQty) {
+        this.completedQuantity += increaseQty;  // Tamamlanan miktar
     }
 
     // Operasyon tamamlandığında
@@ -55,15 +65,9 @@ public abstract class BaseOperation {
         this.completedQuantity += completedQty;  // Tamamlanan miktar
         this.remainingQuantity -= completedQty;  // Kalan miktar
         this.lastCompletedQty = completedQty;  // Son tamamlanan miktar
-//        if (this.remainingQuantity < 0) {
-//            this.remainingQuantity = 0;  // Kalan miktar sıfırdan küçük olamaz
-//        }
     }
 
     public void updateNextOperation(int completedQty) {
-        if (this.remainingQuantity == 0) {
-            this.startDate = LocalDateTime.now();
-        }
         this.remainingQuantity += completedQty;
     }
 
@@ -75,11 +79,5 @@ public abstract class BaseOperation {
 
     public void removeLastFromNextOperation(int lastCompletedQty) {
         this.remainingQuantity -= lastCompletedQty;
-
-        if (this.remainingQuantity == 0 && this.endDate != null) {
-            this.endDate = null;
-        }
-
-        if (this.remainingQuantity==0) this.remainingQuantity=null;
     }
 }

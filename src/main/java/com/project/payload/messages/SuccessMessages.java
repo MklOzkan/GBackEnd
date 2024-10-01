@@ -27,6 +27,7 @@ public class SuccessMessages {
     public static final String KALITE_KONTROL_UPDATED = "Kalite kontrol güncellendi";
     public static final String LAST_CHANGE_REMOVED = "Son değişiklik kaldırıldı";
     public static final String POLISAJ_UPDATED = "Polisaj güncellendi";
+    public static final String BORU_COMPLETED = "Boru kapama işlemi başarılıyla tamamlandı";
 
     private SuccessMessages(){}
 }

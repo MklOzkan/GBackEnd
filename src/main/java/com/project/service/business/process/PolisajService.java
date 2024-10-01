@@ -24,15 +24,12 @@ import org.springframework.stereotype.Service;
 public class PolisajService {
 
     private final PolisajHelper polisajHelper;
-    private final TalasliHelper talasliHelper;
     private final KaliteKontrolHelper  kaliteKontrolHelper;
-    private final PolisajImalatRepository  polisajImalatRepository;
 
 
     public ResponseMessage<String> updatePolisaj(Long id, @Valid PolisajRequest request) {
         PolisajImalat polisajImalat = polisajHelper.findPolisajById(id);
         ProductionProcess productionProcess = polisajImalat.getProductionProcess();
-
         KaliteKontrol afterPolisaj = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
 
         polisajImalat.completeOperation(request.getCompletedQuantity());

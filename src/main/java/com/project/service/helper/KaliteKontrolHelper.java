@@ -39,4 +39,5 @@ public class KaliteKontrolHelper {
         return kaliteKontrolRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.KALITE_KONTROL_NOT_FOUND));
     }
+
 }

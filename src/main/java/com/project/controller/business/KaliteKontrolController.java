@@ -43,7 +43,7 @@ public class KaliteKontrolController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/aftermontaj/{stageId}")
     public ResponseMessage<String> afterMontajKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
-        return null;//kaliteKontrolService.afterMontajKaliteKontrol(request, stageId);
+        return kaliteKontrolService.afterMontajKaliteKontrol(request, stageId);
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
@@ -51,4 +51,25 @@ public class KaliteKontrolController {
     public MultipleResponses<OrderResponse, ProductionProcessResponse, List<KaliteKontrolResponse> > getKaliteKontrolStages(@PathVariable Long id) {
         return kaliteKontrolService.getKaliteKontrolStages(id);
     }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/rollbackAfterPolisaj/{stageId}")
+    public ResponseMessage<String> rollbackAfterPolisajKaliteKontrol(@PathVariable Long stageId,KaliteKontrolRequest request) {
+        return kaliteKontrolService.rollbackAfterPolisajKaliteKontrol(stageId, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/rollbackAfterMontaj/{stageId}")
+    public ResponseMessage<String> rollbackAfterMontajKaliteKontrol(@PathVariable Long stageId,KaliteKontrolRequest request) {
+        return kaliteKontrolService.rollbackAfterMontajKaliteKontrol(stageId, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/rollbackAfterEzme/{stageId}")
+    public ResponseMessage<String> rollbackAfterEzmeKaliteKontrol(@PathVariable Long stageId,KaliteKontrolRequest request) {
+        return kaliteKontrolService.rollbackAfterEzmeKaliteKontrol(stageId, request);
+    }
+
+
+
 }

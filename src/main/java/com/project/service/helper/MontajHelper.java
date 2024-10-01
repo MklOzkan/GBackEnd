@@ -110,4 +110,23 @@ public class MontajHelper {
     public BlokLiftMontaj saveBlokLiftMontajWithReturn(BlokLiftMontaj blokLiftMontaj) {
         return blokLiftMontajRepository.save(blokLiftMontaj);
     }
+
+    public void compareMilCountAndPipeCountForBLMontaj(BlokLiftMontaj blokLiftMontaj) {
+        int milCount = blokLiftMontaj.getMilCount();
+        int pipeCount = blokLiftMontaj.getPipeCount();
+        int afterCompare = Math.min(milCount, pipeCount);
+        int completedQty = blokLiftMontaj.getCompletedQuantity();
+        int updatedQuantityForRemaining = afterCompare -completedQty;
+        blokLiftMontaj.setRemainingQuantity(updatedQuantityForRemaining);
+        saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+    }
+
+    public void compareMilCountAndPipeCountForLiftMontaj(LiftMontaj liftMontaj) {
+        int milCount = liftMontaj.getMilCount();
+        int pipeCount = liftMontaj.getPipeCount();
+        int afterCompare = Math.min(milCount, pipeCount);
+        int completedQty = liftMontaj.getCompletedQuantity();
+        int updatedQuantityForRemaining = afterCompare -completedQty;
+        liftMontaj.setRemainingQuantity(updatedQuantityForRemaining);
+    }
 }
