@@ -9,6 +9,7 @@ import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.process.PolisajResponse;
 import com.project.payload.response.business.process.ProductionProcessResponse;
 import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.service.business.ExcelService;
@@ -82,6 +83,14 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getMultipleResponseByIdForPolisaj/{id}")
+    public MultipleResponses<OrderResponse, PolisajResponse, ProductionProcessResponse> getMultipleResponseByIdForPolisaj(@PathVariable Long id, HttpServletRequest request){
+        return orderService.getMultipleResponseByIdForPolisaj(id, request);
+    }
+
+
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getAllOrders")
     public Page<OrderResponse> getAllOrders(@RequestParam(value = "page", defaultValue = "0") int page,
                                                            @RequestParam(value = "size", defaultValue = "10") int size,
@@ -94,13 +103,25 @@ public class OrderController {
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getAllOrdersForSupervisor")
-    public Page<OrderResponse> getAllOrdersForSupervisor(
+    public Page<OrderResponse> getAllOrdersForTalasliAmir(
                                                             HttpServletRequest  request,
                                                             @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
                                                             @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
                                                             @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
                                                             @RequestParam(value = "type", defaultValue = "desc") String type){
         return orderService.getAllOrdersForSupervisor(request,page, size, sort, type);
+
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getOrdersForOtherAmir")
+    public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemede(
+            HttpServletRequest  request,
+            @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
+            @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
+            @RequestParam(value = "type", defaultValue = "desc") String type){
+        return orderService.getOrdersForPolisajAmir(request,page, size, sort, type);
 
     }
 

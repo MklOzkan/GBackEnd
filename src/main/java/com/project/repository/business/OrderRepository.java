@@ -2,6 +2,7 @@ package com.project.repository.business;
 
 import com.project.domain.concretes.business.Order;
 import com.project.domain.concretes.business.OrderStatus;
+import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("statusNames") List<String> statusNames,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
+            Pageable pageable
+    );
+
+    @Query("SELECT o FROM Order o WHERE o.orderStatus.statusName IN :statusNames AND o.orderType <> com.project.domain.enums.OrderType.PASLANMAZ")
+    Page<Order> findByStatusTypeAndOrderTypeNotLike(
+            @Param("statusNames") List<String> statusNames,
             Pageable pageable
     );
 

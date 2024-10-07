@@ -12,6 +12,7 @@ import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.enums.OrderType;
+import com.project.exception.ConflictException;
 import com.project.payload.mappers.TalasliMapper;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.process.TalasliImalatRequest;
@@ -81,7 +82,7 @@ public class TalasliService {
         talasliImalatRepository.save(milTornalama);
 
         return ResponseMessage.<String>builder()
-                .message(SuccessMessages.MILKOPARMA_COMPLETED)
+                .message(String.format(SuccessMessages.MILKOPARMA_COMPLETED, request.getCompletedQuantity()))
                 .httpStatus(HttpStatus.OK)
                 .build();
     }
@@ -116,11 +117,18 @@ public class TalasliService {
         talasliHelper.saveTalasliImalatWithoutReturn(boruKesme);
 
             return ResponseMessage.<String>builder()
-                    .message(SuccessMessages.ORDER_STARTED)
+                    .message(String.format(SuccessMessages.BORU_SAVED, request.getCompletedQuantity()))
                     .httpStatus(HttpStatus.OK)
                     .build();
 
+    }
+
+    public void isCompletedCountMoreThanRemainingCount(int completedCount, int remainingCount) {
+        if (completedCount > remainingCount) {
+            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
         }
+    }
+
         
 
     @Transactional
@@ -128,6 +136,8 @@ public class TalasliService {
 
         TalasliImalat miltornalama = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = miltornalama.getProductionProcess();
+
+        isCompletedCountMoreThanRemainingCount(request.getCompletedQuantity(), miltornalama.getRemainingQuantity());
 
         miltornalama.completeOperation(request.getCompletedQuantity());
 
@@ -151,6 +161,10 @@ public class TalasliService {
         TalasliImalat miltaslama = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = miltaslama.getProductionProcess();
         OrderType orderType = productionProcess.getOrder().getOrderType();
+
+        if (request.getCompletedQuantity()> miltaslama.getRemainingQuantity()) {
+            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
+        }
 
         miltaslama.completeOperation(request.getCompletedQuantity());
 
@@ -181,6 +195,10 @@ public class TalasliService {
         TalasliImalat isilislem = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = isilislem.getProductionProcess();
 
+        if (request.getCompletedQuantity()> isilislem.getRemainingQuantity()) {
+            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
+        }
+
         isilislem.completeOperation(request.getCompletedQuantity());
 
         PolisajImalat polisajImalat = talasliHelper.findPolisajImalatByProductionProcess(productionProcess);
@@ -200,6 +218,10 @@ public class TalasliService {
     public ResponseMessage<String> ezme(TalasliImalatRequest request, Long operationId) {
         TalasliImalat ezme = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = ezme.getProductionProcess();
+
+        if (request.getCompletedQuantity()> ezme.getRemainingQuantity()) {
+            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
+        }
 
         ezme.completeOperation(request.getCompletedQuantity());
 
@@ -223,7 +245,7 @@ public class TalasliService {
         TalasliOperationType operationType = talasliImalat.getOperationType();
         int lastCompletedQty = talasliImalat.getLastCompletedQty();
         OrderType orderType = productionProcess.getOrder().getOrderType();
-        PolisajImalat polisajImalat = talasliHelper.findPolisajImalatByProductionProcess(productionProcess);
+        PolisajImalat polisajImalat = productionProcess.getPolisajOperation();
 
         switch (operationType) {
             case BORU_KESME_HAVSA:

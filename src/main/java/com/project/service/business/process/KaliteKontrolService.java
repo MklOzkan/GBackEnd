@@ -12,6 +12,7 @@ import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliI
 import com.project.domain.enums.OrderType;
 import com.project.payload.mappers.KaliteKontrolMapper;
 import com.project.payload.mappers.OrderMapper;
+import com.project.payload.mappers.TalasliMapper;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.process.KaliteKontrolRequest;
 import com.project.payload.response.business.MultipleResponses;
@@ -38,14 +39,29 @@ public class KaliteKontrolService {
     private final OrderMapper orderMapper;
     private final PolisajHelper polisajHelper;
     private final MontajHelper montajHelper;
+    private final KaliteKontrolMapper kaliteKontrolMapper;
+    private final MethodHelper methodHelper;
+    private final TalasliMapper talasliMapper;
+
     //paslanmaz icin mil taslama sonrası kalite kontrol
     public ResponseMessage<String> afterMilTaslamaKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
         TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
+        TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
 
-        handleKaliteKontrolUpdates(kaliteKontrol, request);
+        if (request.getApproveCount() > 0) {
+            kaliteKontrol.approvedPart(request.getApproveCount());
+        }
+        if (request.getScrapCount() > 0) {
+            kaliteKontrol.scrapPart(request.getScrapCount());
+        }
+        if (request.getReturnedToMilTaslama() > 0) {
+            kaliteKontrol.returnedToMilTaslama(request.getReturnedToMilTaslama());
+            miltaslama.returnedToOperation(request.getReturnedToMilTaslama());
+        }
         updateNextOperation(ezme, request.getApproveCount());
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
 
         return ResponseMessage.<String>builder()
                 .message(SuccessMessages.KALITE_KONTROL_UPDATED)
@@ -308,5 +324,26 @@ public class KaliteKontrolService {
                 .httpStatus(HttpStatus.OK)
                 .build();
 
+    }
+
+    public MultipleResponses<OrderResponse, ProductionProcessResponse, List<KaliteKontrolResponse>> getAllForOrder(Long orderId) {
+        Order order = methodHelper.findOrderById(orderId);
+        ProductionProcess productionProcess = order.getProductionProcess();
+        List<KaliteKontrol> kaliteKontrolList = kaliteKontrolRepository.findAllByProductionProcess(productionProcess);
+        return MultipleResponses.<OrderResponse, ProductionProcessResponse, List<KaliteKontrolResponse>>builder()
+                .returnBody(orderMapper.mapOrderToOrderResponse(order))
+                .returnBody2(talasliMapper.mapProductionProcessToResponse(productionProcess))
+                .returnBody3(kaliteKontrolMapper.mapKaliteKontrolListToResponse(kaliteKontrolList))
+                .build();
+    }
+
+    public MultipleResponses<OrderResponse, ProductionProcessResponse, KaliteKontrolResponse> getOrderAndStage(Long stageId) {
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+        Order order = productionProcess.getOrder();
+        return MultipleResponses.<OrderResponse, ProductionProcessResponse, KaliteKontrolResponse>builder()
+                .returnBody(orderMapper.mapOrderToOrderResponse(order))
+                .returnBody3(kaliteKontrolMapper.mapKaliteKontrolToResponse(kaliteKontrol))
+                .build();
     }
 }

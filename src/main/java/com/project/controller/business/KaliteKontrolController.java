@@ -23,6 +23,18 @@ public class KaliteKontrolController {
     private final KaliteKontrolService kaliteKontrolService;
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getAllForOrder/{orderId}")
+    public MultipleResponses<OrderResponse, ProductionProcessResponse, List<KaliteKontrolResponse>> getAllForOrder(@PathVariable Long orderId) {
+        return kaliteKontrolService.getAllForOrder(orderId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getOrderAndStage/{stageId}")
+    public MultipleResponses<OrderResponse, ProductionProcessResponse, KaliteKontrolResponse> getOrderAndStahe(@PathVariable Long stageId) {
+        return kaliteKontrolService.getOrderAndStage(stageId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/aftermiltaslama/{stageId}")
     public ResponseMessage<String> afterMilTaslamaKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
         return kaliteKontrolService.afterMilTaslamaKaliteKontrol(request, stageId);

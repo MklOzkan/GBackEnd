@@ -15,6 +15,7 @@ public class KaliteKontrolMapper {
     public KaliteKontrolResponse mapKaliteKontrolToResponse(KaliteKontrol kaliteKontrol) {
         return KaliteKontrolResponse.builder()
                 .id(kaliteKontrol.getId())
+                .milCount(kaliteKontrol.getMilCount())
                 .kaliteKontrolStage(kaliteKontrol.getKaliteKontrolStage())
                 .approveCount(kaliteKontrol.getApproveCount())
                 .scrapCount(kaliteKontrol.getScrapCount())
