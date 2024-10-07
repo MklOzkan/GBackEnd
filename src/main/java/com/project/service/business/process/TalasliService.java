@@ -148,10 +148,7 @@ public class TalasliService {
         talasliImalatRepository.save(miltornalama);
         talasliImalatRepository.save(miltaslama);
 
-        return ResponseMessage.<String>builder()
-                .message(SuccessMessages.MILTORNALAMA_COMPLETED)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return methodHelper.createResponse(SuccessMessages.MILTORNALAMA_COMPLETED, HttpStatus.OK, null);
     }
 
 

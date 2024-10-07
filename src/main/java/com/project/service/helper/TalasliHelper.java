@@ -9,6 +9,8 @@ import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.request.business.OrderRequest;
+import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.repository.business.process.PolisajImalatRepository;
 import com.project.repository.business.process.ProductionProcessRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
@@ -110,6 +112,17 @@ public class TalasliHelper {
 
     public void saveTalasliImalatWithoutReturn(TalasliImalat talasliImalat) {
         talasliImalatRepository.save(talasliImalat);
+    }
+
+    public void updateOperation(TalasliImalat talasliImalat, Order order) {
+
+            if (talasliImalat.getOperationType().equals(TalasliOperationType.BORU_KESME_HAVSA)){
+                talasliImalat.setRemainingQuantity(order.getOrderQuantity()-talasliImalat.getCompletedQuantity());
+                saveTalasliImalatWithoutReturn(talasliImalat);
+            }else{
+                talasliImalat.setRemainingQuantity(order.getOrderQuantity()-talasliImalat.getCompletedQuantity()-order.getReadyMilCount());
+                saveTalasliImalatWithoutReturn(talasliImalat);
+            }
     }
 
 
