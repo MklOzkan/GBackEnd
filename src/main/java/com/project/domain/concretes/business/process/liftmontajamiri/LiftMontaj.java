@@ -55,4 +55,13 @@ public class LiftMontaj extends BaseOperation {
     public void rollbackNextMilCount(int rollbackQty) {
         this.milCount -= rollbackQty;
     }
+
+
+    public void  updateAccordingToPipeAndMilCount(){
+        if (this.pipeCount<=this.milCount){
+            this.setRemainingQuantity(this.pipeCount-this.getCompletedQuantity());
+        }else{
+            this.setRemainingQuantity(this.milCount-this.getCompletedQuantity());
+        }
+    }
 }
