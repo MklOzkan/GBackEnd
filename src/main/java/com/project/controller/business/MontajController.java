@@ -31,4 +31,30 @@ public class MontajController {
     public ResponseMessage<String> boruKaynakOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
         return montajService.boruKaynakOperation(operationId, request);
     }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/montajOperation/{operationId}")
+    public ResponseMessage<String> montajOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.montajOperation(operationId, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/blBoruKapamaOperation/{operationId}")
+    public ResponseMessage<String> blockLiftBoruKapamaOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.blLiftBoruKapamaOperation(operationId, request);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/gazDolumOperation/{operationId}")
+    public ResponseMessage<String> gazDolumOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+
+        return montajService.gazDolumOperation(operationId, request);
+    }
+
+
+
+
+
+
 }
