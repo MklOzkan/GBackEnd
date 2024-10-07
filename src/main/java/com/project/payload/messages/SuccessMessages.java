@@ -19,7 +19,7 @@ public class SuccessMessages {
     public static final String ORDER_COMPLETED = "Sipariş tamamlandı";
     public static final String ORDER_PAUSED = "Sipariş durduruldu ve beklemeye alındı";
     public static final String ORDER_STATUS_CHANGED = "Sipariş durumu değiştirildi";
-    public static final String MILKOPARMA_COMPLETED = "Milkoparma islemi basariliyla tamamlandi.";
+    public static final String MILKOPARMA_COMPLETED = "Koparılan %s adet mil başarılı bir şekilde kaydedildi";
     public static final String MILTORNALAMA_COMPLETED = "Miltornalama islemi basariliyla tamamlandi.";
     public static final String MILTASLAMA_COMPLETED = "Miltaslama islemi basariliyla tamamlandi.";
     public static final String ISILISLEM_COMPLETED = "Isıl işlem islemi basariliyla tamamlandi.";
@@ -27,7 +27,9 @@ public class SuccessMessages {
     public static final String KALITE_KONTROL_UPDATED = "Kalite kontrol güncellendi";
     public static final String LAST_CHANGE_REMOVED = "Son değişiklik kaldırıldı";
     public static final String POLISAJ_UPDATED = "Polisaj güncellendi";
-    public static final String BORU_COMPLETED = "Boru kapama işlemi başarılıyla tamamlandı";
+    public static final String BORU_KAPAMA_COMPLETED = "Boru kapama işlemi başarılıyla tamamlandı";
+    public static final String BORU_SAVED = "%s adet boru başarılı bir şekilde kaydedildi";
+    public static final String BORU_COMPLETED = "Boru işlemi başarılı bir şekilde tamamlandı";
 
     private SuccessMessages(){}
 }

@@ -23,7 +23,7 @@ public class PolisajController {
     }
 
 
-    @GetMapping("/{id}")
+    @PutMapping("/removeLastChange/{id}")
     @PreAuthorize("hasAnyAuthority('Employee')")
     public ResponseMessage<String>removeLastChange(@PathVariable Long id){
         return polisajService.removeLastChange(id);

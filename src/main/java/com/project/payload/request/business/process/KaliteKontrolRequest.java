@@ -22,6 +22,8 @@ public class KaliteKontrolRequest {
 
     private String rollBack;//geri alınacak alan
 
+    private int milCount =0;//mil sayısı
+
     private int approveCount =0;//onay sayısı
 
     private int scrapCount =0;//hurda sayısı

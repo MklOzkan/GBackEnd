@@ -17,6 +17,8 @@ public class KaliteKontrolResponse {
     private Long id;
     private KaliteKontrolStage kaliteKontrolStage;//kalite kontrol aşaması
 
+    private int milCount;//mil sayısı
+
     private Integer approveCount;//onay sayısı
 
     private Integer scrapCount;//hurda sayısı

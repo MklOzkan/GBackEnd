@@ -16,6 +16,7 @@ import com.project.domain.enums.StatusType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.OrderMapper;
+import com.project.payload.mappers.PolisajMapper;
 import com.project.payload.mappers.TalasliMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
@@ -24,6 +25,7 @@ import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.process.PolisajResponse;
 import com.project.payload.response.business.process.ProductionProcessResponse;
 import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.repository.business.OrderRepository;
@@ -33,6 +35,7 @@ import com.project.service.helper.PageableHelper;
 import com.project.service.helper.TalasliHelper;
 import com.project.service.validator.TimeValidator;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -69,6 +72,7 @@ public class OrderService {
     private final ProductionProcessRepository productionProcessRepository;
     private final TalasliHelper talasliHelper;
     private final TalasliMapper talasliMapper;
+    private final PolisajMapper polisajMapper;
 
 
     public ResponseMessage<OrderResponse> createOrder(OrderRequest orderRequest, HttpServletRequest request) {
@@ -394,6 +398,54 @@ public class OrderService {
         Order order = methodHelper.findOrderById(id);
         return ResponseMessage.<OrderResponse>builder()
                 .returnBody(orderMapper.mapOrderToOrderResponse(order))
+                .message(SuccessMessages.ORDER_FOUND)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
+    public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemede(HttpServletRequest request, @Min(0) int page, @Min(1) int size, String sort, String type) {
+        String username = (String) request.getAttribute("username");
+        methodHelper.loadUserByUsername(username);
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameIn(statuses, pageable);
+
+        List<OrderResponse> orderResponses = ordersPage.getContent().stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
+    }
+
+    public Page<OrderResponse> getOrdersForPolisajAmir(HttpServletRequest request, @Min(0) int page, @Min(1) int size, String sort, String type) {
+
+        String username = (String) request.getAttribute("username");
+        methodHelper.loadUserByUsername(username);
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        Page<Order> ordersPage = orderRepository.findByStatusTypeAndOrderTypeNotLike(statuses, pageable);
+
+        List<OrderResponse> orderResponses = ordersPage.getContent().stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
+    }
+
+    public MultipleResponses<OrderResponse, PolisajResponse, ProductionProcessResponse> getMultipleResponseByIdForPolisaj(Long id, HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        methodHelper.loadUserByUsername(username);
+
+        Order order = methodHelper.findOrderById(id);
+        ProductionProcess productionProcess = order.getProductionProcess();
+        PolisajImalat polisajImalat = productionProcess.getPolisajOperation();
+
+        return MultipleResponses.<OrderResponse, PolisajResponse, ProductionProcessResponse>builder()
+                .returnBody(orderMapper.mapOrderToOrderResponse(order))
+                .returnBody2(polisajMapper.mapToResponse(polisajImalat))
+                .returnBody3(talasliMapper.mapProductionProcessToResponse(productionProcess))
                 .message(SuccessMessages.ORDER_FOUND)
                 .httpStatus(HttpStatus.OK)
                 .build();
