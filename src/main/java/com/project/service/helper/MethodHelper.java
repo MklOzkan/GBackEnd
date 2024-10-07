@@ -7,6 +7,8 @@ import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.response.business.MultipleResponses;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.OrderRepository;
 import com.project.repository.user.UserRepository;
 import com.project.service.user.UserRoleService;
@@ -14,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -97,6 +100,24 @@ public class MethodHelper {
         if (isExist) {
             throw new ConflictException(String.format(ErrorMessages.ORDER_NUMBER_IS_ALREADY_EXIST, orderNumber));
         }
+    }
+
+    public <T> ResponseMessage<T> createResponse(String message, HttpStatus httpStatus, T data) {
+        return ResponseMessage.<T>builder()
+                .message(message)
+                .httpStatus(httpStatus)
+                .returnBody(data)
+                .build();
+    }
+
+    public <T, U, V> MultipleResponses<T, U, V> multipleResponse(String message, HttpStatus httpStatus, T data, U data2, V data3) {
+        return MultipleResponses.<T, U, V>builder()
+                .message(message)
+                .httpStatus(httpStatus)
+                .returnBody(data)
+                .returnBody2(data2)
+                .returnBody3(data3)
+                .build();
     }
 
 

@@ -1,7 +1,6 @@
 package com.project.service.business;
 
 import com.project.domain.concretes.business.Order;
-import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.*;
 import com.project.domain.concretes.business.process.blokliftmontajamiri.BlokLiftMontaj;
@@ -14,7 +13,6 @@ import com.project.domain.concretes.user.User;
 import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import com.project.exception.BadRequestException;
-import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.OrderMapper;
 import com.project.payload.mappers.PolisajMapper;
 import com.project.payload.mappers.TalasliMapper;
@@ -41,16 +39,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +66,7 @@ public class OrderService {
     private final TalasliHelper talasliHelper;
     private final TalasliMapper talasliMapper;
     private final PolisajMapper polisajMapper;
+    //private final ResponseHelper responseHelper;
 
 
     public ResponseMessage<OrderResponse> createOrder(OrderRequest orderRequest, HttpServletRequest request) {
@@ -246,11 +240,7 @@ public class OrderService {
             kaliteKontrolRepository.save(afterPolisaj);
         }
 
-        return ResponseMessage.<OrderResponse>builder()
-                .returnBody(orderMapper.mapOrderToOrderResponse(savedOrder))
-                .message(SuccessMessages.ORDER_CREATED)
-                .httpStatus(HttpStatus.CREATED)
-                .build();
+        return methodHelper.createResponse(SuccessMessages.ORDER_CREATED, HttpStatus.CREATED, orderMapper.mapOrderToOrderResponse(savedOrder));
     }
 
 
@@ -264,11 +254,25 @@ public class OrderService {
         Order updatedOrder = orderMapper.updateOrderFromRequest(orderRequest, order);
 
         orderRepository.save(updatedOrder);
+        updateTalasliOperations(updatedOrder);
+        OrderResponse orderResponse = orderMapper.mapOrderToOrderResponse(updatedOrder);
 
-        return ResponseMessage.<OrderResponse>builder()
-                .message(SuccessMessages.ORDER_UPDATED)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return methodHelper.createResponse(SuccessMessages.ORDER_UPDATED, HttpStatus.OK, orderResponse);
+    }
+
+    public void updateTalasliOperations(Order order){
+        ProductionProcess productionProcess = order.getProductionProcess();
+        TalasliImalat boruKesme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.BORU_KESME_HAVSA);
+        TalasliImalat milKoparma;
+        TalasliImalat milTaslama;
+        talasliHelper.updateOperation(boruKesme, order);
+        if (order.getOrderType().equals(OrderType.BLOKLIFT)) {
+            milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+            talasliHelper.updateOperation(milTaslama, order);
+        } else {
+            milKoparma = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_KOPARMA);
+            talasliHelper.updateOperation(milKoparma, order);
+        }
     }
 
     private void checkUserName(User user) {
@@ -303,10 +307,7 @@ public class OrderService {
 
         Order order = methodHelper.findOrderByOrderNumber(orderNumber);
         orderRepository.delete(order);
-        return ResponseMessage.<String>builder()
-                .message(SuccessMessages.ORDER_DELETED)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return methodHelper.createResponse(SuccessMessages.ORDER_DELETED, HttpStatus.OK, orderNumber);
     }
 
     public Page<OrderResponse> getAllOrdersForSupervisor(
@@ -336,7 +337,6 @@ public class OrderService {
         String status = StatusType.ISLENMEKTE.getName();
         Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusName(status, pageable);
 
-
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()
                 .map(orderMapper::mapOrderToOrderResponse)
                 .collect(Collectors.toList());
@@ -347,11 +347,6 @@ public class OrderService {
 
     public Page<OrderResponse> filterOrdersByStatusAndDate(
             List<String> statuses, String startDateStr, String endDateStr, int page, int size, String sort, String type) {
-
-//         //Default to filtering by all statuses if none are provided
-//        if (statuses == null || statuses.isEmpty()) {
-//            statuses = EnumSet.allOf(OrderStatus.class);
-//        }
 
         // Parse dates
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -377,13 +372,12 @@ public class OrderService {
         ProductionProcess productionProcess = talasliHelper.findProductionProcessById(order.getProductionProcess().getId());
         List<TalasliImalat> talasliOperations = talasliHelper.talasliOperations(productionProcess);
 
-        return MultipleResponses.<OrderResponse, List<TalasliImalatResponse>, ProductionProcessResponse>builder()
-                .returnBody(orderMapper.mapOrderToOrderResponse(order))
-                .returnBody2(talasliMapper.mapTalasliListToResponse(talasliOperations))
-                .returnBody3(talasliMapper.mapProductionProcessToResponse(productionProcess))
-                .message(SuccessMessages.ORDER_FOUND)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return methodHelper.multipleResponse(
+                SuccessMessages.ORDER_FOUND,
+                HttpStatus.OK,
+                orderMapper.mapOrderToOrderResponse(order),
+                talasliMapper.mapTalasliListToResponse(talasliOperations),
+                talasliMapper.mapProductionProcessToResponse(productionProcess));
     }
 
 
@@ -396,11 +390,7 @@ public class OrderService {
         methodHelper.loadUserByUsername(username);
 
         Order order = methodHelper.findOrderById(id);
-        return ResponseMessage.<OrderResponse>builder()
-                .returnBody(orderMapper.mapOrderToOrderResponse(order))
-                .message(SuccessMessages.ORDER_FOUND)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return methodHelper.createResponse(SuccessMessages.ORDER_FOUND, HttpStatus.OK, orderMapper.mapOrderToOrderResponse(order));
     }
 
     public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemede(HttpServletRequest request, @Min(0) int page, @Min(1) int size, String sort, String type) {
@@ -441,13 +431,11 @@ public class OrderService {
         Order order = methodHelper.findOrderById(id);
         ProductionProcess productionProcess = order.getProductionProcess();
         PolisajImalat polisajImalat = productionProcess.getPolisajOperation();
-
-        return MultipleResponses.<OrderResponse, PolisajResponse, ProductionProcessResponse>builder()
-                .returnBody(orderMapper.mapOrderToOrderResponse(order))
-                .returnBody2(polisajMapper.mapToResponse(polisajImalat))
-                .returnBody3(talasliMapper.mapProductionProcessToResponse(productionProcess))
-                .message(SuccessMessages.ORDER_FOUND)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return methodHelper.multipleResponse(
+                SuccessMessages.ORDER_FOUND,
+                HttpStatus.OK,
+                orderMapper.mapOrderToOrderResponse(order),
+                polisajMapper.mapToResponse(polisajImalat),
+                talasliMapper.mapProductionProcessToResponse(productionProcess));
     }
 }
