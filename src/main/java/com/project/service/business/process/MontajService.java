@@ -63,9 +63,41 @@ public class MontajService {
 
     public ResponseMessage<String> boruKaynakOperation(Long operationId, @Valid MontajRequest request) {
 
-        return ResponseMessage.<String>builder()
-                .message(SuccessMessages.BORU_COMPLETED)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        BlokLiftMontaj blokLiftBoruKaynak;
+        LiftMontaj liftBoruKaynak;
+
+        if(request.getOrderType().equals(OrderType.DAMPER)){
+
+            blokLiftBoruKaynak= montajHelper.findBlokLiftOperationById(operationId);
+            ProductionProcess productionProcess = blokLiftBoruKaynak.getProductionProcess();
+            blokLiftBoruKaynak.completeOperation(request.getCompletedQuantity());
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKaynak);
+
+            BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+            blokLiftMontaj.updateNextPipeOperation(blokLiftBoruKaynak.getLastCompletedQty());
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+
+            blokLiftMontaj.updateAccordingToPipeAndMilCount();
+            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+
+
+        }else{
+            liftBoruKaynak=montajHelper.findLiftOperationById(operationId);
+
+            ProductionProcess productionProcess = liftBoruKaynak.getProductionProcess();
+
+            liftBoruKaynak.completeOperation(request.getCompletedQuantity());
+
+            montajHelper.saveLiftMontajWithoutReturn(liftBoruKaynak);
+
+            LiftMontaj liftMontaj = montajHelper.findLiftMontajByProductionProcess(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
+
+            liftMontaj.updateNextPipeOperation(liftBoruKaynak.getLastCompletedQty());
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+
+            liftMontaj.updateAccordingToPipeAndMilCount();
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+        }
+        return methodHelper.createResponse(SuccessMessages.BORU_COMPLETED,HttpStatus.OK,null);
     }
 }
