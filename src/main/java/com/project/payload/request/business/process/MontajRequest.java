@@ -1,5 +1,6 @@
 package com.project.payload.request.business.process;
 
+import com.project.domain.enums.OrderType;
 import com.project.payload.request.abstracts.BaseOperationRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -23,5 +24,7 @@ public class MontajRequest extends BaseOperationRequest {
 
     @NotNull(message = "işlem tipi boş olamaz")
     private String operationType;//işlem tipi
+
+    private OrderType orderType;//sipariş tipi
 
 }
