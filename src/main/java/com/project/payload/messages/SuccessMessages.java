@@ -29,7 +29,10 @@ public class SuccessMessages {
     public static final String POLISAJ_UPDATED = "Polisaj güncellendi";
     public static final String BORU_KAPAMA_COMPLETED = "Boru kapama işlemi başarılıyla tamamlandı";
     public static final String BORU_SAVED = "%s adet boru başarılı bir şekilde kaydedildi";
-    public static final String BORU_COMPLETED = "Boru işlemi başarılı bir şekilde tamamlandı";
+    public static final String BORU_KAYANAK_COMPLETED = "Boru kaynak işlemi başarılı bir şekilde tamamlandı";
+    public static final String BORU_MONTAJ_COMPLETED = "Boru montaj işlemi başarılı bir şekilde tamamlandı";
+    public static final String GAZ_DOLUM_COMPLETED = "Gaz dolum işlemi başarılı bir şekilde tamamlandı";
+
 
     private SuccessMessages(){}
 }

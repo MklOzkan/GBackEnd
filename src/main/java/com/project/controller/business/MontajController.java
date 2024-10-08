@@ -41,7 +41,7 @@ public class MontajController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/blBoruKapamaOperation/{operationId}")
     public ResponseMessage<String> blockLiftBoruKapamaOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
-        return montajService.blLiftBoruKapamaOperation(operationId, request);
+        return montajService.blokLiftBoruKapamaOperation(operationId, request);
     }
 
 
