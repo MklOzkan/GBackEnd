@@ -50,4 +50,10 @@ Ayni zamanda isil islemin kalan kismi, miltaslamanin gelen adet ile toplanarak g
 8-/polisaj
 
 9-/liftmontaj/borukapama
-==>
+1. stepBos LiftMontaj liftmontaj; ve BlokLiftMontaj blokLiftMontaj; objeleri olusturulur.
+2. step: if else statement'e olusturulur. Burda orderType kontrol edilir, eger orderType "Damper" ise,
+operationId kullanilarak BlokLiftMontaj operation bulunur, degilse LiftMontaj operation bulunur.
+3. operation bulunduktan sonra, productionProcess bulunur.
+4.
+
+

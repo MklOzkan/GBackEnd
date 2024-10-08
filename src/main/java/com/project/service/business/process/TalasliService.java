@@ -93,22 +93,20 @@ public class TalasliService {
         TalasliImalat boruKesme = talasliHelper.findOperationById(id);
         ProductionProcess productionProcess= boruKesme.getProductionProcess();
         OrderType orderType = productionProcess.getOrder().getOrderType();
-        LiftMontaj liftBoruKapama;
-        BlokLiftMontaj blokLiftBoru;
 
         boruKesme.completeOperation(request.getCompletedQuantity());
 
         if((orderType.equals(OrderType.LIFT)||orderType.equals(OrderType.PASLANMAZ))){
-            liftBoruKapama =montajHelper.findLiftMontajByProductionProcess(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
-            liftBoruKapama.completeOperation(request.getCompletedQuantity());
+            LiftMontaj liftBoruKapama =montajHelper.findLiftMontajByProductionProcess(productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
+            liftBoruKapama.updateNextOperation(request.getCompletedQuantity());
             montajHelper.saveLiftMontajWithoutReturn(liftBoruKapama);
 
         }else if(orderType.equals(OrderType.DAMPER)){
-            blokLiftBoru = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAPAMA);
+            BlokLiftMontaj blokLiftBoru = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAPAMA);
             blokLiftBoru.updateNextOperation(request.getCompletedQuantity());
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoru);
         }else {
-            blokLiftBoru = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+            BlokLiftMontaj blokLiftBoru = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
             blokLiftBoru.updateNextPipeOperation(request.getCompletedQuantity());
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoru);
             montajHelper.compareMilCountAndPipeCountForBLMontaj(blokLiftBoru);
@@ -116,10 +114,7 @@ public class TalasliService {
 
         talasliHelper.saveTalasliImalatWithoutReturn(boruKesme);
 
-            return ResponseMessage.<String>builder()
-                    .message(String.format(SuccessMessages.BORU_SAVED, request.getCompletedQuantity()))
-                    .httpStatus(HttpStatus.OK)
-                    .build();
+        return methodHelper.createResponse(SuccessMessages.BORU_COMPLETED, HttpStatus.OK, null);
 
     }
 
