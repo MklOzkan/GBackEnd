@@ -1,21 +1,26 @@
 package com.project.service.business.process;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.BlokLiftOperationType;
+import com.project.domain.concretes.business.process._enums.BoyaPaketOperationType;
 import com.project.domain.concretes.business.process._enums.KaliteKontrolStage;
 import com.project.domain.concretes.business.process._enums.LiftMontajOperationTye;
 import com.project.domain.concretes.business.process.blokliftmontajamiri.BlokLiftMontaj;
+import com.project.domain.concretes.business.process.boyavepaket.BoyaVePaketleme;
 import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol;
 import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.enums.OrderType;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.process.MontajRequest;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.service.helper.BoyaPaketHelper;
 import com.project.service.helper.KaliteKontrolHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.MontajHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,6 +30,7 @@ public class MontajService {
     private final MontajHelper montajHelper;
     private final MethodHelper methodHelper;
     private final KaliteKontrolHelper kaliteKontrolHelper;
+    private final BoyaPaketHelper boyaPaketHelper;
 
     public ResponseMessage<String> boruKapamaOperation(Long operationId, MontajRequest request) {
         BlokLiftMontaj blokLiftBoruKapama;
@@ -160,6 +166,7 @@ public class MontajService {
 
     public ResponseMessage<String> gazDolumOperation(Long operationId, MontajRequest request) {
         BlokLiftMontaj blokLiftMontaj;
+
         if (request.getOrderType().equals(OrderType.DAMPER) || request.getOrderType().equals(OrderType.BLOKLIFT)) {
             blokLiftMontaj = montajHelper.findBlokLiftOperationById(operationId);
             ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
@@ -182,17 +189,44 @@ public class MontajService {
             montajHelper.saveLiftMontajWithoutReturn(nextOperation);
 
         }
-
         return methodHelper.createResponse(SuccessMessages.GAZ_DOLUM_COMPLETED, HttpStatus.OK, null);
     }
 
 
     public ResponseMessage<String> baslikTakmaOperation(Long operationId, @Valid MontajRequest request) {
+        LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
+            ProductionProcess productionProcess = liftMontaj.getProductionProcess();
+
+            liftMontaj.completeOperation(request.getCompletedQuantity());
+            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+
+            BoyaVePaketleme nextOperation = boyaPaketHelper.findBoyaVePaketlemeByProductionProcessAndOperationType(productionProcess, BoyaPaketOperationType.BOYA);
+            nextOperation.updateNextOperation(liftMontaj.getLastCompletedQty());
+            boyaPaketHelper.saveBoyaVePaketlemeWithoutReturn(nextOperation);
 
         return methodHelper.createResponse(SuccessMessages.BASLIK_TAKMA_UPDATED, HttpStatus.OK, null);
+
     }
 
+
     public ResponseMessage<String> testOperation(Long operationId, @Valid MontajRequest request) {
+            BlokLiftMontaj blokLiftMontajOperation= montajHelper.findBlokLiftOperationById(operationId);
+            ProductionProcess productionProcess = blokLiftMontajOperation.getProductionProcess();
+
+            if(request.getLastCompletedScrapCount()>0){
+                blokLiftMontajOperation.setScrapCountAfterTest(request.getLastCompletedScrapCount() + blokLiftMontajOperation.getScrapCountAfterTest());
+                blokLiftMontajOperation.setLastCompletedScrapCount(request.getLastCompletedScrapCount());
+                 montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontajOperation);
+            }
+
+            if(request.getCompletedQuantity()>0){
+                blokLiftMontajOperation.completeOperation(request.getCompletedQuantity());
+                montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontajOperation);
+                BoyaVePaketleme nextOperation = boyaPaketHelper.findBoyaVePaketlemeByProductionProcessAndOperationType(productionProcess, BoyaPaketOperationType.BOYA);
+                nextOperation.updateNextOperation(blokLiftMontajOperation.getLastCompletedQty());
+                boyaPaketHelper.saveBoyaVePaketlemeWithoutReturn(nextOperation);
+
+            }
 
         return methodHelper.createResponse(SuccessMessages.TEST_OPERATION_UPDATED, HttpStatus.OK, null);
     }
