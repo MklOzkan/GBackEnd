@@ -37,6 +37,7 @@ public class ErrorMessages {
     public static final String POLISAJ_IMALAT_NOT_FOUND = "Polisaj imalat bulunamadı";
     public static final String KALITE_KONTROL_NOT_FOUND = "Kalite kontrol  aşaması bulunamadı";
     public static final String POLISAJ_NOT_FOUND = "Polisaj bulunamadı: %s";
+    public static final String BASLIK_TAKMA_NOT_FOUND = "Başlık takma işlemi bulunamadı";
 
     private ErrorMessages(){}
 
