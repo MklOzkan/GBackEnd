@@ -43,7 +43,7 @@ public class KaliteKontrolController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/afterezme/{stageId}")
     public ResponseMessage<String> afterEzmeKaliteKontrol(@RequestBody @Valid KaliteKontrolRequest request, @PathVariable Long stageId) {
-        return null;//kaliteKontrolService.afterEzmeKaliteKontrol(request, stageId);
+        return kaliteKontrolService.afterEzmeKaliteKontrol(request, stageId);
     }
     //TODO: Cahit
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
