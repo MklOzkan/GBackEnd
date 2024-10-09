@@ -237,10 +237,7 @@ public class KaliteKontrolService {
                 kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
                 break;
         }
-        return ResponseMessage.<String>builder()
-                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return methodHelper.createResponse(SuccessMessages.KALITE_KONTROL_UPDATED, HttpStatus.OK, null);
     }
 
     private void rollbackApprove(ProductionProcess productionProcess, Long id){
