@@ -31,6 +31,8 @@ public class BlokLiftRequest extends BaseOperationRequest {
 
     private int scrapCountAfterTest =0;//test sonrası hurda sayısı
 
+    private int lastCompletedScrapCount =0;//son tamamlanan hurda sayısı
+
     @NotNull(message = "Islem tipi bos olamaz")
     private String operationType;
 

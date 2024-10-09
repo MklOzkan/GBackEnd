@@ -31,6 +31,8 @@ public class BlokLiftMontaj extends BaseOperation {
 
     private int scrapCountAfterTest;//test sonrası hurda sayısı
 
+    private int lastCompletedScrapCount;//son tamamlanan hurda sayısı
+
     @Column(name = "operation_type")
     @Enumerated(EnumType.STRING)
     private BlokLiftOperationType operationType;

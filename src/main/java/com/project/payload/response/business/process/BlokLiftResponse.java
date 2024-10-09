@@ -26,6 +26,8 @@ public class BlokLiftResponse extends BaseOperationResponse {
 
     private Integer scrapCountAfterTest;//test sonrası hurda sayısı
 
+    private Integer lastCompletedScrapCount;//son tamamlanan hurda sayısı
+
     private BlokLiftOperationType operationType;
 
     private int lastMilCount;//son mil sayısı

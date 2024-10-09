@@ -48,9 +48,22 @@ public class MontajController {
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @PutMapping("/gazDolumOperation/{operationId}")
     public ResponseMessage<String> gazDolumOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
-
         return montajService.gazDolumOperation(operationId, request);
     }
+    //TODO: Cahit&Adem
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/baslikTakmaOperation/{operationId}")
+    public ResponseMessage<String> baslikTakmaOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.baslikTakmaOperation(operationId, request);
+    }
+
+    //TODO: Cahit&Adem
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/testOperation/{operationId}")
+    public ResponseMessage<String> testOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.testOperation(operationId, request);
+    }
+
 
 
 
