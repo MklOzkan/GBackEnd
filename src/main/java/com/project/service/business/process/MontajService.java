@@ -13,6 +13,7 @@ import com.project.payload.response.business.ResponseMessage;
 import com.project.service.helper.KaliteKontrolHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.MontajHelper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -186,4 +187,13 @@ public class MontajService {
     }
 
 
+    public ResponseMessage<String> baslikTakmaOperation(Long operationId, @Valid MontajRequest request) {
+
+        return methodHelper.createResponse(SuccessMessages.BASLIK_TAKMA_UPDATED, HttpStatus.OK, null);
+    }
+
+    public ResponseMessage<String> testOperation(Long operationId, @Valid MontajRequest request) {
+
+        return methodHelper.createResponse(SuccessMessages.TEST_OPERATION_UPDATED, HttpStatus.OK, null);
+    }
 }
