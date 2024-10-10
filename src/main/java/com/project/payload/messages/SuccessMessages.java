@@ -34,6 +34,7 @@ public class SuccessMessages {
     public static final String GAZ_DOLUM_COMPLETED = "Gaz dolum işlemi başarılı bir şekilde tamamlandı";
     public static final String BASLIK_TAKMA_UPDATED = "Başlık takma işlemi başarılı bir şekilde güncellendi";
     public static final String TEST_OPERATION_UPDATED = "Test işlemi başarılı bir şekilde güncellendi";
+    public static final String BORU_UPDATED = "Boru güncellendi";
 
 
     private SuccessMessages(){}

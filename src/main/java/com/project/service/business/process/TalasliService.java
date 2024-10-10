@@ -114,7 +114,7 @@ public class TalasliService {
 
         talasliHelper.saveTalasliImalatWithoutReturn(boruKesme);
 
-        return methodHelper.createResponse(SuccessMessages.BORU_COMPLETED, HttpStatus.OK, null);
+        return methodHelper.createResponse(SuccessMessages.BORU_UPDATED, HttpStatus.OK, null);
 
     }
 
