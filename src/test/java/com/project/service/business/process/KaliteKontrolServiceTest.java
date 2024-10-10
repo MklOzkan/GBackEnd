@@ -129,7 +129,7 @@ class KaliteKontrolServiceTest {
         kaliteKontrol.setProductionProcess(productionProcess);
 
         when(kaliteKontrolHelper.findById(anyLong())).thenReturn(kaliteKontrol);
-        when(boyaPaketHelper.findBoyaVePaketlemeByProductionProcess(any(), any())).thenReturn(new BoyaVePaketleme());
+        //when(boyaPaketHelper.findBoyaVePaketlemeByProductionProcess(any(), any())).thenReturn(new BoyaVePaketleme());
 
         ResponseMessage<String> response = kaliteKontrolService.afterMontajKaliteKontrol(request, 1L);
 
