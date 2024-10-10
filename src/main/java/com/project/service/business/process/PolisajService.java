@@ -6,14 +6,12 @@ import com.project.domain.concretes.business.process._enums.KaliteKontrolStage;
 import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol;
 import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.enums.OrderType;
+import com.project.exception.ConflictException;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.process.PolisajRequest;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.process.PolisajImalatRepository;
-import com.project.service.helper.KaliteKontrolHelper;
-import com.project.service.helper.MontajHelper;
-import com.project.service.helper.PolisajHelper;
-import com.project.service.helper.TalasliHelper;
+import com.project.service.helper.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,12 +23,15 @@ public class PolisajService {
 
     private final PolisajHelper polisajHelper;
     private final KaliteKontrolHelper  kaliteKontrolHelper;
+    private final MethodHelper methodHelper;
 
 
     public ResponseMessage<String> updatePolisaj(Long id, @Valid PolisajRequest request) {
         PolisajImalat polisajImalat = polisajHelper.findPolisajById(id);
         ProductionProcess productionProcess = polisajImalat.getProductionProcess();
         KaliteKontrol afterPolisaj = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
+
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), polisajImalat.getRemainingQuantity());
 
         polisajImalat.completeOperation(request.getCompletedQuantity());
 
