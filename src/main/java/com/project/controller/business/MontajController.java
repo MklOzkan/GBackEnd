@@ -64,7 +64,17 @@ public class MontajController {
         return montajService.testOperation(operationId, request);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/removelastchange/{operationId}")
+    public ResponseMessage<String> removeLastChangeFromBlokliftMontaj(@PathVariable Long operationId) {
+        return montajService.removeLastChangeFromBlokliftMontaj(operationId);
+    }
 
+//    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+//    @GetMapping("/removelastchange/{operationId}")
+//    public ResponseMessage<String> removeLastChangeFromLiftMontaj(@PathVariable Long operationId) {
+//        return montajService.removeLastChangeFromLiftMontaj(operationId);
+//    }
 
 
 
