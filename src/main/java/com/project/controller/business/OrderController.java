@@ -1,9 +1,5 @@
 package com.project.controller.business;
 
-import com.project.domain.concretes.business.OrderStatus;
-import com.project.domain.concretes.business.process.ProductionProcess;
-import com.project.domain.enums.StatusType;
-import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.OrderRequest;
 import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.MultipleResponses;
@@ -22,9 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,14 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.DateFormatter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/orders")
@@ -114,14 +102,26 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @GetMapping("/getOrdersForOtherAmir")
-    public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemede(
+    @GetMapping("/getOrdersForPolisajAmir")
+    public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemedeForPolisaj(
             HttpServletRequest  request,
             @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
             @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
             @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
             @RequestParam(value = "type", defaultValue = "desc") String type){
         return orderService.getOrdersForPolisajAmir(request,page, size, sort, type);
+
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getOrdersIslenmekteAndBeklemede")
+    public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemede(
+            HttpServletRequest  request,
+            @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
+            @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
+            @RequestParam(value = "type", defaultValue = "desc") String type){
+        return orderService.getOrdersWhichStatusIslenmekteAndBeklemede(request,page, size, sort, type);
 
     }
 

@@ -95,54 +95,38 @@ public class OrderService {
         orderRepository.save(savedOrder);
 
         TalasliImalat boruKesme = new TalasliImalat();
-        boruKesme.setOperationType(TalasliOperationType.BORU_KESME_HAVSA);
         boruKesme.setRemainingQuantity(savedOrder.getOrderQuantity());
-        boruKesme.setProductionProcess(productionProcess);
-        talasliImalatRepository.save(boruKesme);
-
-
+        createTalasli(boruKesme, productionProcess, TalasliOperationType.BORU_KESME_HAVSA);
 
         TalasliImalat milKoparma = new TalasliImalat();
         TalasliImalat milTornalama = new TalasliImalat();
 
         if (!savedOrder.getOrderType().equals(OrderType.BLOKLIFT)) {
-            milKoparma.setOperationType(TalasliOperationType.MIL_KOPARMA);
             milKoparma.setRemainingQuantity(savedOrder.getOrderQuantity() - savedOrder.getReadyMilCount());
-            milKoparma.setProductionProcess(productionProcess);
-            talasliImalatRepository.save(milKoparma);
-
-            milTornalama.setOperationType(TalasliOperationType.MIL_TORNALAMA);
-            milTornalama.setProductionProcess(productionProcess);
-            talasliImalatRepository.save(milTornalama);
-
+            createTalasli(milKoparma, productionProcess, TalasliOperationType.MIL_KOPARMA);
+            createTalasli(milTornalama, productionProcess, TalasliOperationType.MIL_TORNALAMA);
         }
 
         TalasliImalat milTaslama = new TalasliImalat();
-        milTaslama.setOperationType(TalasliOperationType.MIL_TASLAMA);
+
         if (savedOrder.getOrderType().equals(OrderType.BLOKLIFT)) {
             milTaslama.setRemainingQuantity(savedOrder.getOrderQuantity());
         }
-        milTaslama.setProductionProcess(productionProcess);
-        talasliImalatRepository.save(milTaslama);
+        createTalasli(milTaslama, productionProcess, TalasliOperationType.MIL_TASLAMA);
 
         TalasliImalat isilIslem = new TalasliImalat();
         if (!savedOrder.getOrderType().equals(OrderType.PASLANMAZ)) {
-            isilIslem.setOperationType(TalasliOperationType.ISIL_ISLEM);
-            isilIslem.setProductionProcess(productionProcess);
-            talasliImalatRepository.save(isilIslem);
+            createTalasli(isilIslem, productionProcess, TalasliOperationType.ISIL_ISLEM);
         }
 
         TalasliImalat ezme = new TalasliImalat();
         if (savedOrder.getOrderType().equals(OrderType.PASLANMAZ)) {
-            ezme.setOperationType(TalasliOperationType.EZME);
-            ezme.setProductionProcess(productionProcess);
-            talasliImalatRepository.save(ezme);
+            createTalasli(ezme, productionProcess, TalasliOperationType.EZME);
         }
 
         PolisajImalat polisaj = new PolisajImalat();
         if (!savedOrder.getOrderType().equals(OrderType.PASLANMAZ)){
-            polisaj.setProductionProcess(productionProcess);
-            polisajImalatRepository.save(polisaj);
+            createPolisaj(polisaj, productionProcess);
         }
 
 
@@ -159,88 +143,83 @@ public class OrderService {
         BlokLiftMontaj test = new BlokLiftMontaj();
 
         if (savedOrder.getOrderType().equals(OrderType.LIFT)||savedOrder.getOrderType().equals(OrderType.PASLANMAZ)) {
-            boruKapama.setOperationType(LiftMontajOperationTye.BORU_KAPAMA);
-            boruKapama.setProductionProcess(productionProcess);
-            liftMontajRepository.save(boruKapama);
+            createLiftMontaj(boruKapama, productionProcess, LiftMontajOperationTye.BORU_KAPAMA);
+            createLiftMontaj(boruKaynak, productionProcess, LiftMontajOperationTye.BORU_KAYNAK);
 
-            boruKaynak.setOperationType(LiftMontajOperationTye.BORU_KAYNAK);
-            boruKaynak.setProductionProcess(productionProcess);
-            liftMontajRepository.save(boruKaynak);
-
-            liftMontaj.setOperationType(LiftMontajOperationTye.LIFT_MONTAJ);
-            liftMontaj.setProductionProcess(productionProcess);
-            liftMontajRepository.save(liftMontaj);
-
-            gazDolum.setOperationType(LiftMontajOperationTye.GAZ_DOLUM);
-            gazDolum.setProductionProcess(productionProcess);
-            liftMontajRepository.save(gazDolum);
-
-            baslikTakma.setOperationType(LiftMontajOperationTye.BASLIK_TAKMA);
-            baslikTakma.setProductionProcess(productionProcess);
-            liftMontajRepository.save(baslikTakma);
+            if(savedOrder.getOrderType().equals(OrderType.LIFT)&&savedOrder.getReadyMilCount()>=0){
+                liftMontaj.setMilCount(savedOrder.getReadyMilCount());
+            }
+            createLiftMontaj(liftMontaj, productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
+            createLiftMontaj(gazDolum, productionProcess, LiftMontajOperationTye.GAZ_DOLUM);
+            createLiftMontaj(baslikTakma, productionProcess, LiftMontajOperationTye.BASLIK_TAKMA);
         }else {
 
-            boruKapamaBlok.setOperationType(BlokLiftOperationType.BORU_KAPAMA);
-            boruKapamaBlok.setProductionProcess(productionProcess);
-            blokLiftMontajRepository.save(boruKapamaBlok);
+            createBlokLiftMontaj(boruKapamaBlok, productionProcess, BlokLiftOperationType.BORU_KAPAMA);
             if (savedOrder.getOrderType().equals(OrderType.BLOKLIFT)) {
-                boruKaynakBlok.setOperationType(BlokLiftOperationType.BORU_KAYNAK);
-                boruKaynakBlok.setProductionProcess(productionProcess);
-                blokLiftMontajRepository.save(boruKaynakBlok);
+                createBlokLiftMontaj(boruKaynakBlok, productionProcess, BlokLiftOperationType.BORU_KAYNAK);
             }
-            liftMontajBlok.setOperationType(BlokLiftOperationType.BLOK_LIFT_MONTAJ);
-            liftMontajBlok.setProductionProcess(productionProcess);
-            blokLiftMontajRepository.save(liftMontajBlok);
-
-            gazDolumBlok.setOperationType(BlokLiftOperationType.GAZ_DOLUM);
-            gazDolumBlok.setProductionProcess(productionProcess);
-            blokLiftMontajRepository.save(gazDolumBlok);
-
-            test.setOperationType(BlokLiftOperationType.TEST);
-            test.setProductionProcess(productionProcess);
-            blokLiftMontajRepository.save(test);
-
+            createBlokLiftMontaj(liftMontajBlok, productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+            createBlokLiftMontaj(gazDolumBlok, productionProcess, BlokLiftOperationType.GAZ_DOLUM);
+            createBlokLiftMontaj(test, productionProcess, BlokLiftOperationType.TEST);
         }
 
         BoyaVePaketleme boya = new BoyaVePaketleme();
-        boya.setOperationType(BoyaPaketOperationType.BOYA);
-        boya.setProductionProcess(productionProcess);
-        boyaVePaketlemeRepository.save(boya);
+        createBoyavePAketleme(boya, productionProcess, BoyaPaketOperationType.BOYA);
 
         BoyaVePaketleme paketleme = new BoyaVePaketleme();
-        paketleme.setOperationType(BoyaPaketOperationType.PAKETLEME);
-        paketleme.setProductionProcess(productionProcess);
-        boyaVePaketlemeRepository.save(paketleme);
+        createBoyavePAketleme(paketleme, productionProcess, BoyaPaketOperationType.PAKETLEME);
 
         KaliteKontrol afterPolisaj = new KaliteKontrol();
         KaliteKontrol afterMontaj = new KaliteKontrol();
         KaliteKontrol afterMilTaslama = new KaliteKontrol();
         KaliteKontrol afterEzme = new KaliteKontrol();
         if (savedOrder.getOrderType().equals(OrderType.LIFT)||savedOrder.getOrderType().equals(OrderType.DAMPER)){
-            afterPolisaj.setKaliteKontrolStage(KaliteKontrolStage.AFTER_POLISAJ);
-            afterPolisaj.setProductionProcess(productionProcess);
-            kaliteKontrolRepository.save(afterPolisaj);
-
-            afterMontaj.setKaliteKontrolStage(KaliteKontrolStage.AFTER_MONTAJ);
-            afterMontaj.setProductionProcess(productionProcess);
-            kaliteKontrolRepository.save(afterMontaj);
+            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
+            createKaliteKontrol(afterMontaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
         } else if (savedOrder.getOrderType().equals(OrderType.PASLANMAZ)) {
-            afterEzme.setKaliteKontrolStage(KaliteKontrolStage.AFTER_EZME);
-            afterMilTaslama.setKaliteKontrolStage(KaliteKontrolStage.AFTER_MIL_TASLAMA);
-            afterMontaj.setKaliteKontrolStage(KaliteKontrolStage.AFTER_MONTAJ);
-            afterEzme.setProductionProcess(productionProcess);
-            afterMilTaslama.setProductionProcess(productionProcess);
-            afterMontaj.setProductionProcess(productionProcess);
-            kaliteKontrolRepository.save(afterEzme);
-            kaliteKontrolRepository.save(afterMilTaslama);
-            kaliteKontrolRepository.save(afterMontaj);
+            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
+            createKaliteKontrol(afterMilTaslama, productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+            createKaliteKontrol(afterEzme, productionProcess, KaliteKontrolStage.AFTER_EZME);
         }else {
-            afterPolisaj.setKaliteKontrolStage(KaliteKontrolStage.AFTER_POLISAJ);
-            afterPolisaj.setProductionProcess(productionProcess);
-            kaliteKontrolRepository.save(afterPolisaj);
+            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
         }
 
         return methodHelper.createResponse(SuccessMessages.ORDER_CREATED, HttpStatus.CREATED, orderMapper.mapOrderToOrderResponse(savedOrder));
+    }
+
+    public void createTalasli(TalasliImalat talasliImalat, ProductionProcess productionProcess, TalasliOperationType operationType) {
+        talasliImalat.setOperationType(operationType);
+        talasliImalat.setProductionProcess(productionProcess);
+        talasliImalatRepository.save(talasliImalat);
+    }
+
+    public void createPolisaj(PolisajImalat polisajImalat, ProductionProcess productionProcess) {
+        polisajImalat.setProductionProcess(productionProcess);
+        polisajImalatRepository.save(polisajImalat);
+    }
+
+    public void createLiftMontaj(LiftMontaj liftMontaj, ProductionProcess productionProcess, LiftMontajOperationTye operationType) {
+        liftMontaj.setOperationType(operationType);
+        liftMontaj.setProductionProcess(productionProcess);
+        liftMontajRepository.save(liftMontaj);
+    }
+
+    public void createBlokLiftMontaj(BlokLiftMontaj blokLiftMontaj, ProductionProcess productionProcess, BlokLiftOperationType operationType) {
+        blokLiftMontaj.setOperationType(operationType);
+        blokLiftMontaj.setProductionProcess(productionProcess);
+        blokLiftMontajRepository.save(blokLiftMontaj);
+    }
+
+    public void createKaliteKontrol(KaliteKontrol kaliteKontrol, ProductionProcess productionProcess, KaliteKontrolStage kaliteKontrolStage) {
+        kaliteKontrol.setKaliteKontrolStage(kaliteKontrolStage);
+        kaliteKontrol.setProductionProcess(productionProcess);
+        kaliteKontrolRepository.save(kaliteKontrol);
+    }
+
+    public void createBoyavePAketleme(BoyaVePaketleme boyaVePaketleme, ProductionProcess productionProcess, BoyaPaketOperationType operationType) {
+        boyaVePaketleme.setOperationType(operationType);
+        boyaVePaketleme.setProductionProcess(productionProcess);
+        boyaVePaketlemeRepository.save(boyaVePaketleme);
     }
 
 
@@ -414,7 +393,7 @@ public class OrderService {
         methodHelper.loadUserByUsername(username);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
-        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName(), StatusType.ISLENMEYI_BEKLIYOR.getName());
         Page<Order> ordersPage = orderRepository.findByStatusTypeAndOrderTypeNotLike(statuses, pageable);
 
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()

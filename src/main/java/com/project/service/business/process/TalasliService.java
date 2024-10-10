@@ -1,6 +1,7 @@
 package com.project.service.business.process;
 
 import com.project.domain.concretes.business.Order;
+import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.BlokLiftOperationType;
 import com.project.domain.concretes.business.process._enums.KaliteKontrolStage;
 import com.project.domain.concretes.business.process._enums.LiftMontajOperationTye;
@@ -10,20 +11,16 @@ import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol
 import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
-import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.enums.OrderType;
 import com.project.exception.ConflictException;
 import com.project.payload.mappers.TalasliMapper;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.process.TalasliImalatRequest;
-import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.ResponseMessage;
-import com.project.payload.response.business.process.TalasliImalatResponse;
 import com.project.repository.business.OrderRepository;
 import com.project.repository.business.process.KaliteKontrolRepository;
 import com.project.repository.business.process.PolisajImalatRepository;
 import com.project.repository.business.process.TalasliImalatRepository;
-import com.project.service.business.OrderStatusService;
 import com.project.service.helper.KaliteKontrolHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.MontajHelper;
@@ -31,13 +28,9 @@ import com.project.service.helper.TalasliHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -114,7 +107,7 @@ public class TalasliService {
 
         talasliHelper.saveTalasliImalatWithoutReturn(boruKesme);
 
-        return methodHelper.createResponse(SuccessMessages.BORU_COMPLETED, HttpStatus.OK, null);
+        return methodHelper.createResponse(SuccessMessages.BORU_UPDATED, HttpStatus.OK, null);
 
     }
 

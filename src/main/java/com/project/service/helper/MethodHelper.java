@@ -35,9 +35,6 @@ public class MethodHelper {
         return user;
     }
 
-
-
-
     public void checkRole(User user, RoleType roleType) {
      if(!user.getUserRole().getRoleType().equals(roleType)) throw new BadRequestException(ErrorMessages.USER_ROLE_IS_NOT_FOUND);
     }
@@ -118,6 +115,12 @@ public class MethodHelper {
                 .returnBody2(data2)
                 .returnBody3(data3)
                 .build();
+    }
+
+    public void compareCompletedQuantityWithRemainingQuantity(@NotNull int completedQuantity, @NotNull int remainingQuantity) {
+        if (completedQuantity > remainingQuantity) {
+            throw new ConflictException(ErrorMessages.COMPLETED_QUANTITY_CANNOT_BE_GREATER_THAN_REMAINING_QUANTITY);
+        }
     }
 
 
