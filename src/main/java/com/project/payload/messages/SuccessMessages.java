@@ -36,6 +36,8 @@ public class SuccessMessages {
     public static final String TEST_OPERATION_UPDATED = "Test işlemi başarılı bir şekilde güncellendi";
     public static final String BORU_COMPLETED = "Boru işlemi başarılı bir şekilde tamamlandı";
     public static final String REMOVE_LAST_CHANGE = "Son değişiklik kaldırıldı";
+    public static final String BORU_UPDATED = "Boru işlemi başarılı bir şekilde güncellendi";
+
 
     private SuccessMessages(){}
 }
