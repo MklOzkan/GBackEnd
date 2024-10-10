@@ -19,7 +19,7 @@ public class BoyaPaketHelper {
     private final MethodHelper methodHelper;
     private final BoyaVePaketlemeRepository boyaVePaketlemeRepository;
 
-    public BoyaVePaketleme findBoyaVePaketlemeByProductionProcess(ProductionProcess productionProcess, BoyaPaketOperationType operationType) {
+    public BoyaVePaketleme findBoyaVePaketlemeByProductionProcessAndOperationType(ProductionProcess productionProcess, BoyaPaketOperationType operationType) {
         return productionProcess.getBoyaPaketOperations()
                 .stream()
                 .filter(t -> t.getOperationType().equals(operationType))

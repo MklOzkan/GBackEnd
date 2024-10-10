@@ -22,6 +22,8 @@ public class MontajRequest extends BaseOperationRequest {
 
     private int scarapCountAfterTest;//test sonrası hurda sayısı
 
+    private int lastCompletedScrapCount;//son tamamlanan hurda sayısı
+
     @NotNull(message = "işlem tipi boş olamaz")
     private String operationType;//işlem tipi
 
