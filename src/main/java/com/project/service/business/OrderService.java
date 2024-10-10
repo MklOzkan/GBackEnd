@@ -38,7 +38,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -394,7 +393,7 @@ public class OrderService {
         methodHelper.loadUserByUsername(username);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
-        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName(), StatusType.ISLENMEYI_BEKLIYOR.getName());
         Page<Order> ordersPage = orderRepository.findByStatusTypeAndOrderTypeNotLike(statuses, pageable);
 
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()
