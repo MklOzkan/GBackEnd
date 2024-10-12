@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +26,13 @@ public class PolisajService {
     private final KaliteKontrolHelper  kaliteKontrolHelper;
     private final MethodHelper methodHelper;
 
-
+    @Transactional
     public ResponseMessage<String> updatePolisaj(Long id, @Valid PolisajRequest request) {
         PolisajImalat polisajImalat = polisajHelper.findPolisajById(id);
         ProductionProcess productionProcess = polisajImalat.getProductionProcess();
         KaliteKontrol afterPolisaj = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
 
         methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), polisajImalat.getRemainingQuantity());
-
         polisajImalat.completeOperation(request.getCompletedQuantity());
 
         afterPolisaj.nextOperationByKaliteKontrol(request.getCompletedQuantity());
@@ -44,10 +44,9 @@ public class PolisajService {
                 .message(SuccessMessages.POLISAJ_UPDATED)
                 .httpStatus(HttpStatus.OK)
                 .build();
-
-
     }
 
+    @Transactional
     public ResponseMessage<String> removeLastChange(Long id) {
         PolisajImalat polisajImalat = polisajHelper.findPolisajById(id);
         ProductionProcess productionProcess = polisajImalat.getProductionProcess();
@@ -62,8 +61,5 @@ public class PolisajService {
         return ResponseMessage.<String>builder()
                 .message(SuccessMessages.POLISAJ_UPDATED)
                 .httpStatus(HttpStatus.OK).build();
-
-
-
     }
 }

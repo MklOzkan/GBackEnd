@@ -41,9 +41,13 @@ public class AuthenticationService {
         //login için gerekli olan email ve password LoginRequest classı üzerinden alınıyor.
         String username = loginRequest.getUsername();
         String password= loginRequest.getPassword();
-        // authenticationManager user ı valide ediyor
-        Authentication authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
-        // authentication nesnesi SecurityContextHolder içine yükleniyor
+        Authentication authentication;
+        try {
+            // authenticationManager user ı valide ediyor
+            authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+        }catch (Exception e){
+            throw new BadRequestException(ErrorMessages.INVALID_CREDENTIALS);
+        }        // authentication nesnesi SecurityContextHolder içine yükleniyor
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // JWT token oluşturuluyor
         String token= jwtUtils.generateJwtToken(authentication);

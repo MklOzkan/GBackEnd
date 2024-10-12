@@ -21,6 +21,11 @@ public class KaliteKontrolMapper {
                 .scrapCount(kaliteKontrol.getScrapCount())
                 .returnedToIsilIslem(kaliteKontrol.getReturnedToIsilIslem())
                 .returnedToMilTaslama(kaliteKontrol.getReturnedToMilTaslama())
+                .lastApproveCount(kaliteKontrol.getLastApproveCount())
+                .lastScrapCount(kaliteKontrol.getLastScrapCount())
+                .lastReturnedToIsilIslem(kaliteKontrol.getLastReturnedToIsilIslem())
+                .lastReturnedToMilTaslama(kaliteKontrol.getLastReturnedToMilTaslama())
+                .productionProcessId(kaliteKontrol.getProductionProcess().getId())
                 .active(kaliteKontrol.isActive())
                 .build();
     }

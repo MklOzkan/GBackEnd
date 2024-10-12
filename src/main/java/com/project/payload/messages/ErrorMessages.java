@@ -39,6 +39,9 @@ public class ErrorMessages {
     public static final String POLISAJ_NOT_FOUND = "Polisaj bulunamadı: %s";
     public static final String COMPLETED_QUANTITY_CANNOT_BE_GREATER_THAN_REMAINING_QUANTITY = "Tamamlanan miktar, kalan miktarı geçemez";
     public static final String BASLIK_TAKMA_NOT_FOUND = "Başlık takma işlemi bulunamadı";
+    public static final String LAST_COMPLETED_QUANTITY_CANNOT_BE_GREATER_THAN_REMAINING_QUANTITY = "Bu işlemi geri alamaysınız, çünkü %s operasyonunun kalan mıktarı, sizin giriş yaptığınız en son %s adetlik miktardan küçük!";
+    public static final String INVALID_CREDENTIALS = "Geçersiz şifre!";
+
 
     private ErrorMessages(){}
 

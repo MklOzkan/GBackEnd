@@ -123,5 +123,11 @@ public class MethodHelper {
         }
     }
 
+    public void comparisonForRollBack(@NotNull int lastCompletedQuantity, @NotNull int remainingQuantity) {
+        if (lastCompletedQuantity > remainingQuantity) {
+            throw new ConflictException(ErrorMessages.LAST_COMPLETED_QUANTITY_CANNOT_BE_GREATER_THAN_REMAINING_QUANTITY);
+        }
+    }
+
 
 }

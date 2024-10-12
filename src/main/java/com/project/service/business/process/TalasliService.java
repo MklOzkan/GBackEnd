@@ -111,22 +111,13 @@ public class TalasliService {
 
     }
 
-    public void isCompletedCountMoreThanRemainingCount(int completedCount, int remainingCount) {
-        if (completedCount > remainingCount) {
-            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
-        }
-    }
-
-        
-
     @Transactional
     public ResponseMessage<String> milTornalama(TalasliImalatRequest request, Long operationId) {
 
         TalasliImalat miltornalama = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = miltornalama.getProductionProcess();
 
-        isCompletedCountMoreThanRemainingCount(request.getCompletedQuantity(), miltornalama.getRemainingQuantity());
-
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), miltornalama.getRemainingQuantity());
         miltornalama.completeOperation(request.getCompletedQuantity());
 
         TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
@@ -146,11 +137,9 @@ public class TalasliService {
         TalasliImalat miltaslama = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = miltaslama.getProductionProcess();
         OrderType orderType = productionProcess.getOrder().getOrderType();
-
-        if (request.getCompletedQuantity()> miltaslama.getRemainingQuantity()) {
-            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
+        if (!orderType.equals(OrderType.BLOKLIFT)){
+            methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), miltaslama.getRemainingQuantity());
         }
-
         miltaslama.completeOperation(request.getCompletedQuantity());
 
         TalasliImalat isilIslem;
@@ -180,10 +169,7 @@ public class TalasliService {
         TalasliImalat isilislem = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = isilislem.getProductionProcess();
 
-        if (request.getCompletedQuantity()> isilislem.getRemainingQuantity()) {
-            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
-        }
-
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), isilislem.getRemainingQuantity());
         isilislem.completeOperation(request.getCompletedQuantity());
 
         PolisajImalat polisajImalat = talasliHelper.findPolisajImalatByProductionProcess(productionProcess);
@@ -204,10 +190,7 @@ public class TalasliService {
         TalasliImalat ezme = talasliHelper.findOperationById(operationId);
         ProductionProcess productionProcess = ezme.getProductionProcess();
 
-        if (request.getCompletedQuantity()> ezme.getRemainingQuantity()) {
-            throw new ConflictException("Üretilen miktar hedef miktarı aşamaz");
-        }
-
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), ezme.getRemainingQuantity());
         ezme.completeOperation(request.getCompletedQuantity());
 
         KaliteKontrol afterEzme= kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_EZME);
@@ -246,6 +229,7 @@ public class TalasliService {
                 handleMilTaslama(productionProcess, orderType, lastCompletedQty);
                 break;
             case ISIL_ISLEM:
+                methodHelper.comparisonForRollBack(lastCompletedQty, polisajImalat.getRemainingQuantity());
                 polisajImalat.removeLastFromNextOperation(lastCompletedQty);
                 polisajImalatRepository.save(polisajImalat);
                 break;

@@ -27,6 +27,16 @@ public class KaliteKontrolResponse {
 
     private Integer returnedToMilTaslama;//mil taşlama geri dönüş
 
+    private int lastApproveCount;//son onay sayısı
+
+    private int lastScrapCount;//son hurda sayısı
+
+    private int lastReturnedToIsilIslem;//son isıl işlem geri dönüş
+
+    private int lastReturnedToMilTaslama;//son mil taşlama geri dönüş
+
+    private Long productionProcessId;//üretim işlemi id
+
     private boolean active;  // Operasyonun aktif olup olmadığı
 
     
