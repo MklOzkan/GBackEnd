@@ -343,4 +343,35 @@ public class KaliteKontrolService {
                 .returnBody3(kaliteKontrolMapper.mapKaliteKontrolToResponse(kaliteKontrol))
                 .build();
     }
+
+    public ResponseMessage<String> rollbackAfterMilTaslamaKaliteKontrol(Long stageId, @Valid KaliteKontrolRequest request) {
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+        TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+        TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
+        KaliteKontrol afterMilTaslama = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
+
+        switch (request.getOperationField()){
+            case "Approve":
+                ezme.removeLastFromNextOperation(kaliteKontrol.getLastApproveCount());
+                talasliHelper.saveTalasliImalatWithoutReturn(ezme);
+                kaliteKontrol.rollBackLastApprove();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+            case "Scrap":
+                kaliteKontrol.rollBackLastScrap();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+            case "Mil_Taslama":
+                milTaslama.rollbackOperation(kaliteKontrol.getLastReturnedToMilTaslama());
+                talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+                kaliteKontrol.rollBackLastReturnedToMilTaslama();
+                kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+                break;
+        }
+        return ResponseMessage.<String>builder()
+                .message(SuccessMessages.KALITE_KONTROL_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
 }

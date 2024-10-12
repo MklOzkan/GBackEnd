@@ -32,6 +32,8 @@ public class KaliteKontrolRequest {
 
     private int returnedToMilTaslama =0;//mil taşlama geri dönüş
 
+    private String operationField;//operasyon alanı
+
     private Long productionProcessId;//üretim işlemi id
 
     private boolean active = false;  // Operasyonun aktif olup olmadığı
