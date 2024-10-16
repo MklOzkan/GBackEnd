@@ -28,6 +28,11 @@ public class BoyaPaketHelper {
 
     }
 
+    public BoyaVePaketleme findBoyaVePaketlemeByOperationId(Long operationId) {
+        return boyaVePaketlemeRepository.findById(operationId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.BOYA_PAKET_NOT_FOUND_BY_ID, operationId)));
+    }
+
     public void saveBoyaVePaketlemeWithoutReturn(BoyaVePaketleme boyaVePaketleme) {
         boyaVePaketlemeRepository.save(boyaVePaketleme);
     }

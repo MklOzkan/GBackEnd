@@ -10,6 +10,7 @@ import com.project.domain.concretes.business.process.boyavepaket.BoyaVePaketleme
 import com.project.domain.concretes.business.process.kalitekontrol.KaliteKontrol;
 import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.enums.OrderType;
+import com.project.exception.BadRequestException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.process.MontajRequest;
@@ -260,7 +261,7 @@ public class MontajService {
                 handleRemoveLastChangeFromTest(blokLiftMontaj, productionProcess, lastCompletedQty);
                 break;
             default:
-                throw new IllegalArgumentException("Unknown operation type: " + operationType);
+                throw new BadRequestException(String.format(ErrorMessages.INVALID_OPERATION_TYPE, operationType));
         }
 
         return methodHelper.createResponse(SuccessMessages.REMOVE_LAST_CHANGE, HttpStatus.OK, null);
@@ -280,12 +281,11 @@ public class MontajService {
             blokLiftMontaj.removeLastCompletedQty();
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
         }
-
     }
 
     private void handleRemoveLastChangeFromBoruKaynak(BlokLiftMontaj blokLiftMontaj, ProductionProcess productionProcess, int lastCompletedQty) {
         BlokLiftMontaj nextOperation = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
-        nextOperation.removeLastFromNextOperation(lastCompletedQty);
+        nextOperation.removeLastPipeCount(lastCompletedQty);
         montajHelper.saveBlokLiftMontajWithoutReturn(nextOperation);
         montajHelper.compareMilCountAndPipeCountForBLMontaj(nextOperation);
         blokLiftMontaj.removeLastCompletedQty();
@@ -308,13 +308,6 @@ public class MontajService {
             blokLiftMontaj.removeLastCompletedQty();
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
         }
-
-        KaliteKontrol afterMontaj =  kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
-        afterMontaj.removeLastFromNextOperation(lastCompletedQty);
-        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMontaj);
-
-        blokLiftMontaj.removeLastCompletedQty();
-        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
     }
 
     private void handleRemoveLastChangeFromGazDolum(BlokLiftMontaj blokLiftMontaj, ProductionProcess productionProcess, int lastCompletedQty) {
@@ -326,12 +319,82 @@ public class MontajService {
     }
 
     private void handleRemoveLastChangeFromTest(BlokLiftMontaj blokLiftMontaj, ProductionProcess productionProcess, int lastCompletedQty) {
+        BoyaVePaketleme nextOperation = boyaPaketHelper.findBoyaVePaketlemeByProductionProcessAndOperationType(productionProcess, BoyaPaketOperationType.BOYA);
+        nextOperation.removeLastFromNextOperation(lastCompletedQty);
+        boyaPaketHelper.saveBoyaVePaketlemeWithoutReturn(nextOperation);
+
         blokLiftMontaj.removeLastCompletedQty();
         montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
-
-
     }
 
-//    public ResponseMessage<String> removeLastChangeFromLiftMontaj(Long operationId) {
-//    }
+    public ResponseMessage<String> removeLastChangeFromLiftMontaj(Long operationId) {
+        LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
+        ProductionProcess productionProcess = liftMontaj.getProductionProcess();
+        LiftMontajOperationTye operationType = liftMontaj.getOperationType();
+        int lastCompletedQty = liftMontaj.getLastCompletedQty();
+        OrderType orderType = productionProcess.getOrder().getOrderType();
+
+        switch (operationType) {
+            case BORU_KAPAMA:
+                handleRemoveLastChangeFromBoruKapamaForLiftMontaj(liftMontaj, productionProcess, lastCompletedQty, orderType);
+                break;
+            case BORU_KAYNAK:
+                handleRemoveLastChangeFromBoruKaynakForLiftMontaj(liftMontaj, productionProcess, lastCompletedQty);
+                break;
+            case LIFT_MONTAJ:
+                handleRemoveLastChangeFromLiftMontajForLiftMontaj(liftMontaj, productionProcess, lastCompletedQty, orderType);
+                break;
+            case GAZ_DOLUM:
+                handleRemoveLastChangeFromGazDolumForLiftMontaj(liftMontaj, productionProcess, lastCompletedQty);
+                break;
+            case BASLIK_TAKMA:
+                handleRemoveLastChangeFromBaslikTakmaForLiftMontaj(liftMontaj, productionProcess, lastCompletedQty);
+                break;
+            default:
+                throw new BadRequestException(String.format(ErrorMessages.INVALID_OPERATION_TYPE, operationType));
+        }
+
+        return methodHelper.createResponse(SuccessMessages.REMOVE_LAST_CHANGE, HttpStatus.OK, null);
+    }
+
+    private void handleRemoveLastChangeFromBoruKapamaForLiftMontaj(LiftMontaj liftMontaj, ProductionProcess productionProcess, int lastCompletedQty, OrderType orderType) {
+        LiftMontaj nextOperation = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BORU_KAYNAK);
+        nextOperation.removeLastFromNextOperation(lastCompletedQty);
+        montajHelper.saveLiftMontajWithoutReturn(nextOperation);
+        liftMontaj.removeLastCompletedQty();
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+    }
+
+    private void handleRemoveLastChangeFromBoruKaynakForLiftMontaj(LiftMontaj liftMontaj, ProductionProcess productionProcess, int lastCompletedQty) {
+        LiftMontaj nextOperation = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
+        nextOperation.rollbackNextPipeCount(lastCompletedQty);
+        montajHelper.saveLiftMontajWithoutReturn(nextOperation);
+        montajHelper.compareMilCountAndPipeCountForLiftMontaj(nextOperation);
+        liftMontaj.removeLastCompletedQty();
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+    }
+
+    private void handleRemoveLastChangeFromLiftMontajForLiftMontaj(LiftMontaj liftMontaj, ProductionProcess productionProcess, int lastCompletedQty, OrderType orderType) {
+        KaliteKontrol afterMontaj =  kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
+        afterMontaj.removeLastFromNextOperation(lastCompletedQty);
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMontaj);
+        liftMontaj.removeLastCompletedQty();
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+    }
+
+    private void handleRemoveLastChangeFromGazDolumForLiftMontaj(LiftMontaj liftMontaj, ProductionProcess productionProcess, int lastCompletedQty) {
+        LiftMontaj nextOperation = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BASLIK_TAKMA);
+        nextOperation.removeLastFromNextOperation(lastCompletedQty);
+        montajHelper.saveLiftMontajWithoutReturn(nextOperation);
+        liftMontaj.removeLastCompletedQty();
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+    }
+
+    private void handleRemoveLastChangeFromBaslikTakmaForLiftMontaj(LiftMontaj liftMontaj, ProductionProcess productionProcess, int lastCompletedQty) {
+        BoyaVePaketleme nextOperation = boyaPaketHelper.findBoyaVePaketlemeByProductionProcessAndOperationType(productionProcess, BoyaPaketOperationType.BOYA);
+        nextOperation.removeLastFromNextOperation(lastCompletedQty);
+        boyaPaketHelper.saveBoyaVePaketlemeWithoutReturn(nextOperation);
+        liftMontaj.removeLastCompletedQty();
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+    }
 }

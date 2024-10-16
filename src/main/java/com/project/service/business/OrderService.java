@@ -397,8 +397,8 @@ public class OrderService {
         Page<Order> ordersPage = orderRepository.findByStatusTypeAndOrderTypeNotLike(statuses, pageable);
 
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()
-                .map(orderMapper::mapOrderToOrderResponse)
-                .collect(Collectors.toList());
+                                            .map(orderMapper::mapOrderToOrderResponse)
+                                            .collect(Collectors.toList());
 
         return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
     }

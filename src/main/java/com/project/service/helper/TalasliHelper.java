@@ -63,11 +63,11 @@ public class TalasliHelper {
         } else if (order.getOrderStatus().equals(orderStatusService.getOrderStatus(StatusType.BEKLEMEDE))) {
             order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
         }
-
+        Order updatedOrder = methodHelper.saveOrderWithReturn(order);
         productionProcessRepository.save(productionProcess);
         talasliImalatRepository.save(operation);
         talasliImalatRepository.save(boruKesme);
-        return order;
+        return updatedOrder;
     }
 
     public ProductionProcess findProductionProcessById(Long id) {

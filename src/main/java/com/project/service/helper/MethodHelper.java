@@ -35,6 +35,23 @@ public class MethodHelper {
         return user;
     }
 
+    public void saveOrderWithoutReturn(Order order) {
+        try {
+            orderRepository.save(order);
+        }catch (Exception e){
+            throw new BadRequestException(ErrorMessages.ORDER_CANNOT_BE_UPDATED);
+        }
+
+    }
+
+    public Order saveOrderWithReturn(Order order) {
+        try {
+            return orderRepository.save(order);
+        }catch (Exception e){
+            throw new BadRequestException(ErrorMessages.ORDER_CANNOT_BE_UPDATED);
+        }
+    }
+
     public void checkRole(User user, RoleType roleType) {
      if(!user.getUserRole().getRoleType().equals(roleType)) throw new BadRequestException(ErrorMessages.USER_ROLE_IS_NOT_FOUND);
     }
