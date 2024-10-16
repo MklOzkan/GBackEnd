@@ -37,6 +37,11 @@ public class SuccessMessages {
     public static final String BORU_COMPLETED = "Boru işlemi başarılı bir şekilde tamamlandı";
     public static final String REMOVE_LAST_CHANGE = "Son değişiklik kaldırıldı";
     public static final String BORU_UPDATED = "Boru işlemi başarılı bir şekilde güncellendi";
+    public static final String BOYA_UPDATED = "%s adetlik boya işlemi başarılı bir şekilde kaydedildi";
+    public static final String PAKET_UPDATED = "%s adetlik paket işlemi başarılı bir şekilde kaydedildi";
+    public static final String OPERATION_ROLLEDBACK = "%s adetlik üretim geri alındı";
+    public static final String ORDER_STATUS_UPDATED = "Sipariş durumu başarılı bir şekilde güncellendi ve başlatıldı";
+    public static final String ORDER_STATUS_PAUSED = "Sipariş durumu başarılı bir şekilde güncellendi ve durduruldu";
 
 
     private SuccessMessages(){}

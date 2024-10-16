@@ -80,11 +80,23 @@ public class KaliteKontrolService {
     public ResponseMessage<String> afterEzmeKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
+        TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
+        TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+        KaliteKontrol afterMilTaslama = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
 
         int approveCount = request.getApproveCount();
 
         kaliteKontrol.completedPart(request);
         kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
+        if (request.getReturnedToMilTaslama()>0){
+            milTaslama.returnedToOperation(kaliteKontrol.getReturnedToMilTaslama());
+            talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+            afterMilTaslama.rollbackLastApproveCount(kaliteKontrol.getReturnedToMilTaslama());
+            kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMilTaslama);
+            ezme.decreaseCompletedQuantity(kaliteKontrol.getReturnedToMilTaslama());
+            talasliHelper.saveTalasliImalatWithoutReturn(ezme);
+        }
+
 
         if(request.getApproveCount()>0){
             LiftMontaj liftMontaj  = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
@@ -122,7 +134,7 @@ public class KaliteKontrolService {
         if (request.getApproveCount() > 0) {
             kaliteKontrol.approvedPart(request.getApproveCount());
         }
-        if (request.getApproveCount() > 0) {
+        if (request.getScrapCount() > 0) {
             kaliteKontrol.scrapPart(request.getScrapCount());
         }
         if (request.getReturnedToIsilIslem() > 0) {
@@ -205,7 +217,7 @@ public class KaliteKontrolService {
 
 
 
-        switch (request.getRollBack()){
+        switch (request.getOperationField()){
             case "Mil_Taslama":
                 TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
                 isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
@@ -259,9 +271,11 @@ public class KaliteKontrolService {
     public ResponseMessage<String> rollbackAfterMontajKaliteKontrol(Long stageId, KaliteKontrolRequest request) {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
-        if (request.getRollBack().equals("Approve")) {
+        if (request.getOperationField().equals("Approve")) {
+            System.out.println("approve");
             rollbackApproveForAfterMontaj(productionProcess, stageId);//approve geri al
-        } else if(request.getRollBack().equals("Scrap")){
+        } else if(request.getOperationField().equals("Scrap")){
+            System.out.println("scrap");
             kaliteKontrol.rollBackLastScrap();//son hurda sayısını geri al
             kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
         }
@@ -279,11 +293,15 @@ public class KaliteKontrolService {
             LiftMontaj liftMontaj = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.GAZ_DOLUM);
             liftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
             montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+
         }else{
             BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.GAZ_DOLUM);
             blokLiftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+
         }
+        kaliteKontrol.rollBackLastApprove();
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
     }
 
     public ResponseMessage<String> rollbackAfterEzmeKaliteKontrol(Long stageId, KaliteKontrolRequest request) {
@@ -291,7 +309,7 @@ public class KaliteKontrolService {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
 
-        switch (request.getRollBack()){
+        switch (request.getOperationField()){
             case "Mil_Taslama":
                 TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
                 TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);

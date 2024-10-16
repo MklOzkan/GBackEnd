@@ -56,6 +56,10 @@ public class LiftMontaj extends BaseOperation {
         this.milCount -= rollbackQty;
     }
 
+    //Eger kalite kontrol hatali giris yaparsa geri almak icin kullanilir
+    public void rollbackNextPipeCount(int rollbackQty) {
+        this.pipeCount -= rollbackQty;
+    }
 
     public void  updateAccordingToPipeAndMilCount(){
         if (this.pipeCount<=this.milCount){

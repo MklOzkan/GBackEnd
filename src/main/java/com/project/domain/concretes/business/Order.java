@@ -47,6 +47,8 @@ public class Order {
 
     private Integer readyMilCount;//Hazır mil sayısı
 
+    private int finalProductQuantity;//Nihai ürün sayısı
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

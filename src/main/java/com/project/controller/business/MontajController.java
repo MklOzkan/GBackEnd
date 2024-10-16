@@ -65,7 +65,7 @@ public class MontajController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @GetMapping("/removelastchange/{operationId}")
+    @PutMapping("/removelastchange/{operationId}")
     public ResponseMessage<String> removeLastChangeFromBlokliftMontaj(@PathVariable Long operationId) {
         return montajService.removeLastChangeFromBlokliftMontaj(operationId);
     }

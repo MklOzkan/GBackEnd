@@ -1,6 +1,7 @@
 package com.project.service.business.process;
 
 import com.project.domain.concretes.business.Order;
+import com.project.domain.concretes.business.OrderStatus;
 import com.project.domain.concretes.business.process.ProductionProcess;
 import com.project.domain.concretes.business.process._enums.BlokLiftOperationType;
 import com.project.domain.concretes.business.process._enums.KaliteKontrolStage;
@@ -12,6 +13,7 @@ import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
 import com.project.domain.enums.OrderType;
+import com.project.domain.enums.StatusType;
 import com.project.exception.ConflictException;
 import com.project.payload.mappers.TalasliMapper;
 import com.project.payload.messages.SuccessMessages;
@@ -51,9 +53,16 @@ public class TalasliService {
 
         Order order = methodHelper.findOrderById(id);
         Order updatedOrder = talasliHelper.updateOrderStatus(order);
-        orderRepository.save(updatedOrder);
+
+        String message=null;
+        if(updatedOrder.getOrderStatus().getStatusType().equals(StatusType.ISLENMEKTE)){
+            message = SuccessMessages.ORDER_STATUS_UPDATED;
+        }else if(updatedOrder.getOrderStatus().getStatusType().equals(StatusType.BEKLEMEDE)){
+            message = SuccessMessages.ORDER_STATUS_PAUSED;
+        }
 
         return ResponseMessage.<String>builder()
+                .message(message)
                 .httpStatus(HttpStatus.OK)
                 .build();
     }
