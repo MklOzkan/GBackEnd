@@ -102,6 +102,28 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getOrdersForBLMontajAmiri")
+    public Page<OrderResponse> getOrdersForBLMontajAmiri(
+            HttpServletRequest  request,
+            @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
+            @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
+            @RequestParam(value = "type", defaultValue = "desc") String type){
+        return orderService.getOrdersForBLMontajAmiri(request,page, size, sort, type);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getOrdersForLiftMontajAmiri")
+    public Page<OrderResponse> getOrdersForLiftMontajAmiri(
+            HttpServletRequest  request,
+            @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
+            @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
+            @RequestParam(value = "type", defaultValue = "desc") String type){
+        return orderService.getOrdersForLiftMontajAmiri(request,page, size, sort, type);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getOrdersForPolisajAmir")
     public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemedeForPolisaj(
             HttpServletRequest  request,

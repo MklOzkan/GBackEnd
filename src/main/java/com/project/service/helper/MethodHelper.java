@@ -146,5 +146,11 @@ public class MethodHelper {
         }
     }
 
+    public User checkUser(HttpServletRequest request){
+        String username = request.getUserPrincipal().getName();
+        User user =loadUserByUsername(username);
+        return user;
+    }
+
 
 }
