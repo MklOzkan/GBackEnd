@@ -70,8 +70,7 @@ public class OrderService {
 
 
     public ResponseMessage<OrderResponse> createOrder(OrderRequest orderRequest, HttpServletRequest request) {
-        String username = (String) request.getAttribute("username");
-        User user = methodHelper.loadUserByUsername(username);
+        User user = methodHelper.checkUser(request);
         checkUserName(user);//kullanıcı adı kontrolü yapıyoruz
 
         methodHelper.checkGasanNo(orderRequest.getGasanNo());//gazan numarası kontrolü yapıyoruz
@@ -224,8 +223,7 @@ public class OrderService {
 
 
     public ResponseMessage<OrderResponse> updateOrder(UpdateOrderRequest orderRequest, Long id, HttpServletRequest request) {
-        String userRole = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(userRole);
+        methodHelper.checkUser(request);
 
         Order order = methodHelper.findOrderById(id);
         timeValidator.checkTimeWithException(LocalDate.now(), orderRequest.getDeliveryDate());
@@ -281,8 +279,7 @@ public class OrderService {
     }
 
     public ResponseMessage<String> deleteOrder(String orderNumber, HttpServletRequest request) {
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+        methodHelper.checkUser(request);
 
         Order order = methodHelper.findOrderByOrderNumber(orderNumber);
         orderRepository.delete(order);
@@ -291,8 +288,7 @@ public class OrderService {
 
     public Page<OrderResponse> getAllOrdersForSupervisor(
             HttpServletRequest request, int page, int size, String sort, String type) {
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+        methodHelper.checkUser(request);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
         List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(), StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
@@ -309,8 +305,7 @@ public class OrderService {
 
     public Page<OrderResponse> getAllOrdersForOtherSuperVisor(
             HttpServletRequest request, int page, int size, String sort, String type) {
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+        methodHelper.checkUser(request);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
         String status = StatusType.ISLENMEKTE.getName();
@@ -344,8 +339,7 @@ public class OrderService {
     }
 
     public MultipleResponses<OrderResponse, List<TalasliImalatResponse>, ProductionProcessResponse> getOrderById(Long id, HttpServletRequest request) {
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+            methodHelper.checkUser(request);
 
         Order order = methodHelper.findOrderById(id);
         ProductionProcess productionProcess = talasliHelper.findProductionProcessById(order.getProductionProcess().getId());
@@ -365,16 +359,14 @@ public class OrderService {
     }
 
     public ResponseMessage<OrderResponse> getOrder(Long id, HttpServletRequest request) {
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+        methodHelper.checkUser(request);
 
         Order order = methodHelper.findOrderById(id);
         return methodHelper.createResponse(SuccessMessages.ORDER_FOUND, HttpStatus.OK, orderMapper.mapOrderToOrderResponse(order));
     }
 
     public Page<OrderResponse> getOrdersWhichStatusIslenmekteAndBeklemede(HttpServletRequest request, @Min(0) int page, @Min(1) int size, String sort, String type) {
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+        methodHelper.checkUser(request);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
         List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
@@ -389,8 +381,7 @@ public class OrderService {
 
     public Page<OrderResponse> getOrdersForPolisajAmir(HttpServletRequest request, @Min(0) int page, @Min(1) int size, String sort, String type) {
 
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+        methodHelper.checkUser(request);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
         List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName(), StatusType.ISLENMEYI_BEKLIYOR.getName());
@@ -404,8 +395,7 @@ public class OrderService {
     }
 
     public MultipleResponses<OrderResponse, PolisajResponse, ProductionProcessResponse> getMultipleResponseByIdForPolisaj(Long id, HttpServletRequest request) {
-        String username = (String) request.getAttribute("username");
-        methodHelper.loadUserByUsername(username);
+        methodHelper.checkUser(request);
 
         Order order = methodHelper.findOrderById(id);
         ProductionProcess productionProcess = order.getProductionProcess();
@@ -416,5 +406,36 @@ public class OrderService {
                 orderMapper.mapOrderToOrderResponse(order),
                 polisajMapper.mapToResponse(polisajImalat),
                 talasliMapper.mapProductionProcessToResponse(productionProcess));
+    }
+
+    public Page<OrderResponse> getOrdersForBLMontajAmiri(HttpServletRequest request, @Min(0) int page, @Min(1) int size, String sort, String type) {
+        methodHelper.checkUser(request);
+
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        List<OrderType> orderTypes = List.of(OrderType.BLOKLIFT, OrderType.DAMPER);
+        Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameInAndOrderTypeIn(statuses, orderTypes, pageable);
+
+        List<OrderResponse> orderResponses = ordersPage.getContent().stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+        return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
+    }
+
+    public Page<OrderResponse> getOrdersForLiftMontajAmiri(HttpServletRequest request, @Min(0) int page, @Min(1) int size, String sort, String type) {
+        methodHelper.checkUser(request);
+
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        List<OrderType> orderTypes = List.of(OrderType.LIFT, OrderType.PASLANMAZ );
+        Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameInAndOrderTypeIn(statuses, orderTypes, pageable);
+
+        List<OrderResponse> orderResponses = ordersPage.getContent().stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
     }
 }
