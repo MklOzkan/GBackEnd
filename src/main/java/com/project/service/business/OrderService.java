@@ -13,9 +13,7 @@ import com.project.domain.concretes.user.User;
 import com.project.domain.enums.OrderType;
 import com.project.domain.enums.StatusType;
 import com.project.exception.BadRequestException;
-import com.project.payload.mappers.OrderMapper;
-import com.project.payload.mappers.PolisajMapper;
-import com.project.payload.mappers.TalasliMapper;
+import com.project.payload.mappers.*;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.OrderRequest;
@@ -23,9 +21,7 @@ import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
-import com.project.payload.response.business.process.PolisajResponse;
-import com.project.payload.response.business.process.ProductionProcessResponse;
-import com.project.payload.response.business.process.TalasliImalatResponse;
+import com.project.payload.response.business.process.*;
 import com.project.repository.business.OrderRepository;
 import com.project.repository.business.process.*;
 import com.project.service.helper.MethodHelper;
@@ -66,6 +62,8 @@ public class OrderService {
     private final TalasliHelper talasliHelper;
     private final TalasliMapper talasliMapper;
     private final PolisajMapper polisajMapper;
+    private final LiftMapper liftMapper;
+    private final BlokLiftMapper blokLiftMapper;
     //private final ResponseHelper responseHelper;
 
 
@@ -437,5 +435,35 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
+    }
+
+    public MultipleResponses<OrderResponse, List<LiftResponse>, ProductionProcessResponse> getOrderByIdForLiftMontaj(Long id, HttpServletRequest request) {
+        methodHelper.checkUser(request);
+
+        Order order = methodHelper.findOrderById(id);
+        ProductionProcess productionProcess = order.getProductionProcess();
+        List<LiftMontaj> liftMontajList = productionProcess.getLiftOperations();
+
+        return methodHelper.multipleResponse(
+                SuccessMessages.ORDER_FOUND,
+                HttpStatus.OK,
+                orderMapper.mapOrderToOrderResponse(order),
+                liftMapper.mapLiftListToResponse(liftMontajList),
+                talasliMapper.mapProductionProcessToResponse(productionProcess));
+    }
+
+    public MultipleResponses<OrderResponse, List<BlokLiftResponse>, ProductionProcessResponse> getOrderByIdForBlokLiftMontaj(Long id, HttpServletRequest request) {
+        methodHelper.checkUser(request);
+
+        Order order = methodHelper.findOrderById(id);
+        ProductionProcess productionProcess = order.getProductionProcess();
+        List<BlokLiftMontaj> blokLiftMontajList = productionProcess.getBlokLiftOperations();
+
+        return methodHelper.multipleResponse(
+                SuccessMessages.ORDER_FOUND,
+                HttpStatus.OK,
+                orderMapper.mapOrderToOrderResponse(order),
+                blokLiftMapper.mapBlokLiftListToResponse(blokLiftMontajList),
+                talasliMapper.mapProductionProcessToResponse(productionProcess));
     }
 }

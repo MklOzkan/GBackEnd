@@ -5,9 +5,7 @@ import com.project.payload.request.business.UpdateOrderRequest;
 import com.project.payload.response.business.MultipleResponses;
 import com.project.payload.response.business.OrderResponse;
 import com.project.payload.response.business.ResponseMessage;
-import com.project.payload.response.business.process.PolisajResponse;
-import com.project.payload.response.business.process.ProductionProcessResponse;
-import com.project.payload.response.business.process.TalasliImalatResponse;
+import com.project.payload.response.business.process.*;
 import com.project.service.business.ExcelService;
 import com.project.service.business.OrderService;
 import com.project.service.helper.MethodHelper;
@@ -76,14 +74,26 @@ public class OrderController {
         return orderService.getMultipleResponseByIdForPolisaj(id, request);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getResponsesForLift/{id}")
+    public MultipleResponses<OrderResponse, List<LiftResponse>, ProductionProcessResponse> getOrderByIdForLiftMontaj(@PathVariable Long id, HttpServletRequest request){
+        return orderService.getOrderByIdForLiftMontaj(id, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getResponsesForBlokLift/{id}")
+    public MultipleResponses<OrderResponse, List<BlokLiftResponse>, ProductionProcessResponse> getOrderByIdForBlokLiftMontaj(@PathVariable Long id, HttpServletRequest request){
+        return orderService.getOrderByIdForBlokLiftMontaj(id, request);
+    }
+
 
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getAllOrders")
     public Page<OrderResponse> getAllOrders(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                           @RequestParam(value = "size", defaultValue = "10") int size,
-                                                           @RequestParam(value = "sort", defaultValue = "orderNumber") String sort,
-                                                           @RequestParam(value = "type", defaultValue = "desc") String type){
+                                            @RequestParam(value = "size", defaultValue = "10") int size,
+                                            @RequestParam(value = "sort", defaultValue = "orderNumber") String sort,
+                                            @RequestParam(value = "type", defaultValue = "desc") String type){
 
         return orderService.getAllOrders(page, size, sort, type);
 
