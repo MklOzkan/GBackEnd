@@ -37,86 +37,75 @@ public class MontajService {
     private final KaliteKontrolHelper kaliteKontrolHelper;
     private final BoyaPaketHelper boyaPaketHelper;
 
-    public ResponseMessage<String> boruKapamaOperation(Long operationId, MontajRequest request) {
-        BlokLiftMontaj blokLiftBoruKapama;
-        LiftMontaj liftBoruKapama;
+    public ResponseMessage<String> boruKapamaOperationForBL(Long operationId, MontajRequest request) {
+        BlokLiftMontaj blokLiftBoruKapama= montajHelper.findBlokLiftOperationById(operationId);
 
-        if (request.getOrderType().equals(OrderType.DAMPER)) {
+        ProductionProcess productionProcess = blokLiftBoruKapama.getProductionProcess();
 
+        blokLiftBoruKapama.completeOperation(request.getCompletedQuantity());
+        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKapama);
 
-            blokLiftBoruKapama = montajHelper.findBlokLiftOperationById(operationId);
-            ProductionProcess productionProcess = blokLiftBoruKapama.getProductionProcess();
+        BlokLiftMontaj boruKaynak = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAYNAK);
 
-            blokLiftBoruKapama.completeOperation(request.getCompletedQuantity());
-            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKapama);
+        boruKaynak.updateNextOperation(blokLiftBoruKapama.getLastCompletedQty());
+        montajHelper.saveBlokLiftMontajWithoutReturn(boruKaynak);
 
-            BlokLiftMontaj boruKaynak = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BORU_KAYNAK);
+        return methodHelper.createResponse(SuccessMessages.BORU_KAPAMA_COMPLETED, HttpStatus.OK, null);
+    }
 
-            boruKaynak.updateNextOperation(blokLiftBoruKapama.getLastCompletedQty());
-            montajHelper.saveBlokLiftMontajWithoutReturn(boruKaynak);
+    public ResponseMessage<String> boruKapamaOperationForLift(Long operationId, MontajRequest request) {
+        LiftMontaj liftBoruKapama = montajHelper.findLiftOperationById(operationId);
+        ProductionProcess productionProcess = liftBoruKapama.getProductionProcess();
+        liftBoruKapama.completeOperation(request.getCompletedQuantity());
+        montajHelper.saveLiftMontajWithoutReturn(liftBoruKapama);
 
-        } else {
-            liftBoruKapama = montajHelper.findLiftOperationById(operationId);
-            ProductionProcess productionProcess = liftBoruKapama.getProductionProcess();
-            liftBoruKapama.completeOperation(request.getCompletedQuantity());
-            montajHelper.saveLiftMontajWithoutReturn(liftBoruKapama);
+        LiftMontaj boruKaynak = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BORU_KAYNAK);
 
-            LiftMontaj boruKaynak = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BORU_KAYNAK);
-
-            boruKaynak.updateNextOperation(liftBoruKapama.getLastCompletedQty());
-            montajHelper.saveLiftMontajWithoutReturn(boruKaynak);
-        }
+        boruKaynak.updateNextOperation(liftBoruKapama.getLastCompletedQty());
+        montajHelper.saveLiftMontajWithoutReturn(boruKaynak);
 
         return methodHelper.createResponse(SuccessMessages.BORU_KAPAMA_COMPLETED, HttpStatus.OK, null);
     }
 
 
-    public ResponseMessage<String> boruKaynakOperation(Long operationId, MontajRequest request) {
+    public ResponseMessage<String> boruKaynakOperationForBl(Long operationId, MontajRequest request) {
 
-        BlokLiftMontaj blokLiftBoruKaynak;
-        LiftMontaj liftBoruKaynak;
+        BlokLiftMontaj blokLiftBoruKaynak= montajHelper.findBlokLiftOperationById(operationId);
+        ProductionProcess productionProcess = blokLiftBoruKaynak.getProductionProcess();
+        blokLiftBoruKaynak.completeOperation(request.getCompletedQuantity());
+        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKaynak);
 
-        if (request.getOrderType().equals(OrderType.DAMPER)) {
+        BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
+        blokLiftMontaj.updateNextPipeOperation(blokLiftBoruKaynak.getLastCompletedQty());
+        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
 
-            blokLiftBoruKaynak = montajHelper.findBlokLiftOperationById(operationId);
-            ProductionProcess productionProcess = blokLiftBoruKaynak.getProductionProcess();
-            blokLiftBoruKaynak.completeOperation(request.getCompletedQuantity());
-            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKaynak);
+        blokLiftMontaj.updateAccordingToPipeAndMilCount();
+        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+        return methodHelper.createResponse(SuccessMessages.BORU_KAYANAK_COMPLETED, HttpStatus.OK, null);
+    }
 
-            BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
-            blokLiftMontaj.updateNextPipeOperation(blokLiftBoruKaynak.getLastCompletedQty());
-            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+    public ResponseMessage<String> boruKaynakOperationForLift(Long operationId, MontajRequest request) {
+        LiftMontaj liftBoruKaynak = montajHelper.findLiftOperationById(operationId);
+        ProductionProcess productionProcess = liftBoruKaynak.getProductionProcess();
+        liftBoruKaynak.completeOperation(request.getCompletedQuantity());
+        montajHelper.saveLiftMontajWithoutReturn(liftBoruKaynak);
 
-            blokLiftMontaj.updateAccordingToPipeAndMilCount();
-            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+        LiftMontaj liftMontaj = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
 
+        liftMontaj.updateNextPipeOperation(liftBoruKaynak.getLastCompletedQty());
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
 
-        } else {
-            liftBoruKaynak = montajHelper.findLiftOperationById(operationId);
+        liftMontaj.updateAccordingToPipeAndMilCount();
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
 
-            ProductionProcess productionProcess = liftBoruKaynak.getProductionProcess();
-
-            liftBoruKaynak.completeOperation(request.getCompletedQuantity());
-
-            montajHelper.saveLiftMontajWithoutReturn(liftBoruKaynak);
-
-            LiftMontaj liftMontaj = montajHelper.findLiftMontajByProductionProcess(productionProcess, LiftMontajOperationTye.LIFT_MONTAJ);
-
-            liftMontaj.updateNextPipeOperation(liftBoruKaynak.getLastCompletedQty());
-            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
-
-            liftMontaj.updateAccordingToPipeAndMilCount();
-            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
-        }
         return methodHelper.createResponse(SuccessMessages.BORU_KAYANAK_COMPLETED, HttpStatus.OK, null);
     }
 
 
-    public ResponseMessage<String> montajOperation(Long operationId, MontajRequest request) {
-        BlokLiftMontaj blokLiftMontaj;
-        LiftMontaj liftMontaj;
-        if(request.getOrderType().equals(OrderType.DAMPER)) {
-            blokLiftMontaj = montajHelper.findBlokLiftOperationById(operationId);
+    public ResponseMessage<String> montajOperationForBl(Long operationId, MontajRequest request) {
+        BlokLiftMontaj blokLiftMontaj = montajHelper.findBlokLiftOperationById(operationId);
+        if(blokLiftMontaj.getProductionProcess().getOrder().getOrderType().equals(OrderType.DAMPER)) {
+
             ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
 
             blokLiftMontaj.completeOperation(request.getCompletedQuantity());
@@ -126,8 +115,8 @@ public class MontajService {
             afterMontaj.nextOperationByKaliteKontrol(blokLiftMontaj.getLastCompletedQty());
             kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMontaj);
 
-        }else if(request.getOrderType().equals(OrderType.BLOKLIFT)){
-            blokLiftMontaj = montajHelper.findBlokLiftOperationById(operationId);
+        }else {
+
             ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
 
             blokLiftMontaj.completeOperation(request.getCompletedQuantity());
@@ -137,20 +126,23 @@ public class MontajService {
             blokLiftBoruKapama.updateNextOperation(blokLiftMontaj.getLastCompletedQty());
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKapama);
 
-        }else{
-
-            liftMontaj = montajHelper.findLiftOperationById(operationId);
-            ProductionProcess productionProcess = liftMontaj.getProductionProcess();
-
-            liftMontaj.completeOperation(request.getCompletedQuantity());
-            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
-
-            KaliteKontrol afterMontaj =  kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
-            afterMontaj.nextOperationByKaliteKontrol(liftMontaj.getLastCompletedQty());
-            kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMontaj);
         }
 
         return methodHelper.createResponse(SuccessMessages.BORU_MONTAJ_COMPLETED, HttpStatus.OK, null);
+    }
+
+    public ResponseMessage<String> montajOperationForLift(Long operationId, MontajRequest request) {
+        LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
+        ProductionProcess productionProcess = liftMontaj.getProductionProcess();
+
+        liftMontaj.completeOperation(request.getCompletedQuantity());
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+
+        KaliteKontrol afterMontaj =  kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
+        afterMontaj.nextOperationByKaliteKontrol(liftMontaj.getLastCompletedQty());
+        kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMontaj);
+
+        return methodHelper.createResponse(SuccessMessages.MONTAJ_OPERATION_UPDATED, HttpStatus.OK, null);
     }
 
 
@@ -169,31 +161,30 @@ public class MontajService {
     }
 
 
-    public ResponseMessage<String> gazDolumOperation(Long operationId, MontajRequest request) {
-        BlokLiftMontaj blokLiftMontaj;
+    public ResponseMessage<String> gazDolumOperationForBL(Long operationId, MontajRequest request) {
+        BlokLiftMontaj blokLiftMontaj= montajHelper.findBlokLiftOperationById(operationId);
+        ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
 
-        if (request.getOrderType().equals(OrderType.DAMPER) || request.getOrderType().equals(OrderType.BLOKLIFT)) {
-            blokLiftMontaj = montajHelper.findBlokLiftOperationById(operationId);
-            ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
+        blokLiftMontaj.completeOperation(request.getCompletedQuantity());
+        montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
 
-            blokLiftMontaj.completeOperation(request.getCompletedQuantity());
-            montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
+        BlokLiftMontaj nextOperation = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.TEST);
+        nextOperation.updateNextOperation(blokLiftMontaj.getLastCompletedQty());
+        montajHelper.saveBlokLiftMontajWithoutReturn(nextOperation);
+        return methodHelper.createResponse(SuccessMessages.GAZ_DOLUM_COMPLETED, HttpStatus.OK, null);
+    }
 
-            BlokLiftMontaj nextOperation = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.TEST);
-            nextOperation.updateNextOperation(blokLiftMontaj.getLastCompletedQty());
-            montajHelper.saveBlokLiftMontajWithoutReturn(nextOperation);
-        } else {
-            LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
-            ProductionProcess productionProcess = liftMontaj.getProductionProcess();
+    public ResponseMessage<String> gazDolumOperationForLift(Long operationId, MontajRequest request) {
+        LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
+        ProductionProcess productionProcess = liftMontaj.getProductionProcess();
 
-            liftMontaj.completeOperation(request.getCompletedQuantity());
-            montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
+        liftMontaj.completeOperation(request.getCompletedQuantity());
+        montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
 
-            LiftMontaj nextOperation = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BASLIK_TAKMA);
-            nextOperation.updateNextOperation(liftMontaj.getLastCompletedQty());
-            montajHelper.saveLiftMontajWithoutReturn(nextOperation);
+        LiftMontaj nextOperation = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.BASLIK_TAKMA);
+        nextOperation.updateNextOperation(liftMontaj.getLastCompletedQty());
+        montajHelper.saveLiftMontajWithoutReturn(nextOperation);
 
-        }
         return methodHelper.createResponse(SuccessMessages.GAZ_DOLUM_COMPLETED, HttpStatus.OK, null);
     }
 

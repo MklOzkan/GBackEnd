@@ -11,14 +11,8 @@ import java.util.Objects;
 public class PageableHelper {
 
     public Pageable getPageableWithProperties(int page, int size, String sort, String type) {
-
-        Pageable pageable= PageRequest.of(page,size, Sort.by(sort).ascending());
-        if(Objects.equals(type,"desc")){
-            pageable=PageRequest.of(page,size,Sort.by(sort).descending());
-        }
-
-        return pageable;
-
+        Sort.Direction direction = "desc".equalsIgnoreCase(type) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        return PageRequest.of(page, size, Sort.by(direction, sort));
     }
 }
 

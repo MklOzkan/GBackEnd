@@ -27,6 +27,4 @@ public class MontajRequest extends BaseOperationRequest {
     @NotNull(message = "işlem tipi boş olamaz")
     private String operationType;//işlem tipi
 
-    private OrderType orderType;//sipariş tipi
-
 }

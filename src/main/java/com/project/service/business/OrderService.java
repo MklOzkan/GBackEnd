@@ -152,7 +152,7 @@ public class OrderService {
         }else {
 
             createBlokLiftMontaj(boruKapamaBlok, productionProcess, BlokLiftOperationType.BORU_KAPAMA);
-            if (savedOrder.getOrderType().equals(OrderType.BLOKLIFT)) {
+            if (savedOrder.getOrderType().equals(OrderType.DAMPER)) {
                 createBlokLiftMontaj(boruKaynakBlok, productionProcess, BlokLiftOperationType.BORU_KAYNAK);
             }
             createBlokLiftMontaj(liftMontajBlok, productionProcess, BlokLiftOperationType.BLOK_LIFT_MONTAJ);
@@ -291,6 +291,10 @@ public class OrderService {
 
         List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(), StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
         Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameIn(statuses, pageable);
+
+        System.out.println("Total Pages: " + ordersPage.getTotalPages());
+        System.out.println("Current Page: " + ordersPage.getNumber());
+        System.out.println("Total Elements: " + ordersPage.getTotalElements());
 
 
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()
