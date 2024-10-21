@@ -21,21 +21,39 @@ public class MontajController {
     private final TalasliHelper talasliHelper;
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/boruKapama/{operationId}")
-    public ResponseMessage<String> boruKapamaOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
-        return montajService.boruKapamaOperation(operationId, request);
+    @PutMapping("/boruKapamaForBL/{operationId}")
+    public ResponseMessage<String> boruKapamaOperationForBL(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.boruKapamaOperationForBL(operationId, request);
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/boruKaynak/{operationId}")
-    public ResponseMessage<String> boruKaynakOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
-        return montajService.boruKaynakOperation(operationId, request);
+    @PutMapping("/boruKapamaForLift/{operationId}")
+    public ResponseMessage<String> boruKapamaOperationForLift(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.boruKapamaOperationForLift(operationId, request);
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/montajOperation/{operationId}")
+    @PutMapping("/boruKaynakForBL/{operationId}")
+    public ResponseMessage<String> boruKaynakOperationForBL(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.boruKaynakOperationForBl(operationId, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/boruKaynakForLift/{operationId}")
+    public ResponseMessage<String> boruKaynakOperationForLift(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.boruKaynakOperationForLift(operationId, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/montajOperationForBL/{operationId}")
     public ResponseMessage<String> montajOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
-        return montajService.montajOperation(operationId, request);
+        return montajService.montajOperationForBl(operationId, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/montajOperationForLift/{operationId}")
+    public ResponseMessage<String> montajOperationForLift(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.montajOperationForLift(operationId, request);
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
@@ -46,9 +64,15 @@ public class MontajController {
 
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/gazDolumOperation/{operationId}")
-    public ResponseMessage<String> gazDolumOperation(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
-        return montajService.gazDolumOperation(operationId, request);
+    @PutMapping("/gazDolumOperationForBL/{operationId}")
+    public ResponseMessage<String> gazDolumOperationForBL(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.gazDolumOperationForBL(operationId, request);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/gazDolumOperationForLift/{operationId}")
+    public ResponseMessage<String> gazDolumOperationForLift(@PathVariable Long operationId, @RequestBody @Valid MontajRequest request) {
+        return montajService.gazDolumOperationForLift(operationId, request);
     }
     //TODO: Cahit&Adem
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
@@ -65,16 +89,16 @@ public class MontajController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @PutMapping("/removelastchange/{operationId}")
+    @PutMapping("/removelastchangeForBL/{operationId}")
     public ResponseMessage<String> removeLastChangeFromBlokliftMontaj(@PathVariable Long operationId) {
         return montajService.removeLastChangeFromBlokliftMontaj(operationId);
     }
 
-//    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-//    @GetMapping("/removelastchange/{operationId}")
-//    public ResponseMessage<String> removeLastChangeFromLiftMontaj(@PathVariable Long operationId) {
-//        return montajService.removeLastChangeFromLiftMontaj(operationId);
-//    }
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/removelastchangeForLift/{operationId}")
+    public ResponseMessage<String> removeLastChangeFromLiftMontaj(@PathVariable Long operationId) {
+        return montajService.removeLastChangeFromLiftMontaj(operationId);
+    }
 
 
 

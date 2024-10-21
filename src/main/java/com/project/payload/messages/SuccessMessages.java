@@ -42,6 +42,7 @@ public class SuccessMessages {
     public static final String OPERATION_ROLLEDBACK = "%s adetlik üretim geri alındı";
     public static final String ORDER_STATUS_UPDATED = "Sipariş durumu başarılı bir şekilde güncellendi ve başlatıldı";
     public static final String ORDER_STATUS_PAUSED = "Sipariş durumu başarılı bir şekilde güncellendi ve durduruldu";
+    public static final String MONTAJ_OPERATION_UPDATED = "Montaj işlemi başarılı bir şekilde güncellendi";
 
 
     private SuccessMessages(){}
