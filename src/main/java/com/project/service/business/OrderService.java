@@ -176,11 +176,11 @@ public class OrderService {
             createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
             createKaliteKontrol(afterMontaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
         } else if (savedOrder.getOrderType().equals(OrderType.PASLANMAZ)) {
-            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
+            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
             createKaliteKontrol(afterMilTaslama, productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
             createKaliteKontrol(afterEzme, productionProcess, KaliteKontrolStage.AFTER_EZME);
         }else {
-            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
+            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
         }
 
         return methodHelper.createResponse(SuccessMessages.ORDER_CREATED, HttpStatus.CREATED, orderMapper.mapOrderToOrderResponse(savedOrder));
