@@ -41,6 +41,11 @@ public abstract class BaseOperation {
         this.startDate = this.startDate == null ? LocalDateTime.now() : this.startDate;  // Başlangıç tarihi
     }
 
+    public void endOperation() {
+        this.endDate = LocalDateTime.now();  // Bitiş tarihi
+        this.isCompleted = true;  // Tamamlanma durumu
+    }
+
     //kalite kontrolden geri dönüş olduğunda kullanılır
     public void returnedToOperation(int returnedQty) {
         this.remainingQuantity += returnedQty;  // Kalan miktar

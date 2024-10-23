@@ -44,6 +44,8 @@ public class ErrorMessages {
     public static final String INVALID_OPERATION_TYPE = "Geçersiz işlem tipi: %s";
     public static final String BOYA_PAKET_NOT_FOUND_BY_ID = "Boya paketleme işlemi bulunamadı: %s";
     public static final String ORDER_CANNOT_BE_UPDATED = "Sipariş güncellenemedi";
+    public static final String APPROVE_COUNT_MORE_THAN_REMAINING_QUANTITY = "Girilen miktar, hedef miktardan fazla olamaz";
+    public static final String ORDER_CANNOT_FINISHED = "Tamamlanan miktar, hedef miktardan az olduğu için sipariş tamamlanamaz";
 
 
     private ErrorMessages(){}

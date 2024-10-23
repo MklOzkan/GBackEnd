@@ -44,6 +44,12 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/startStop/{id}")
+    public ResponseMessage<String> startStopTalasli(@PathVariable Long id) {
+        return orderService.startStop(id);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
     @GetMapping("/getOrderById/{id}")
     public ResponseMessage<OrderResponse> getOrder(@PathVariable Long id, HttpServletRequest request){
         return orderService.getOrder(id, request);
@@ -86,6 +92,11 @@ public class OrderController {
         return orderService.getOrderByIdForBlokLiftMontaj(id, request);
     }
 
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @GetMapping("/getResponsesForBoyaPaket/{id}")
+    public MultipleResponses<OrderResponse, List<BoyaVePaketlemeResponse>, ProductionProcessResponse> getOrderByIdForBoyaPaket(@PathVariable Long id, HttpServletRequest request){
+        return orderService.getOrderByIdForBoyaPaket(id, request);
+    }
 
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
@@ -210,6 +221,12 @@ public class OrderController {
             @RequestParam(value = "sort", defaultValue = "orderDate") String sort,
             @RequestParam(value = "type", defaultValue = "desc") String type){
         return orderService.getAllOrdersForOtherSuperVisor(request,page, size, sort, type);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Admin','Employee')")
+    @PutMapping("/finishOrder/{id}")
+    public ResponseMessage<String> finishOrder(@PathVariable Long id, HttpServletRequest request){
+        return orderService.finishOrder(id, request);
     }
 
 

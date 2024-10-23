@@ -23,6 +23,7 @@ public class OrderResponse {
     private LocalDate deliveryDate;
     private OrderType orderType;
     private Integer orderQuantity;
+    private int finalProductQuantity;
     private String orderStatus;
     private Integer readyMilCount;
     private Long productionProcessId;

@@ -38,6 +38,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,6 +65,7 @@ public class OrderService {
     private final PolisajMapper polisajMapper;
     private final LiftMapper liftMapper;
     private final BlokLiftMapper blokLiftMapper;
+    private final BoyaVePaketMapper boyaVePaketMapper;
     //private final ResponseHelper responseHelper;
 
 
@@ -74,7 +76,7 @@ public class OrderService {
         methodHelper.checkGasanNo(orderRequest.getGasanNo());//gazan numarası kontrolü yapıyoruz
 
         methodHelper.checkOrderNumber(orderRequest.getOrderNumber());//sipariş numarası kontrolü yapıyoruz
-        
+
         timeValidator.checkTimeWithException(LocalDate.now(), orderRequest.getDeliveryDate());//teslim tarihi bugünden küçük olamaz
 
 
@@ -341,7 +343,7 @@ public class OrderService {
     }
 
     public MultipleResponses<OrderResponse, List<TalasliImalatResponse>, ProductionProcessResponse> getOrderById(Long id, HttpServletRequest request) {
-            methodHelper.checkUser(request);
+        methodHelper.checkUser(request);
 
         Order order = methodHelper.findOrderById(id);
         ProductionProcess productionProcess = talasliHelper.findProductionProcessById(order.getProductionProcess().getId());
@@ -390,8 +392,8 @@ public class OrderService {
         Page<Order> ordersPage = orderRepository.findByStatusTypeAndOrderTypeNotLike(statuses, pageable);
 
         List<OrderResponse> orderResponses = ordersPage.getContent().stream()
-                                            .map(orderMapper::mapOrderToOrderResponse)
-                                            .collect(Collectors.toList());
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
 
         return new PageImpl<>(orderResponses, pageable, ordersPage.getTotalElements());
     }
@@ -469,5 +471,54 @@ public class OrderService {
                 orderMapper.mapOrderToOrderResponse(order),
                 blokLiftMapper.mapBlokLiftListToResponse(blokLiftMontajList),
                 talasliMapper.mapProductionProcessToResponse(productionProcess));
+    }
+
+    public MultipleResponses<OrderResponse, List<BoyaVePaketlemeResponse>, ProductionProcessResponse> getOrderByIdForBoyaPaket(Long id, HttpServletRequest request) {
+        methodHelper.checkUser(request);
+
+        Order order = methodHelper.findOrderById(id);
+        ProductionProcess productionProcess = order.getProductionProcess();
+        List<BoyaVePaketleme> boyaVePaketlemeList = productionProcess.getBoyaPaketOperations();
+
+        return methodHelper.multipleResponse(
+                SuccessMessages.ORDER_FOUND,
+                HttpStatus.OK,
+                orderMapper.mapOrderToOrderResponse(order),
+                boyaVePaketMapper.mapToBoyaVePaketlemeResponseList(boyaVePaketlemeList),
+                talasliMapper.mapProductionProcessToResponse(productionProcess));
+    }
+
+    public ResponseMessage<String> finishOrder(Long id, HttpServletRequest request) {
+        methodHelper.checkUser(request);
+
+        Order order = methodHelper.findOrderById(id);
+        ProductionProcess productionProcess = order.getProductionProcess();
+        if (order.getFinalProductQuantity()>=order.getOrderQuantity()){
+            order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.TAMAMLANDI));
+            productionProcess.endOperation();
+            productionProcessRepository.save(productionProcess);
+            orderRepository.save(order);
+        }else {
+            throw new BadRequestException(ErrorMessages.ORDER_CANNOT_FINISHED);
+        }
+
+        return methodHelper.createResponse(SuccessMessages.ORDER_FINISHED, HttpStatus.OK, null);
+    }
+
+    public ResponseMessage<String> startStop(Long id) {
+        System.out.println("Accessing startStop for order: " + id);
+        Order order = methodHelper.findOrderById(id);
+        ProductionProcess productionProcess = order.getProductionProcess();
+        if (order.getOrderStatus().getStatusType().getName().equals(StatusType.ISLENMEYI_BEKLIYOR.getName())) {
+            order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
+            productionProcess.startOperation();
+        }else if (order.getOrderStatus().getStatusType().getName().equals(StatusType.ISLENMEKTE.getName())) {
+            order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.BEKLEMEDE));
+        } else if (order.getOrderStatus().getStatusType().getName().equals(StatusType.BEKLEMEDE.getName())) {
+            order.setOrderStatus(orderStatusService.getOrderStatus(StatusType.ISLENMEKTE));
+        }
+        productionProcessRepository.save(productionProcess);
+        orderRepository.save(order);
+        return methodHelper.createResponse(SuccessMessages.ORDER_STATUS_CHANGED, HttpStatus.OK, null);
     }
 }
