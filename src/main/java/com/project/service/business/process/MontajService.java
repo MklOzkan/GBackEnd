@@ -39,6 +39,7 @@ public class MontajService {
 
     public ResponseMessage<String> boruKapamaOperationForBL(Long operationId, MontajRequest request) {
         BlokLiftMontaj blokLiftBoruKapama= montajHelper.findBlokLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),blokLiftBoruKapama.getRemainingQuantity());
 
         ProductionProcess productionProcess = blokLiftBoruKapama.getProductionProcess();
 
@@ -55,6 +56,7 @@ public class MontajService {
 
     public ResponseMessage<String> boruKapamaOperationForLift(Long operationId, MontajRequest request) {
         LiftMontaj liftBoruKapama = montajHelper.findLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),liftBoruKapama.getRemainingQuantity());
         ProductionProcess productionProcess = liftBoruKapama.getProductionProcess();
         liftBoruKapama.completeOperation(request.getCompletedQuantity());
         montajHelper.saveLiftMontajWithoutReturn(liftBoruKapama);
@@ -71,6 +73,7 @@ public class MontajService {
     public ResponseMessage<String> boruKaynakOperationForBl(Long operationId, MontajRequest request) {
 
         BlokLiftMontaj blokLiftBoruKaynak= montajHelper.findBlokLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),blokLiftBoruKaynak.getRemainingQuantity());
         ProductionProcess productionProcess = blokLiftBoruKaynak.getProductionProcess();
         blokLiftBoruKaynak.completeOperation(request.getCompletedQuantity());
         montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftBoruKaynak);
@@ -86,6 +89,7 @@ public class MontajService {
 
     public ResponseMessage<String> boruKaynakOperationForLift(Long operationId, MontajRequest request) {
         LiftMontaj liftBoruKaynak = montajHelper.findLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),liftBoruKaynak.getRemainingQuantity());
         ProductionProcess productionProcess = liftBoruKaynak.getProductionProcess();
         liftBoruKaynak.completeOperation(request.getCompletedQuantity());
         montajHelper.saveLiftMontajWithoutReturn(liftBoruKaynak);
@@ -104,6 +108,7 @@ public class MontajService {
 
     public ResponseMessage<String> montajOperationForBl(Long operationId, MontajRequest request) {
         BlokLiftMontaj blokLiftMontaj = montajHelper.findBlokLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),blokLiftMontaj.getRemainingQuantity());
         if(blokLiftMontaj.getProductionProcess().getOrder().getOrderType().equals(OrderType.DAMPER)) {
 
             ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
@@ -133,6 +138,7 @@ public class MontajService {
 
     public ResponseMessage<String> montajOperationForLift(Long operationId, MontajRequest request) {
         LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),liftMontaj.getRemainingQuantity());
         ProductionProcess productionProcess = liftMontaj.getProductionProcess();
 
         liftMontaj.completeOperation(request.getCompletedQuantity());
@@ -148,6 +154,7 @@ public class MontajService {
 
     public ResponseMessage<String> blokLiftBoruKapamaOperation(Long operationId, MontajRequest request) {
         BlokLiftMontaj blokLiftMontaj = montajHelper.findBlokLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),blokLiftMontaj.getRemainingQuantity());
         ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
 
         blokLiftMontaj.completeOperation(request.getCompletedQuantity());
@@ -163,6 +170,7 @@ public class MontajService {
 
     public ResponseMessage<String> gazDolumOperationForBL(Long operationId, MontajRequest request) {
         BlokLiftMontaj blokLiftMontaj= montajHelper.findBlokLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),blokLiftMontaj.getRemainingQuantity());
         ProductionProcess productionProcess = blokLiftMontaj.getProductionProcess();
 
         blokLiftMontaj.completeOperation(request.getCompletedQuantity());
@@ -176,6 +184,7 @@ public class MontajService {
 
     public ResponseMessage<String> gazDolumOperationForLift(Long operationId, MontajRequest request) {
         LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),liftMontaj.getRemainingQuantity());
         ProductionProcess productionProcess = liftMontaj.getProductionProcess();
 
         liftMontaj.completeOperation(request.getCompletedQuantity());
@@ -191,6 +200,7 @@ public class MontajService {
 
     public ResponseMessage<String> baslikTakmaOperation(Long operationId, @Valid MontajRequest request) {
         LiftMontaj liftMontaj = montajHelper.findLiftOperationById(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),liftMontaj.getRemainingQuantity());
             ProductionProcess productionProcess = liftMontaj.getProductionProcess();
 
             liftMontaj.completeOperation(request.getCompletedQuantity());
@@ -207,6 +217,7 @@ public class MontajService {
 
     public ResponseMessage<String> testOperation(Long operationId, @Valid MontajRequest request) {
             BlokLiftMontaj blokLiftMontajOperation= montajHelper.findBlokLiftOperationById(operationId);
+            methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(),blokLiftMontajOperation.getRemainingQuantity());
             ProductionProcess productionProcess = blokLiftMontajOperation.getProductionProcess();
 
             if(request.getLastCompletedScrapCount()>0){

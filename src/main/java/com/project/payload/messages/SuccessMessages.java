@@ -43,6 +43,7 @@ public class SuccessMessages {
     public static final String ORDER_STATUS_UPDATED = "Sipariş durumu başarılı bir şekilde güncellendi ve başlatıldı";
     public static final String ORDER_STATUS_PAUSED = "Sipariş durumu başarılı bir şekilde güncellendi ve durduruldu";
     public static final String MONTAJ_OPERATION_UPDATED = "Montaj işlemi başarılı bir şekilde güncellendi";
+    public static final String ORDER_FINISHED = "Sipariş başarılı bir şekilde tamamlandı";
 
 
     private SuccessMessages(){}

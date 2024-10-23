@@ -23,6 +23,7 @@ public class BoyaVePaketService {
     @Transactional
     public ResponseMessage<String> boyaOperation(Long operationId, @Valid BoyaVePaketlemeRequest request) {
         BoyaVePaketleme boya = boyaPaketHelper.findBoyaVePaketlemeByOperationId(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), boya.getRemainingQuantity());
         boya.completeOperation(request.getCompletedQuantity());
         boyaPaketHelper.saveBoyaVePaketlemeWithoutReturn(boya);
 
@@ -36,6 +37,7 @@ public class BoyaVePaketService {
     @Transactional
     public ResponseMessage<String> paketOperation(Long operationId, @Valid BoyaVePaketlemeRequest request) {
         BoyaVePaketleme paket = boyaPaketHelper.findBoyaVePaketlemeByOperationId(operationId);
+        methodHelper.compareCompletedQuantityWithRemainingQuantity(request.getCompletedQuantity(), paket.getRemainingQuantity());
         paket.completeOperation(request.getCompletedQuantity());
         boyaPaketHelper.saveBoyaVePaketlemeWithoutReturn(paket);
 

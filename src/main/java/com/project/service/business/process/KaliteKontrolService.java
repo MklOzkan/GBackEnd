@@ -10,9 +10,11 @@ import com.project.domain.concretes.business.process.liftmontajamiri.LiftMontaj;
 import com.project.domain.concretes.business.process.polisajamiri.PolisajImalat;
 import com.project.domain.concretes.business.process.talasliimalatamiri.TalasliImalat;
 import com.project.domain.enums.OrderType;
+import com.project.exception.ConflictException;
 import com.project.payload.mappers.KaliteKontrolMapper;
 import com.project.payload.mappers.OrderMapper;
 import com.project.payload.mappers.TalasliMapper;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.process.KaliteKontrolRequest;
 import com.project.payload.response.business.MultipleResponses;
@@ -45,6 +47,8 @@ public class KaliteKontrolService {
 
     //paslanmaz icin mil taslama sonrası kalite kontrol
     public ResponseMessage<String> afterMilTaslamaKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
+        checkIsCompletedMoreThanRemainingQuantity(stageId, request);
+
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
         TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
@@ -78,6 +82,7 @@ public class KaliteKontrolService {
 
     //paslanmaz icin ezme sonrası kalite kontrol
     public ResponseMessage<String> afterEzmeKaliteKontrol(@Valid KaliteKontrolRequest request, Long stageId) {
+        checkIsCompletedMoreThanRemainingQuantity(stageId, request);
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
         TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
@@ -112,6 +117,7 @@ public class KaliteKontrolService {
 
     //montaj sonrası kalite kontrol
     public ResponseMessage<String> afterMontajKaliteKontrol(KaliteKontrolRequest request, Long stageId) {
+        checkIsCompletedMoreThanRemainingQuantity(stageId, request);
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
 
@@ -182,7 +188,7 @@ public class KaliteKontrolService {
     }
     //polisan sonrası kalite kontrol
     public ResponseMessage<String> afterPolisajKaliteKontrol(KaliteKontrolRequest request, Long stageId) {
-
+        checkIsCompletedMoreThanRemainingQuantity(stageId, request);
         KaliteKontrol kaliteKontrol=kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess=kaliteKontrol.getProductionProcess();
         OrderType orderType=productionProcess.getOrder().getOrderType();
@@ -391,5 +397,22 @@ public class KaliteKontrolService {
                 .message(SuccessMessages.KALITE_KONTROL_UPDATED)
                 .httpStatus(HttpStatus.OK)
                 .build();
+    }
+
+
+    private void checkQuantity(int requestCount, int milCount) {
+        if (requestCount > 0 && milCount < requestCount) {
+            throw new ConflictException(ErrorMessages.APPROVE_COUNT_MORE_THAN_REMAINING_QUANTITY);
+        }
+    }
+
+    public void checkIsCompletedMoreThanRemainingQuantity(Long stageId, KaliteKontrolRequest request) {
+        KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
+        int milCount = kaliteKontrol.getMilCount();
+
+        checkQuantity(request.getApproveCount(), milCount);
+        checkQuantity(request.getReturnedToMilTaslama(), milCount);
+        checkQuantity(request.getReturnedToIsilIslem(), milCount);
+        checkQuantity(request.getScrapCount(), milCount);
     }
 }
