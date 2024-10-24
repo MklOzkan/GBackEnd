@@ -52,7 +52,6 @@ public class KaliteKontrolService {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(stageId);
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
         TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
-        TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
 
         if (request.getApproveCount() > 0) {
             kaliteKontrol.approvedPart(request.getApproveCount());
@@ -61,8 +60,10 @@ public class KaliteKontrolService {
             kaliteKontrol.scrapPart(request.getScrapCount());
         }
         if (request.getReturnedToMilTaslama() > 0) {
+            TalasliImalat miltaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
             kaliteKontrol.returnedToMilTaslama(request.getReturnedToMilTaslama());
             miltaslama.returnedToOperation(request.getReturnedToMilTaslama());
+            talasliHelper.saveTalasliImalatWithoutReturn(miltaslama);
         }
         updateNextOperation(ezme, request.getApproveCount());
         kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
