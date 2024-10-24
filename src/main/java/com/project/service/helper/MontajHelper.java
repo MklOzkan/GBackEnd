@@ -128,5 +128,6 @@ public class MontajHelper {
         int completedQty = liftMontaj.getCompletedQuantity();
         int updatedQuantityForRemaining = afterCompare -completedQty;
         liftMontaj.setRemainingQuantity(updatedQuantityForRemaining);
+        saveLiftMontajWithoutReturn(liftMontaj);
     }
 }
