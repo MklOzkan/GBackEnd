@@ -51,12 +51,7 @@ public class PolisajService {
         PolisajImalat polisajImalat = polisajHelper.findPolisajById(id);
         ProductionProcess productionProcess = polisajImalat.getProductionProcess();
 
-        KaliteKontrol afterPolisaj;
-        if (productionProcess.getOrder().getOrderType().equals(OrderType.BLOKLIFT)) {
-            afterPolisaj = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
-        } else {
-            afterPolisaj = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
-        }
+        KaliteKontrol afterPolisaj = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
         afterPolisaj.removeLastFromNextOperation(polisajImalat.getLastCompletedQty());
         kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterPolisaj);
 
