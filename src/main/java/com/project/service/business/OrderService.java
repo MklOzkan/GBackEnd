@@ -162,12 +162,6 @@ public class OrderService {
             createBlokLiftMontaj(test, productionProcess, BlokLiftOperationType.TEST);
         }
 
-        BoyaVePaketleme boya = new BoyaVePaketleme();
-        createBoyavePAketleme(boya, productionProcess, BoyaPaketOperationType.BOYA);
-
-        BoyaVePaketleme paketleme = new BoyaVePaketleme();
-        createBoyavePAketleme(paketleme, productionProcess, BoyaPaketOperationType.PAKETLEME);
-
         KaliteKontrol afterPolisaj = new KaliteKontrol();
         KaliteKontrol afterMontaj = new KaliteKontrol();
         KaliteKontrol afterMilTaslama = new KaliteKontrol();
@@ -180,8 +174,14 @@ public class OrderService {
             createKaliteKontrol(afterMilTaslama, productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
             createKaliteKontrol(afterEzme, productionProcess, KaliteKontrolStage.AFTER_EZME);
         }else {
-            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
+            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
         }
+
+        BoyaVePaketleme boya = new BoyaVePaketleme();
+        createBoyavePAketleme(boya, productionProcess, BoyaPaketOperationType.BOYA);
+
+        BoyaVePaketleme paketleme = new BoyaVePaketleme();
+        createBoyavePAketleme(paketleme, productionProcess, BoyaPaketOperationType.PAKETLEME);
 
         return methodHelper.createResponse(SuccessMessages.ORDER_CREATED, HttpStatus.CREATED, orderMapper.mapOrderToOrderResponse(savedOrder));
     }
@@ -417,7 +417,7 @@ public class OrderService {
 
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
-        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(),StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
         List<OrderType> orderTypes = List.of(OrderType.BLOKLIFT, OrderType.DAMPER);
         Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameInAndOrderTypeIn(statuses, orderTypes, pageable);
 
@@ -432,7 +432,7 @@ public class OrderService {
 
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
-        List<String> statuses = List.of(StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
+        List<String> statuses = List.of(StatusType.ISLENMEYI_BEKLIYOR.getName(),StatusType.ISLENMEKTE.getName(), StatusType.BEKLEMEDE.getName());
         List<OrderType> orderTypes = List.of(OrderType.LIFT, OrderType.PASLANMAZ );
         Page<Order> ordersPage = orderRepository.findByOrderStatus_StatusNameInAndOrderTypeIn(statuses, orderTypes, pageable);
 

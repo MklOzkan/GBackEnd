@@ -134,8 +134,8 @@ public class KaliteKontrolService {
 
     private void handleKaliteKontrolUpdates(KaliteKontrol kaliteKontrol, KaliteKontrolRequest request) {
         ProductionProcess productionProcess = kaliteKontrol.getProductionProcess();
-        TalasliImalat isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
-        TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
+        TalasliImalat isilIslem;
+        TalasliImalat milTaslama;
         PolisajImalat polisaj = productionProcess.getPolisajOperation();
 
         if (request.getApproveCount() > 0) {
@@ -145,6 +145,7 @@ public class KaliteKontrolService {
             kaliteKontrol.scrapPart(request.getScrapCount());
         }
         if (request.getReturnedToIsilIslem() > 0) {
+            isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
             kaliteKontrol.returnedToIsilIslem(request.getReturnedToIsilIslem());
             isilIslem.returnedToOperation(request.getReturnedToIsilIslem());
             polisaj.decreaseCompletedQuantity(request.getReturnedToIsilIslem());
@@ -152,6 +153,8 @@ public class KaliteKontrolService {
             polisajHelper.savePolisajWithoutReturn(polisaj);
         }
         if (request.getReturnedToMilTaslama() > 0) {
+            isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
+            milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
             kaliteKontrol.returnedToMilTaslama(request.getReturnedToMilTaslama());
             milTaslama.returnedToOperation(request.getReturnedToMilTaslama());
             isilIslem.decreaseCompletedQuantity(request.getReturnedToMilTaslama());
@@ -298,7 +301,7 @@ public class KaliteKontrolService {
         KaliteKontrol kaliteKontrol = kaliteKontrolHelper.findById(id);
         if (orderType.equals(OrderType.LIFT)||orderType.equals(OrderType.PASLANMAZ)){
             LiftMontaj liftMontaj = montajHelper.findLiftByProductionProcessAndOperationType(productionProcess, LiftMontajOperationTye.GAZ_DOLUM);
-            liftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
+            liftMontaj.removeLastFromNextOperation(kaliteKontrol.getLastApproveCount());
             montajHelper.saveLiftMontajWithoutReturn(liftMontaj);
 
         }else{
