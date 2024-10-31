@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -46,4 +47,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderNumber(String orderNumber);
 
     Page<Order> findByOrderStatus_StatusNameInAndOrderTypeIn(List<String> statuses, List<OrderType> orderTypes, Pageable pageable);
+
+    Page<Order> findAllByCustomerName(String customerName, Pageable pageable);
+
+    List<Order> findAllByOrderDateBetween(LocalDate startDate, LocalDate endDate);
+
+    List<Order> findAllByOrderDateAfter(LocalDate startDate);
+
+    List<Order> findAllByOrderDateBefore(LocalDate endDate);
 }

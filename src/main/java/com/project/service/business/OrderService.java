@@ -170,7 +170,7 @@ public class OrderService {
             createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_POLISAJ);
             createKaliteKontrol(afterMontaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
         } else if (savedOrder.getOrderType().equals(OrderType.PASLANMAZ)) {
-            createKaliteKontrol(afterPolisaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
+            createKaliteKontrol(afterMontaj, productionProcess, KaliteKontrolStage.AFTER_MONTAJ);
             createKaliteKontrol(afterMilTaslama, productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
             createKaliteKontrol(afterEzme, productionProcess, KaliteKontrolStage.AFTER_EZME);
         }else {
@@ -270,9 +270,32 @@ public class OrderService {
         return orders.map(orderMapper::mapOrderToOrderResponse);
     }
 
-    public List<OrderResponse> getOrders() {
+    public List<OrderResponse> getOrdersBetweenDates(LocalDate startDate, LocalDate endDate) {
         return orderRepository
-                .findAll()
+                .findAllByOrderDateBetween(startDate, endDate)
+                .stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> getOrdersAfterDate(LocalDate startDate) {
+        return orderRepository
+                .findAllByOrderDateAfter(startDate)
+                .stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> getOrdersBeforeDate(LocalDate endDate) {
+        return orderRepository
+                .findAllByOrderDateBefore(endDate)
+                .stream()
+                .map(orderMapper::mapOrderToOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> getAllOrders(){
+        return orderRepository.findAll()
                 .stream()
                 .map(orderMapper::mapOrderToOrderResponse)
                 .collect(Collectors.toList());
