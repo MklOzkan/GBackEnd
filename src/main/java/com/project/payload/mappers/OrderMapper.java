@@ -10,6 +10,8 @@ import com.project.service.business.OrderStatusService;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Data
 @Component
 public class OrderMapper {
@@ -100,5 +102,7 @@ public class OrderMapper {
     }
 
 
-
+    public List<OrderResponse> mapOrderListToOrderResponseList(List<Order> orderList) {
+        return orderList.stream().map(this::mapOrderToOrderResponse).toList();
+    }
 }

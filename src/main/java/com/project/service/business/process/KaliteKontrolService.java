@@ -231,21 +231,27 @@ public class KaliteKontrolService {
             case "Mil_Taslama":
                 TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
                 isilIslem = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
-                milTaslama.rollbackOperation(kaliteKontrol.getLastReturnedToMilTaslama());
-                isilIslem.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
-                polisaj.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
+
+                milTaslama.returnedToOperation(kaliteKontrol.getLastReturnedToMilTaslama());
                 talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+
+                isilIslem.decreaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
                 talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
+
+                polisaj.decreaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
                 polisajHelper.savePolisajWithoutReturn(polisaj);
+
                 kaliteKontrol.rollBackLastReturnedToMilTaslama();
                 kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
                 break;
             case "Isil_Islem":
                 isilIslem= talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.ISIL_ISLEM);
-                isilIslem.rollbackOperation(kaliteKontrol.getLastReturnedToIsilIslem());
-                polisaj.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToIsilIslem());
+                isilIslem.returnedToOperation(kaliteKontrol.getLastReturnedToIsilIslem());
                 talasliHelper.saveTalasliImalatWithoutReturn(isilIslem);
+
+                polisaj.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToIsilIslem());
                 polisajHelper.savePolisajWithoutReturn(polisaj);
+
                 kaliteKontrol.rollBackLastReturnedToIsilIslem();
                 kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
                 break;
@@ -306,7 +312,7 @@ public class KaliteKontrolService {
 
         }else{
             BlokLiftMontaj blokLiftMontaj = montajHelper.findBLByProductionProcessAndOperationType(productionProcess, BlokLiftOperationType.GAZ_DOLUM);
-            blokLiftMontaj.rollbackNextMilCount(kaliteKontrol.getLastApproveCount());
+            blokLiftMontaj.removeLastFromNextOperation(kaliteKontrol.getLastApproveCount());
             montajHelper.saveBlokLiftMontajWithoutReturn(blokLiftMontaj);
 
         }
@@ -324,12 +330,16 @@ public class KaliteKontrolService {
                 TalasliImalat milTaslama = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.MIL_TASLAMA);
                 TalasliImalat ezme = talasliHelper.findTalasliImalatByProductionProcess(productionProcess, TalasliOperationType.EZME);
                 KaliteKontrol afterMilTaslama = kaliteKontrolHelper.findKaliteKontrolByProductionProcess(productionProcess, KaliteKontrolStage.AFTER_MIL_TASLAMA);
-                milTaslama.rollbackOperation(kaliteKontrol.getLastReturnedToMilTaslama());
+                //mil taşlama geri gönderilen miktarı geri al
+                milTaslama.returnedToOperation(kaliteKontrol.getLastReturnedToMilTaslama());
+                talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+                //mil taşlama sonrasi kalite kontrol approve geri al
                 afterMilTaslama.rollbackLastApproveCount(kaliteKontrol.getLastReturnedToMilTaslama());
                 kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(afterMilTaslama);
-                ezme.increaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
-                talasliHelper.saveTalasliImalatWithoutReturn(milTaslama);
+                //ezme onaylanan miktari azaltir
+                ezme.decreaseCompletedQuantity(kaliteKontrol.getLastReturnedToMilTaslama());
                 talasliHelper.saveTalasliImalatWithoutReturn(ezme);
+
                 kaliteKontrol.rollBackLastReturnedToMilTaslama();
                 kaliteKontrolHelper.saveKaliteKontrolWithoutReturn(kaliteKontrol);
                 break;

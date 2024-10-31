@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,7 +26,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/orders")
@@ -169,12 +172,23 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('Admin','Employee')")
-    @GetMapping("/download/excel")
-    public ResponseEntity<byte[]> downLoadOrdersExcel(){
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> downLoadOrdersExcel(  @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startDate,
+                                                        @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endDate){
 
-        List<OrderResponse> orders = orderService.getOrders();
+        List<OrderResponse> orders ;
 
-        LOGGER.info("Request received to download Excel for orders.");
+        if(startDate.isPresent() && endDate.isPresent()){
+            orders = orderService.getOrdersBetweenDates(startDate.get(), endDate.get());
+        }else if(startDate.isPresent() && !endDate.isPresent()){
+            orders = orderService.getOrdersAfterDate(startDate.get());
+        }else if(!startDate.isPresent() && endDate.isPresent()){
+            orders = orderService.getOrdersBeforeDate(endDate.get());
+        }else {
+            orders = orderService.getAllOrders();
+        }
+
+        LOGGER.info("Request received to download Excel for orders between {} and {}.", startDate, endDate);
 
         try (ByteArrayInputStream in = excelService.generateExcel(orders)) {
             HttpHeaders headers = new HttpHeaders();
